@@ -4,8 +4,9 @@ import type { ServiceOption } from "@/lib/constants";
 import { ContactForm } from "@/components/forms/ContactForm";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { LinkedInIcon } from "@/components/ui/Icon";
+import { LiveClock } from "@/components/ui/LiveClock";
 import { Reveal } from "@/components/motion/Reveal";
-import { GradientMesh } from "@/components/effects/Backgrounds";
+import { Glow, GridBackdrop } from "@/components/effects/Backgrounds";
 
 interface ContactSectionProps {
   eyebrow?: string;
@@ -29,51 +30,48 @@ export function ContactSection({
   defaultService,
   headingLevel = "h2",
 }: ContactSectionProps) {
+  const isPageHeading = headingLevel === "h1";
   return (
     <section
       id="contact"
       aria-labelledby="contact-title"
       className="relative overflow-hidden py-24 sm:py-32"
     >
-      <GradientMesh className="opacity-40" />
-      <div className="container-page relative grid gap-12 lg:grid-cols-[5fr_7fr]">
+      <GridBackdrop className="opacity-50" />
+      <Glow className="-top-40 -left-40 size-[36rem]" />
+      <div className="relative container-page grid gap-12 lg:grid-cols-[5fr_7fr]">
         <div className="flex flex-col gap-10">
           <SectionHeading
             id="contact-title"
             as={headingLevel}
-            intro={headingLevel === "h1"}
+            intro={isPageHeading}
             eyebrow={eyebrow}
             title={title}
             description={description}
           />
-          <Reveal stagger={0.08} className="grid gap-4 sm:grid-cols-2 lg:grid-cols-1">
+          <Reveal stagger={0.07} className="grid gap-3 sm:grid-cols-2 lg:grid-cols-1">
             {details.map(({ icon: IconComponent, label, value, href }) => {
               const content = (
                 <>
-                  <span className="group-hover:text-ink-950 grid size-12 shrink-0 place-items-center rounded-2xl bg-lime-500/10 text-lime-500 transition-colors group-hover:bg-lime-500">
+                  <span className="grid size-11 shrink-0 place-items-center rounded-lg border border-line-strong text-pulse transition-colors group-hover:border-signal group-hover:bg-signal group-hover:text-white">
                     <IconComponent className="size-5" aria-hidden="true" />
                   </span>
                   <span className="min-w-0">
-                    <span className="text-fg-subtle block text-xs tracking-wide uppercase">
+                    <span className="block font-mono text-[10px] tracking-[0.16em] text-fg-subtle uppercase">
                       {label}
                     </span>
-                    <span className="text-fg block font-medium break-words">{value}</span>
+                    <span className="block font-medium break-words text-fg">{value}</span>
                   </span>
                 </>
               );
+              const cls =
+                "group flex items-center gap-4 rounded-xl border border-line bg-panel/60 p-4 transition-colors hover:border-signal/40";
               return href ? (
-                <a
-                  key={label}
-                  href={href}
-                  className="group border-line flex items-center gap-4 rounded-2xl border bg-white/[0.02] p-4 transition-colors hover:border-lime-500/40"
-                >
+                <a key={label} href={href} className={cls}>
                   {content}
                 </a>
               ) : (
-                <div
-                  key={label}
-                  className="group border-line flex items-center gap-4 rounded-2xl border bg-white/[0.02] p-4"
-                >
+                <div key={label} className={cls}>
                   {content}
                 </div>
               );
@@ -82,28 +80,46 @@ export function ContactSection({
               href={site.social.linkedin}
               target="_blank"
               rel="noopener noreferrer"
-              className="group border-line flex items-center gap-4 rounded-2xl border bg-white/[0.02] p-4 transition-colors hover:border-lime-500/40"
+              className="group flex items-center gap-4 rounded-xl border border-line bg-panel/60 p-4 transition-colors hover:border-signal/40"
             >
-              <span className="group-hover:text-ink-950 grid size-12 shrink-0 place-items-center rounded-2xl bg-lime-500/10 text-lime-500 transition-colors group-hover:bg-lime-500">
+              <span className="grid size-11 shrink-0 place-items-center rounded-lg border border-line-strong text-pulse transition-colors group-hover:border-signal group-hover:bg-signal group-hover:text-white">
                 <LinkedInIcon className="size-5" />
               </span>
               <span>
-                <span className="text-fg-subtle block text-xs tracking-wide uppercase">
+                <span className="block font-mono text-[10px] tracking-[0.16em] text-fg-subtle uppercase">
                   Stay Connected
                 </span>
-                <span className="text-fg block font-medium">Follow us on LinkedIn</span>
+                <span className="block font-medium text-fg">Follow us on LinkedIn</span>
               </span>
             </a>
           </Reveal>
+          <Reveal className="flex flex-wrap gap-x-6 gap-y-2 font-mono text-xs tracking-[0.1em] text-fg-subtle uppercase">
+            <span>
+              New York <LiveClock timeZone="America/New_York" className="text-fg" />
+            </span>
+            <span>
+              Chicago <LiveClock timeZone="America/Chicago" className="text-fg" />
+            </span>
+            <span>
+              Los Angeles <LiveClock timeZone="America/Los_Angeles" className="text-fg" />
+            </span>
+          </Reveal>
         </div>
 
-        <Reveal className="glass rounded-[2rem] p-6 sm:p-10" y={60}>
-          {headingLevel === "h1" ? (
-            <h2 className="text-fg mb-2 text-2xl font-medium">Tell us about your project</h2>
-          ) : (
-            <h3 className="text-fg mb-2 text-2xl font-medium">Tell us about your project</h3>
-          )}
-          <p className="text-fg-muted mb-8 text-sm">We’ll get back to you shortly.</p>
+        <Reveal className="beam rounded-2xl p-6 glass sm:p-10" y={60}>
+          <div className="mb-8 flex items-center justify-between gap-4 border-b border-line pb-6">
+            <div>
+              {isPageHeading ? (
+                <h2 className="text-2xl font-semibold text-fg">Tell us about your project</h2>
+              ) : (
+                <h3 className="text-2xl font-semibold text-fg">Tell us about your project</h3>
+              )}
+              <p className="mt-1 text-sm text-fg-muted">We’ll get back to you shortly.</p>
+            </div>
+            <span className="hidden font-mono text-[10px] tracking-[0.16em] text-ok uppercase sm:block">
+              ● secure form
+            </span>
+          </div>
           <ContactForm defaultService={defaultService} />
         </Reveal>
       </div>

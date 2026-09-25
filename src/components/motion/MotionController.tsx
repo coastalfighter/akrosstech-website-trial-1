@@ -98,7 +98,7 @@ export function MotionController() {
   useEffect(() => {
     const html = document.documentElement;
     if (html.dataset.preloader !== "active") return;
-    const settleAt = INTRO_DURATION_MS + 2200;
+    const settleAt = INTRO_DURATION_MS + 3200;
     const id = window.setTimeout(
       () => {
         html.dataset.preloader = "done";

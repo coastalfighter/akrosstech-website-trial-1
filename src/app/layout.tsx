@@ -1,5 +1,5 @@
 import type { Metadata, Viewport } from "next";
-import { Plus_Jakarta_Sans, Space_Grotesk } from "next/font/google";
+import { Inter, JetBrains_Mono, Sora } from "next/font/google";
 import { site } from "@/content/site";
 import { organizationJsonLd, serializeJsonLd } from "@/lib/seo";
 import { SmoothScroll } from "@/components/providers/SmoothScroll";
@@ -14,17 +14,24 @@ import { MotionController } from "@/components/motion/MotionController";
 import { MotionProvider } from "@/components/providers/MotionProvider";
 import "./globals.css";
 
-const jakarta = Plus_Jakarta_Sans({
+const inter = Inter({
   subsets: ["latin"],
-  variable: "--font-jakarta",
+  variable: "--font-inter",
   display: "swap",
 });
 
-const grotesk = Space_Grotesk({
+const sora = Sora({
   subsets: ["latin"],
-  variable: "--font-grotesk",
+  variable: "--font-sora",
   display: "swap",
-  // Display font for headings only — not needed for the first contentful paint.
+  weight: ["400", "600", "700", "800"],
+});
+
+const mono = JetBrains_Mono({
+  subsets: ["latin"],
+  variable: "--font-mono-jb",
+  display: "swap",
+  // Used for small labels only — not needed for first contentful paint.
   preload: false,
 });
 
@@ -73,7 +80,7 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: "#070707",
+  themeColor: "#030509",
   colorScheme: "dark",
   width: "device-width",
   initialScale: 1,
@@ -83,7 +90,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
       lang="en"
-      className={`${jakarta.variable} ${grotesk.variable}`}
+      className={`${inter.variable} ${sora.variable} ${mono.variable}`}
       data-scroll-behavior="smooth"
       suppressHydrationWarning
     >
@@ -91,7 +98,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         {/* Decide preloader visibility before first paint (no flash on repeat visits). */}
         <script dangerouslySetInnerHTML={{ __html: preloaderScript }} />
         <noscript>
-          <style>{`.preloader{display:none!important}.hero-char,.hero-word,.hero-fade{opacity:1!important;transform:none!important}`}</style>
+          <style>{`.preloader{display:none!important}.hero-word,.hero-fade{opacity:1!important;transform:none!important}.type-line{width:auto!important}`}</style>
         </noscript>
         <script
           type="application/ld+json"
@@ -101,7 +108,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       <body>
         <a
           href="#main"
-          className="text-ink-950 fixed top-3 left-3 z-[110] -translate-y-20 rounded-full bg-lime-500 px-5 py-3 text-sm font-semibold transition-transform focus:translate-y-0"
+          className="fixed top-3 left-3 z-[110] -translate-y-20 rounded-lg bg-signal px-5 py-3 text-sm font-semibold text-white transition-transform focus:translate-y-0"
         >
           Skip to content
         </a>

@@ -24,7 +24,7 @@ export function ScrollProgress() {
     <div
       ref={barRef}
       aria-hidden="true"
-      className="fixed inset-x-0 top-0 z-[70] h-[2px] origin-left scale-x-0 bg-gradient-to-r from-lime-500 to-teal-400"
+      className="fixed inset-x-0 top-0 z-[70] h-[2px] origin-left scale-x-0 bg-gradient-to-r from-signal via-pulse to-ion"
     />
   );
 }

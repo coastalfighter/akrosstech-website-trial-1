@@ -1,24 +1,24 @@
 import Link from "next/link";
-import { ArrowUpRight } from "lucide-react";
+import { ArrowRight } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 type Variant = "primary" | "secondary" | "ghost";
 type Size = "md" | "lg";
 
 const base =
-  "group/btn relative inline-flex items-center justify-center gap-2 overflow-hidden rounded-full font-semibold whitespace-nowrap transition-[color,background-color,border-color,box-shadow,transform] duration-300 ease-out focus-visible:outline-2 focus-visible:outline-offset-4 disabled:pointer-events-none disabled:opacity-60 active:scale-[0.97]";
+  "group/btn relative inline-flex items-center justify-center gap-2.5 overflow-hidden rounded-lg font-semibold whitespace-nowrap transition-[color,background-color,border-color,box-shadow,transform] duration-300 ease-out focus-visible:outline-2 focus-visible:outline-offset-4 disabled:pointer-events-none disabled:opacity-60 active:scale-[0.98]";
 
 const variants: Record<Variant, string> = {
   primary:
-    "bg-lime-500 text-ink-950 shadow-[0_0_0_0_rgba(191,247,71,0.5)] hover:shadow-[0_10px_40px_-8px_rgba(191,247,71,0.6)]",
+    "bg-signal text-white shadow-[0_0_0_1px_rgba(122,163,255,0.4)_inset,0_8px_30px_-10px_rgba(61,123,255,0.9)] hover:bg-signal-strong hover:shadow-[0_0_0_1px_rgba(122,163,255,0.6)_inset,0_12px_44px_-8px_rgba(61,123,255,1)]",
   secondary:
-    "border border-line-strong bg-white/[0.03] text-fg backdrop-blur hover:border-lime-500/60 hover:text-lime-500",
-  ghost: "text-fg hover:text-lime-500",
+    "border border-line-strong bg-white/[0.02] text-fg hover:border-pulse/60 hover:bg-pulse/[0.06] hover:text-white",
+  ghost: "text-fg hover:text-pulse",
 };
 
 const sizes: Record<Size, string> = {
   md: "h-11 px-5 text-sm",
-  lg: "h-14 px-7 text-base",
+  lg: "h-13 px-7 text-[15px]",
 };
 
 interface CommonProps {
@@ -26,7 +26,7 @@ interface CommonProps {
   size?: Size;
   className?: string;
   children: React.ReactNode;
-  /** Show the animated diagonal arrow. */
+  /** Show the sliding arrow. */
   arrow?: boolean;
   cursorLabel?: string;
 }
@@ -45,24 +45,21 @@ function Content({
       {variant === "primary" && (
         <span
           aria-hidden="true"
-          className="absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/50 to-transparent transition-transform duration-700 ease-out group-hover/btn:translate-x-full"
+          className="absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/30 to-transparent transition-transform duration-700 ease-out group-hover/btn:translate-x-full"
         />
       )}
       <span className="relative">{children}</span>
       {arrow && (
-        <span
-          className="relative grid size-5 place-items-center overflow-hidden"
+        <ArrowRight
           aria-hidden="true"
-        >
-          <ArrowUpRight className="size-4 transition-transform duration-300 group-hover/btn:translate-x-5 group-hover/btn:-translate-y-5" />
-          <ArrowUpRight className="absolute size-4 -translate-x-5 translate-y-5 transition-transform duration-300 group-hover/btn:translate-x-0 group-hover/btn:translate-y-0" />
-        </span>
+          className="relative size-4 transition-transform duration-300 group-hover/btn:translate-x-1"
+        />
       )}
     </>
   );
 }
 
-/** Link styled as a button. Internal routes use next/link (prefetching). */
+/** Link styled as a button. Internal routes use next/link. */
 export function ButtonLink({
   href,
   variant = "primary",
@@ -77,8 +74,7 @@ export function ButtonLink({
     "href" | "className" | "children"
   >) {
   const classes = cn(base, variants[variant], sizes[size], className);
-  const isExternal = /^(https?:|mailto:|tel:)/.test(href);
-  if (isExternal) {
+  if (/^(https?:|mailto:|tel:)/.test(href)) {
     return (
       <a href={href} className={classes} data-cursor-label={cursorLabel} {...rest}>
         <Content arrow={arrow} variant={variant}>

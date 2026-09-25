@@ -5,46 +5,59 @@ const STORAGE_KEY = "ak-preloaded";
 /** Total intro length in ms (must match the CSS timings in globals.css). */
 export const INTRO_DURATION_MS = 1600;
 
+const bootLines = [
+  { text: "> initializing akrostech.core", t: 0.05 },
+  { text: "> linking U.S. ⇄ India delivery teams", t: 0.3 },
+  { text: "> loading talent network [100+]", t: 0.55 },
+  { text: "> status: online ✓", t: 0.78, ok: true },
+];
+
 /**
- * First-visit brand reveal.
- *
- * The whole sequence (stroke draw, 0→100 counter, curtain lift) is pure CSS,
- * so it starts on first paint and never waits for JavaScript/hydration. An
- * inline <head> script sets `html[data-preloader]` before paint: "active" on
- * the first visit of a session, "done" for repeat visits and reduced motion.
+ * First-visit "boot sequence". Entirely CSS-driven (typed lines, 0→100
+ * counter, progress bar, wipe-out), so it starts on first paint without
+ * waiting for JavaScript. An inline <head> script sets `html[data-preloader]`
+ * to "active" once per session, "done" otherwise.
  */
 export function Preloader() {
   return (
     <div
-      className="preloader bg-ink-950 fixed inset-0 z-[100] flex flex-col items-center justify-center"
+      className="preloader fixed inset-0 z-[100] flex flex-col justify-between bg-void p-6 sm:p-10"
       aria-hidden="true"
     >
-      <div className="gradient-mesh opacity-40">
-        <span />
-        <span />
-        <span />
+      <div className="pointer-events-none absolute inset-0 grid-lines mask-radial opacity-60" />
+      <div className="relative flex items-center justify-between font-mono text-[11px] tracking-[0.2em] text-fg-subtle uppercase">
+        <span>Akrostech // v2</span>
+        <span>Offshore Talent. Onshore Quality.</span>
       </div>
-      <div data-preloader-fade className="relative flex flex-col items-center gap-8">
-        <LogoMark
-          animated
-          className="w-28 text-lime-500 drop-shadow-[0_0_30px_rgba(191,247,71,0.35)] sm:w-36"
-        />
-        <p className="font-display text-fg-muted text-sm tracking-[0.5em] uppercase">Akrostech</p>
+
+      <div className="relative mx-auto flex w-full max-w-xl flex-col gap-8">
+        <LogoMark className="w-20" />
+        <div className="font-mono text-sm leading-7 text-fg-muted sm:text-base">
+          {bootLines.map((line) => (
+            <span
+              key={line.text}
+              className={`boot-line block overflow-hidden whitespace-nowrap ${line.ok ? "text-ok" : ""}`}
+              style={{ ["--chars" as string]: line.text.length, ["--t" as string]: `${line.t}s` }}
+            >
+              {line.text}
+            </span>
+          ))}
+        </div>
       </div>
-      <div
-        data-preloader-fade
-        className="absolute right-6 bottom-6 left-6 flex items-end justify-between sm:right-10 sm:bottom-10 sm:left-10"
-      >
-        <p className="text-fg-subtle max-w-[14rem] text-xs leading-relaxed">
-          Offshore Talent. Onshore Quality.
-        </p>
-        <p className="font-display text-fg text-5xl font-light tabular-nums sm:text-7xl">
-          <span className="preloader-count" />
-          <span className="text-lime-500">%</span>
-        </p>
-      </div>
-      <div data-preloader-fade className="bg-line absolute bottom-0 left-0 h-[2px] w-full">
-        <div className="preloader-bar h-full origin-left bg-lime-500" />
+
+      <div className="relative flex flex-col gap-4">
+        <div className="flex items-end justify-between">
+          <span className="font-mono text-xs tracking-[0.2em] text-fg-subtle uppercase">
+            Booting
+          </span>
+          <p className="font-display text-5xl font-semibold text-fg tabular-nums sm:text-7xl">
+            <span className="preloader-count" />
+            <span className="text-pulse">%</span>
+          </p>
+        </div>
+        <div className="h-px w-full bg-line">
+          <div className="preloader-bar h-full origin-left bg-gradient-to-r from-signal to-pulse" />
+        </div>
       </div>
     </div>
   );

@@ -17,11 +17,11 @@ export default function Error({
   return (
     <section className="flex min-h-[80svh] items-center pt-24">
       <div className="container-page flex flex-col items-center gap-6 text-center">
-        <p className="font-display text-sm tracking-[0.3em] text-lime-500 uppercase">
+        <p className="font-display text-sm tracking-[0.3em] text-pulse uppercase">
           Something went wrong
         </p>
-        <h1 className="text-fg text-4xl font-medium">We hit an unexpected error.</h1>
-        <p className="text-fg-muted max-w-md">
+        <h1 className="text-4xl font-medium text-fg">We hit an unexpected error.</h1>
+        <p className="max-w-md text-fg-muted">
           Please try again. If the problem continues, contact us and we’ll sort it out.
         </p>
         <div className="flex flex-wrap justify-center gap-4">

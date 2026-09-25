@@ -2,14 +2,17 @@
 
 Production website for **Akrostech Consulting LLC** (akrosstech.com): IT outsourcing plus the new
 **Website Development** service. It's built with Next.js 16 (App Router), React 19, Tailwind CSS v4,
-GSAP, Framer Motion, React Three Fiber and Lenis, and it deploys to Vercel.
+GSAP, Framer Motion and Lenis, and it deploys to Vercel.
 
 - All content from the previous WordPress site is preserved verbatim (see
   [`docs/CONTENT_INVENTORY.md`](docs/CONTENT_INVENTORY.md)), and old URLs 301-redirect to the new routes.
-- Dark brand theme (lime `#BFF747`, Plus Jakarta Sans + Space Grotesk).
-- 3D hero: the Akrostech logo rebuilt as exact geometry and extruded into a glossy WebGL tube.
-- CSS-only preloader, split-text reveals, parallax, 3D tilt cards, a pinned horizontal process
-  timeline, a custom cursor, page transitions, smooth scrolling and animated counters.
+- **"Signal" design:** dark, bold and techie — near-black navy with electric blue/cyan, Sora +
+  Inter + JetBrains Mono, blueprint grids, terminal-style UI details and live U.S./India clocks.
+- **Real photography** (Unsplash licence) run through one consistent cinematic grade, so the set
+  reads like a single shoot. Photos warm to full colour on hover.
+- Effects: terminal "boot" preloader, split-text reveals, photo parallax, 3D tilt cards, a pinned
+  horizontal portfolio and process timeline, a sticky scroll story, cursor-following service
+  previews, a crosshair cursor, page transitions, smooth scrolling and animated counters.
 - Contact and newsletter forms send email through Resend to **gaurang@akrosstech.com**.
 
 ---
@@ -21,7 +24,7 @@ GSAP, Framer Motion, React Three Fiber and Lenis, and it deploys to Vercel.
 | Framework  | Next.js 16 (App Router, Turbopack, static prerendering)                       |
 | UI         | React 19, Tailwind CSS v4, lucide-react                                       |
 | Motion     | GSAP 3 (ScrollTrigger, SplitText), Framer Motion (`motion` via `LazyMotion`)  |
-| 3D         | three.js 0.182 + @react-three/fiber 9 + @react-three/drei 10                  |
+| Imagery    | next/image (AVIF/WebP), static imports, `sharp` grading script                |
 | Scroll     | Lenis (driven by the GSAP ticker)                                             |
 | Content    | Typed TS modules (`src/content`) + MDX (`content/`) via `next-mdx-remote/rsc` |
 | Forms      | `zod/mini` validation (shared client/server), Resend email API                |
@@ -36,8 +39,10 @@ GSAP, Framer Motion, React Three Fiber and Lenis, and it deploys to Vercel.
 │   ├── blog/*.mdx                 # 3 posts migrated from WordPress
 │   └── legal/*.mdx                # Privacy Policy, Terms & Conditions
 ├── docs/CONTENT_INVENTORY.md      # Everything extracted from the old site
+├── scripts/grade-images.mjs       # Bakes the photo grade into background variants
 ├── e2e/smoke.spec.ts              # Playwright end-to-end tests
 ├── src/
+│   ├── assets/images/             # Photography (+ graded/ background variants)
 │   ├── app/                       # Routes (App Router)
 │   │   ├── page.tsx               # Home
 │   │   ├── about/  contact/  blog/  blog/[slug]/
@@ -57,7 +62,6 @@ GSAP, Framer Motion, React Three Fiber and Lenis, and it deploys to Vercel.
 │   │   │                          # Magnetic, Intro + MotionController (single client driver)
 │   │   ├── providers/             # SmoothScroll (Lenis), MotionProvider (LazyMotion)
 │   │   ├── sections/              # home/, services/, webdev/, shared/
-│   │   ├── three/                 # HeroScene, LogoTube, HeroVisual (adaptive loader)
 │   │   └── ui/                    # Button, SectionHeading, Accordion, Badge, Icon
 │   ├── content/                   # ← Edit site copy here (typed)
 │   ├── hooks/                     # useMediaQuery, usePrefersReducedMotion, …
@@ -154,10 +158,11 @@ an existing Chromium binary.
 - **Fast first paint.** The preloader and hero entrances are pure CSS (including an `@property` counter),
   so they don't wait for JavaScript. The preloader shows once per session and is skipped for
   reduced-motion users.
-- **3D on demand.** The three.js bundle loads only on wide screens with WebGL, after the intro and on
-  first user interaction. Everyone else gets a static SVG hero. Rendering pauses when off-screen.
-- **Why three.js is pinned to 0.182.** Later releases deprecate `THREE.Clock`, which R3F 9 still uses
-  internally, and that would log a console warning.
+- **Imagery pipeline.** Photos are statically imported (intrinsic sizes, AVIF/WebP via
+  `next/image`). Cards apply the grade live with CSS so they can warm to colour on hover. Full-bleed
+  backgrounds use pre-graded files from `npm run images:grade`, with no runtime filters and no blur
+  placeholder, which keeps them cheap to paint. To use your own photos, replace a file in
+  `src/assets/images/` with the same name, then run `npm run images:grade`.
 - **Accessibility.** Skip link, semantic landmarks, one `h1` per page, ARIA disclosure accordion,
   accessible form errors (focus moves to the first invalid field), and keyboard-friendly menus. All
   motion respects `prefers-reduced-motion`.
@@ -177,10 +182,11 @@ enough to deter casual abuse. For strict global limits, back `createRateLimiter`
 
 | Page                | Desktop P / A / BP / SEO | Mobile P / A / BP / SEO |
 | ------------------- | ------------------------ | ----------------------- |
-| Home                | 98 / 100 / 100 / 100     | 89 / 100 / 100 / 100    |
-| Website Development | 99 / 100 / 100 / 100     | 89 / 100 / 100 / 100    |
-| About               | 99 / 100 / 100 / 100     | 91 / 100 / 100 / 100    |
-| Contact             | 98 / 100 / 100 / 100     | 91 / 100 / 100 / 100    |
+| Home                | 98 / 100 / 100 / 100     | 90 / 100 / 100 / 100    |
+| Website Development | 98 / 100 / 100 / 100     | 89 / 100 / 100 / 100    |
+| Virtual Assistance  | 97 / 100 / 100 / 100     | 87 / 100 / 100 / 100    |
+| About               | 99 / 100 / 100 / 100     | 88 / 100 / 100 / 100    |
+| Contact             | 98 / 100 / 100 / 100     | 87 / 100 / 100 / 100    |
 
 Mobile scores use Lighthouse's simulated slow-4G / 4× CPU profile. In the real trace, LCP happens at
 first paint (about 0.3 s).
@@ -190,6 +196,8 @@ first paint (about 0.3 s).
 - **Website Development figures** in `src/content/site.ts` (`webStats`: 50+ websites, 6+ years). These
   are the only numbers that didn't come from the old site.
 - **Pricing and maintenance tiers** in `src/content/website-development.ts`.
+- **Photography** is high-quality stock (see `docs/IMAGE_CREDITS.md`). Your own team and office
+  photos will make the site more personal, and swapping them in needs no code changes.
 - **Portfolio and testimonials** are clearly labelled sample content. Replace them with real case studies and
   approved quotes when you have them.
 - **Terms & Conditions §1** still lists only the outsourcing services (kept verbatim). Consider adding

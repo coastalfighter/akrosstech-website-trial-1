@@ -3,29 +3,36 @@ import { Reveal } from "@/components/motion/Reveal";
 import { IntroFade, IntroTitle } from "@/components/motion/Intro";
 import { cn } from "@/lib/utils";
 
-/** Small uppercase label with a pulsing lime dot. */
+/** Mono "terminal" label, e.g. `[02] // SERVICES`. */
 export function Eyebrow({
   children,
+  index,
   className,
 }: {
   children: React.ReactNode;
+  index?: string;
   className?: string;
 }) {
   return (
     <p
       className={cn(
-        "border-line font-display text-fg-muted inline-flex items-center gap-2.5 rounded-full border bg-white/[0.03] px-3.5 py-1.5 text-[11px] font-medium tracking-[0.22em] uppercase",
+        "inline-flex items-center gap-3 font-mono text-[11px] tracking-[0.18em] text-pulse uppercase",
         className,
       )}
     >
-      <span className="animate-pulse-dot size-1.5 rounded-full bg-lime-500" aria-hidden="true" />
-      {children}
+      <span className="relative flex size-2" aria-hidden="true">
+        <span className="absolute inline-flex size-full animate-ping-slow rounded-full bg-pulse/60" />
+        <span className="relative inline-flex size-2 rounded-full bg-pulse" />
+      </span>
+      {index && <span className="text-fg-subtle">[{index}]</span>}
+      <span>{children}</span>
     </p>
   );
 }
 
 interface SectionHeadingProps {
   eyebrow?: string;
+  index?: string;
   title: string;
   description?: string;
   align?: "left" | "center";
@@ -37,9 +44,10 @@ interface SectionHeadingProps {
   intro?: boolean;
 }
 
-/** Eyebrow + split-text animated title + optional description. */
+/** Eyebrow + animated title + optional description. */
 export function SectionHeading({
   eyebrow,
+  index,
   title,
   description,
   align = "left",
@@ -50,69 +58,54 @@ export function SectionHeading({
   intro = false,
 }: SectionHeadingProps) {
   const titleClasses = cn(
-    "max-w-4xl text-[clamp(2rem,1.3rem+3vw,3.75rem)] leading-[1.05] font-medium text-fg",
+    "max-w-4xl text-[clamp(2rem,1.2rem+3.2vw,3.75rem)] leading-[1.04] font-semibold text-fg",
     titleClassName,
+  );
+  const wrapper = cn(
+    "flex flex-col gap-5",
+    align === "center" && "items-center text-center",
+    className,
+  );
+  const descriptionEl = description && (
+    <p
+      className={cn(
+        "max-w-2xl text-base leading-relaxed text-fg-muted sm:text-lg",
+        align === "center" && "mx-auto",
+      )}
+    >
+      {description}
+    </p>
   );
 
   if (intro) {
     return (
-      <div
-        className={cn(
-          "flex flex-col gap-5",
-          align === "center" && "items-center text-center",
-          className,
-        )}
-      >
+      <div className={wrapper}>
         {eyebrow && (
           <IntroFade delay={0}>
-            <Eyebrow>{eyebrow}</Eyebrow>
+            <Eyebrow index={index}>{eyebrow}</Eyebrow>
           </IntroFade>
         )}
         <IntroTitle as={as === "h1" ? "h1" : "h2"} id={id} className={titleClasses}>
           {title}
         </IntroTitle>
-        {description && (
-          <IntroFade delay={0.3}>
-            <p
-              className={cn(
-                "text-fg-muted max-w-2xl text-base leading-relaxed sm:text-lg",
-                align === "center" && "mx-auto",
-              )}
-            >
-              {description}
-            </p>
-          </IntroFade>
-        )}
+        {descriptionEl && <IntroFade delay={0.3}>{descriptionEl}</IntroFade>}
       </div>
     );
   }
 
   return (
-    <div
-      className={cn(
-        "flex flex-col gap-5",
-        align === "center" && "items-center text-center",
-        className,
-      )}
-    >
+    <div className={wrapper}>
       {eyebrow && (
         <Reveal y={16}>
-          <Eyebrow>{eyebrow}</Eyebrow>
+          <Eyebrow index={index}>{eyebrow}</Eyebrow>
         </Reveal>
       )}
       <TextReveal as={as} id={id} split="words" className={titleClasses}>
         {title}
       </TextReveal>
-      {description && (
+      {descriptionEl && (
         <Reveal y={24} delay={0.1}>
-          <p
-            className={cn(
-              "text-fg-muted max-w-2xl text-base leading-relaxed sm:text-lg",
-              align === "center" && "mx-auto",
-            )}
-          >
-            {description}
-          </p>
+          {descriptionEl}
         </Reveal>
       )}
     </div>

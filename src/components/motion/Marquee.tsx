@@ -22,13 +22,13 @@ export function Marquee({
   pauseOnHover = true,
 }: MarqueeProps) {
   return (
-    <div className={cn("group/marquee mask-fade-x flex overflow-hidden", className)}>
+    <div className={cn("group/marquee flex overflow-hidden mask-fade-x", className)}>
       {[0, 1].map((copy) => (
         <div
           key={copy}
           aria-hidden={copy === 1 ? true : undefined}
           className={cn(
-            "animate-marquee flex min-w-full shrink-0 items-center justify-around gap-10 pr-10",
+            "flex min-w-full shrink-0 animate-marquee items-stretch justify-around gap-5 pr-5",
             pauseOnHover && "group-hover/marquee:[animation-play-state:paused]",
           )}
           style={{

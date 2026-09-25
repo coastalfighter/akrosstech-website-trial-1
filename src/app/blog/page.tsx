@@ -22,9 +22,13 @@ export default function BlogPage() {
         title="Our latest insight news"
         description="Practical guides on outsourcing, hiring and scaling your business with remote teams."
         breadcrumbs={[{ name: "Blog", path: "/blog" }]}
+        photo="library"
       />
-      <section aria-label="Articles" className="pb-24 sm:pb-32">
+      <section aria-labelledby="articles-title" className="py-24 sm:py-32">
         <div className="container-page">
+          <h2 id="articles-title" className="sr-only">
+            All articles
+          </h2>
           <BlogCards posts={posts} />
         </div>
       </section>

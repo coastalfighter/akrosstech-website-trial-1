@@ -67,13 +67,14 @@ export default function WebsiteDevelopmentPage() {
           { name: "Services", path: "/services" },
           { name: "Website Development", path: "/services/website-development" },
         ]}
+        photo="codeDesk"
         aside={<WebHeroVisual />}
       >
         <div>
           <ul className="flex flex-wrap gap-x-6 gap-y-3">
             {webDevHero.highlights.map((item) => (
-              <li key={item} className="text-fg/85 flex items-center gap-2 text-sm">
-                <Check className="size-4 text-lime-500" aria-hidden="true" />
+              <li key={item} className="flex items-center gap-2 text-sm text-fg/85">
+                <Check className="size-4 text-pulse" aria-hidden="true" />
                 {item}
               </li>
             ))}
@@ -94,8 +95,7 @@ export default function WebsiteDevelopmentPage() {
         eyebrow="Web by the numbers"
         title="Built for startups, scaled by enterprises."
         description="The same people-first delivery model behind our outsourcing services—now designing and engineering websites for growing businesses."
-        showHighlight={false}
-        className="border-line bg-ink-900 border-y"
+        className="border-y border-line bg-void"
       />
       <WebServicesGrid />
       <ProcessTimeline />
@@ -103,6 +103,7 @@ export default function WebsiteDevelopmentPage() {
       <Pricing
         id="packages"
         eyebrow="Website packages"
+        index="04"
         title="Transparent pricing for every stage of growth"
         description="Starting prices for the most common website types. After a free discovery call you’ll receive a fixed quote—no surprises, no hidden fees."
         tiers={websitePackages}
@@ -111,20 +112,22 @@ export default function WebsiteDevelopmentPage() {
       <Pricing
         id="maintenance"
         eyebrow="Maintenance & support"
+        index="04.1"
         title="Keep your website secure, fast and improving"
         description="Flexible monthly plans with no long-term contracts. Upgrade, downgrade or cancel anytime."
         tiers={maintenancePlans}
         footnote="Maintenance plans are available for websites we build and for existing sites after a quick technical audit. Prices in USD."
       />
       <WebWhyUs />
-      <Portfolio title="Websites & apps we love to build" />
-      <FaqSection faqs={webFaqs} title="Website development FAQs" />
+      <Portfolio title="Websites & apps we love to build" index="06" />
+      <FaqSection faqs={webFaqs} index="07" title="Website development FAQs" />
       <CtaBanner
         eyebrow="Let's Get Started"
         heading="Ready to elevate your brand online? start now!"
         body="Tell us about your project and we’ll follow up with a tailored, fixed-price proposal."
         cta="Start Your Project"
         href="#contact"
+        photo="codeLaptop"
       />
       <ContactSection
         eyebrow="Start your project"

@@ -1,8 +1,9 @@
+import type { PhotoKey } from "@/content/media";
 import { ButtonLink } from "@/components/ui/Button";
+import { Photo } from "@/components/ui/Photo";
 import { Reveal } from "@/components/motion/Reveal";
 import { Parallax } from "@/components/motion/Parallax";
 import { TextReveal } from "@/components/motion/TextReveal";
-import { LogoMark } from "@/components/layout/Logo";
 
 interface CtaBannerProps {
   eyebrow: string;
@@ -10,52 +11,58 @@ interface CtaBannerProps {
   body: string;
   cta: string;
   href?: string;
+  photo?: PhotoKey;
 }
 
-/** Full-bleed lime call-to-action panel with parallax brand marks. */
-export function CtaBanner({ eyebrow, heading, body, cta, href = "/contact" }: CtaBannerProps) {
+/** Photo-backed call-to-action panel with an animated border beam. */
+export function CtaBanner({
+  eyebrow,
+  heading,
+  body,
+  cta,
+  href = "/contact",
+  photo = "laptopGlow",
+}: CtaBannerProps) {
   return (
     <section aria-label={eyebrow} className="py-12 sm:py-16">
       <div className="container-page">
         <Reveal
-          scale={0.92}
-          y={60}
-          className="text-ink-950 relative overflow-hidden rounded-[2.5rem] bg-lime-500 px-6 py-16 sm:px-14 sm:py-20"
+          scale={0.95}
+          y={50}
+          className="beam relative isolate overflow-hidden rounded-3xl border border-line"
         >
-          <Parallax
-            speed={0.5}
-            rotate={20}
-            className="pointer-events-none absolute -top-10 -right-16 w-72 opacity-20 sm:w-96"
-          >
-            <LogoMark className="text-ink-950 w-full" />
+          <Parallax speed={0.35} className="absolute inset-x-0 -top-1/3 -bottom-1/3 -z-10">
+            <Photo
+              name={photo}
+              baked
+              className="size-full"
+              sizes="(min-width: 1360px) 1280px, 100vw"
+            />
           </Parallax>
-          <Parallax
-            speed={-0.4}
-            rotate={-15}
-            className="pointer-events-none absolute -bottom-20 -left-10 w-56 opacity-10"
-          >
-            <LogoMark className="text-ink-950 w-full" />
-          </Parallax>
-          <div className="relative flex flex-col gap-8 lg:flex-row lg:items-end lg:justify-between">
+          <div
+            className="absolute inset-0 -z-10 bg-gradient-to-r from-void via-void/85 to-signal/30"
+            aria-hidden="true"
+          />
+          <div
+            className="absolute inset-0 -z-10 grid-lines mask-radial opacity-40"
+            aria-hidden="true"
+          />
+          <div className="flex flex-col gap-8 px-6 py-16 sm:px-14 sm:py-24 lg:flex-row lg:items-end lg:justify-between">
             <div className="max-w-3xl">
-              <p className="font-display mb-5 text-xs font-semibold tracking-[0.3em] uppercase">
+              <p className="mb-5 font-mono text-xs tracking-[0.2em] text-pulse uppercase">
+                {"// "}
                 {eyebrow}
               </p>
               <TextReveal
                 as="h2"
                 split="words"
-                className="text-[clamp(2.25rem,1.4rem+3.6vw,4.5rem)] leading-[1.02] font-semibold"
+                className="text-[clamp(2.25rem,1.3rem+3.8vw,4.75rem)] leading-[1] font-bold tracking-tight text-fg"
               >
                 {heading}
               </TextReveal>
-              <p className="text-ink-800 mt-6 max-w-xl text-lg leading-relaxed">{body}</p>
+              <p className="mt-6 max-w-xl text-lg leading-relaxed text-fg-muted">{body}</p>
             </div>
-            <ButtonLink
-              href={href}
-              size="lg"
-              arrow
-              className="bg-ink-950 text-fg hover:bg-ink-800 hover:shadow-[0_10px_40px_-8px_rgba(0,0,0,0.6)]"
-            >
+            <ButtonLink href={href} size="lg" arrow cursorLabel="Go">
               {cta}
             </ButtonLink>
           </div>

@@ -8,9 +8,9 @@ import { Icon } from "@/components/ui/Icon";
 import { Eyebrow } from "@/components/ui/SectionHeading";
 
 /**
- * Discovery → Support process. On large screens the section pins and the
- * steps scroll horizontally, driven by vertical scroll. On small screens and
- * for reduced motion it is a simple vertical list.
+ * Discovery → Support. On large screens the section pins and the steps
+ * travel horizontally with scroll along a progress rail; small screens and
+ * reduced motion get a vertical list.
  */
 export function ProcessTimeline() {
   const sectionRef = useRef<HTMLElement>(null);
@@ -25,7 +25,6 @@ export function ProcessTimeline() {
         const section = sectionRef.current;
         if (!track || !section) return;
         const distance = () => track.scrollWidth - window.innerWidth + 80;
-
         const tween = gsap.to(track, {
           x: () => -distance(),
           ease: "none",
@@ -39,7 +38,6 @@ export function ProcessTimeline() {
             anticipatePin: 1,
           },
         });
-
         gsap.fromTo(
           progressRef.current,
           { scaleX: 0 },
@@ -54,16 +52,15 @@ export function ProcessTimeline() {
             },
           },
         );
-
         gsap.utils.toArray<HTMLElement>("[data-step]").forEach((step) => {
           gsap.from(step.querySelectorAll("[data-step-inner]"), {
-            y: 40,
+            y: 30,
             opacity: 0,
-            stagger: 0.08,
+            stagger: 0.07,
             scrollTrigger: {
               trigger: step,
               containerAnimation: tween,
-              start: "left 85%",
+              start: "left 88%",
               once: true,
             },
           });
@@ -78,64 +75,63 @@ export function ProcessTimeline() {
     <section
       ref={sectionRef}
       aria-labelledby="process-title"
-      className="relative overflow-hidden py-24 lg:flex lg:h-screen lg:flex-col lg:justify-center lg:py-0"
+      className="relative overflow-hidden border-y border-line bg-void py-24 lg:flex lg:h-screen lg:flex-col lg:justify-center lg:py-0"
     >
-      <div className="container-page mb-12 flex flex-col gap-5 lg:mb-14">
-        <Eyebrow className="w-fit">Our process</Eyebrow>
+      <div
+        className="pointer-events-none absolute inset-0 grid-lines mask-radial opacity-40"
+        aria-hidden="true"
+      />
+      <div className="relative container-page mb-12 flex flex-col gap-5">
+        <Eyebrow index="02">Our process</Eyebrow>
         <h2
           id="process-title"
-          className="text-fg max-w-3xl text-[clamp(2rem,1.3rem+3vw,3.75rem)] leading-[1.05] font-medium"
+          className="max-w-3xl text-[clamp(2rem,1.2rem+3.2vw,3.75rem)] leading-[1.04] font-semibold text-fg"
         >
           From first call to launch day—and every day after.
         </h2>
-        <div className="bg-line mt-2 hidden h-px w-full max-w-md lg:block" aria-hidden="true">
-          <div ref={progressRef} className="h-full origin-left bg-lime-500" />
+        <div className="mt-2 hidden h-px w-full max-w-md bg-line lg:block" aria-hidden="true">
+          <div
+            ref={progressRef}
+            className="h-full origin-left bg-gradient-to-r from-signal to-pulse"
+          />
         </div>
       </div>
 
       <ol
         ref={trackRef}
-        className="container-page flex flex-col gap-5 lg:w-max lg:max-w-none lg:flex-row lg:gap-6 lg:pr-[10vw]"
+        className="relative container-page flex flex-col gap-4 lg:w-max lg:max-w-none lg:flex-row lg:gap-5 lg:pr-[10vw]"
       >
         {processSteps.map((step, i) => (
           <li
             key={step.title}
             data-step
-            className="border-line bg-ink-850 relative flex flex-col gap-5 rounded-[1.75rem] border p-7 lg:h-[440px] lg:w-[380px] lg:shrink-0"
+            className="relative flex flex-col gap-5 rounded-2xl border border-line bg-panel/80 p-7 backdrop-blur lg:h-[430px] lg:w-[370px] lg:shrink-0"
           >
             <div data-step-inner className="flex items-center justify-between">
-              <span className="text-ink-950 grid size-12 place-items-center rounded-2xl bg-lime-500">
+              <span className="grid size-12 place-items-center rounded-lg bg-signal text-white">
                 <Icon name={step.icon} className="size-6" />
               </span>
-              <span
-                aria-hidden="true"
-                data-num={String(i + 1).padStart(2, "0")}
-                className="font-display text-6xl leading-none font-semibold text-white/[0.07] before:content-[attr(data-num)]"
-              />
+              <span className="font-mono text-xs tracking-[0.14em] text-fg-subtle uppercase">
+                step_{String(i + 1).padStart(2, "0")}
+              </span>
             </div>
             <div data-step-inner>
-              <p className="text-xs font-medium tracking-wide text-lime-500 uppercase">
+              <p className="font-mono text-xs tracking-[0.12em] text-pulse uppercase">
                 {step.duration}
               </p>
-              <h3 className="text-fg mt-2 text-2xl font-medium">{step.title}</h3>
+              <h3 className="mt-2 text-2xl font-semibold text-fg">{step.title}</h3>
             </div>
-            <p data-step-inner className="text-fg-muted leading-relaxed">
+            <p data-step-inner className="leading-relaxed text-fg-muted">
               {step.description}
             </p>
-            <ul data-step-inner className="border-line mt-auto grid gap-2 border-t pt-5">
+            <ul data-step-inner className="mt-auto grid gap-2 border-t border-line pt-5">
               {step.deliverables.map((d) => (
-                <li key={d} className="text-fg/85 flex items-center gap-2.5 text-sm">
-                  <Check className="size-4 text-lime-500" aria-hidden="true" />
+                <li key={d} className="flex items-center gap-2.5 text-sm text-fg/90">
+                  <Check className="size-4 text-pulse" aria-hidden="true" />
                   {d}
                 </li>
               ))}
             </ul>
-            {i < processSteps.length - 1 && (
-              <span
-                className="absolute top-1/2 -right-6 hidden h-px w-6 bg-gradient-to-r from-lime-500/60 to-transparent lg:block"
-                aria-hidden="true"
-              />
-            )}
           </li>
         ))}
       </ol>

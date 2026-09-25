@@ -24,7 +24,7 @@ const components: MDXComponents = {
     );
   },
   table: ({ children, ...props }) => (
-    <div className="border-line overflow-x-auto rounded-2xl border">
+    <div className="overflow-x-auto rounded-2xl border border-line">
       <table {...props}>{children}</table>
     </div>
   ),

@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import { getOutsourcingService, outsourcingServices } from "@/content/services";
+import { servicePhotos } from "@/content/media";
 import { serviceFaqs } from "@/content/faqs";
 import { ctaBanner } from "@/content/home";
 import { pageMetadata, serializeJsonLd, serviceJsonLd } from "@/lib/seo";
@@ -37,7 +38,6 @@ export async function generateMetadata({
   });
 }
 
-/** Map slugs to the contact form's service options. */
 const formService: Record<string, ServiceOption> = {
   "recruitment-process-outsourcing": "Recruitment Process Outsourcing",
   "virtual-assistance": "Virtual Assistance",
@@ -70,31 +70,34 @@ export default async function ServicePage({ params }: PageProps<"/services/[slug
         eyebrow="Our services"
         title={service.title}
         description={lead}
+        photo={servicePhotos[slug]?.hero}
         breadcrumbs={[
           { name: "Services", path: "/services" },
           { name: service.title, path: `/services/${slug}` },
         ]}
         aside={
-          <div className="relative mx-auto grid aspect-square w-full max-w-sm place-items-center">
-            <div
-              className="animate-spin-slow absolute inset-0 rounded-full border border-dashed border-lime-500/30"
-              aria-hidden="true"
-            />
-            <div className="border-line absolute inset-10 rounded-full border" aria-hidden="true" />
-            <div
-              className="absolute inset-0 rounded-full bg-lime-500/10 blur-3xl"
-              aria-hidden="true"
-            />
-            <span className="animate-float text-ink-950 relative grid size-40 place-items-center rounded-[2.5rem] bg-lime-500 shadow-[0_30px_80px_-20px_rgba(191,247,71,0.6)]">
-              <Icon name={service.icon} className="size-20" strokeWidth={1.5} />
-            </span>
+          <div className="beam ml-auto w-full max-w-sm rounded-2xl p-6 glass">
+            <div className="flex items-center justify-between border-b border-line pb-4">
+              <span className="grid size-12 place-items-center rounded-lg bg-signal text-white">
+                <Icon name={service.icon} className="size-6" />
+              </span>
+              <span className="font-mono text-[11px] text-ok">● accepting clients</span>
+            </div>
+            <ul className="mt-4 flex flex-col gap-3">
+              {service.why.benefits.slice(0, 4).map((b) => (
+                <li key={b.title} className="flex items-center gap-3 text-sm text-fg">
+                  <Icon name={b.icon} className="size-4 text-pulse" />
+                  {b.title}
+                </li>
+              ))}
+            </ul>
           </div>
         }
       >
         {rest.map((paragraph) => (
-          <div key={paragraph}>
-            <p className="text-fg-muted max-w-2xl leading-relaxed">{paragraph}</p>
-          </div>
+          <p key={paragraph} className="max-w-2xl leading-relaxed text-fg-muted">
+            {paragraph}
+          </p>
         ))}
         <div className="flex flex-wrap gap-4 pt-2">
           <ButtonLink href="#contact" size="lg" arrow>
@@ -108,8 +111,8 @@ export default async function ServicePage({ params }: PageProps<"/services/[slug
 
       <ServiceWhy service={service} />
       <ServiceCapabilities service={service} />
-      <FaqSection faqs={serviceFaqs} />
-      <CtaBanner {...ctaBanner} href="#contact" />
+      <FaqSection faqs={serviceFaqs} index="03" />
+      <CtaBanner {...ctaBanner} href="#contact" photo={servicePhotos[slug]?.detail} />
       <ContactSection
         eyebrow="Get Started"
         title={`Let’s talk about ${service.title.toLowerCase()}`}

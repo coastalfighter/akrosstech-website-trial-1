@@ -24,10 +24,10 @@ const initialValues: Required<Omit<ContactInput, "service">> & { service: string
 };
 
 const inputClass =
-  "peer w-full rounded-2xl border border-line-strong bg-white/[0.03] px-4 pt-6 pb-2.5 text-[15px] text-fg placeholder-transparent transition-colors focus:border-lime-500/70 focus:bg-white/[0.05] focus:outline-none aria-[invalid=true]:border-red-400/70";
+  "peer w-full rounded-lg border border-line-strong bg-white/[0.03] px-4 pt-6 pb-2.5 text-[15px] text-fg placeholder-transparent transition-colors focus:border-signal/70 focus:bg-white/[0.05] focus:outline-none aria-[invalid=true]:border-red-400/70";
 
 const labelClass =
-  "pointer-events-none absolute top-2 left-4 text-[11px] font-medium tracking-wide text-fg-subtle uppercase transition-all peer-placeholder-shown:top-4 peer-placeholder-shown:text-sm peer-placeholder-shown:tracking-normal peer-placeholder-shown:normal-case peer-focus:top-2 peer-focus:text-[11px] peer-focus:tracking-wide peer-focus:uppercase peer-focus:text-lime-500";
+  "pointer-events-none absolute top-2 left-4 text-[11px] font-medium tracking-wide text-fg-subtle uppercase transition-all peer-placeholder-shown:top-4 peer-placeholder-shown:text-sm peer-placeholder-shown:tracking-normal peer-placeholder-shown:normal-case peer-focus:top-2 peer-focus:text-[11px] peer-focus:tracking-wide peer-focus:uppercase peer-focus:text-pulse";
 
 export function ContactForm({
   defaultService,
@@ -115,11 +115,11 @@ export function ContactForm({
             role="status"
             aria-live="polite"
           >
-            <span className="grid size-16 place-items-center rounded-full bg-lime-500/15 text-lime-500">
+            <span className="grid size-16 place-items-center rounded-xl bg-ok/15 text-ok">
               <CheckCircle2 className="size-8" aria-hidden="true" />
             </span>
-            <h3 className="text-fg text-2xl font-medium">Thank you — message received.</h3>
-            <p className="text-fg-muted max-w-sm">
+            <h3 className="text-2xl font-medium text-fg">Thank you — message received.</h3>
+            <p className="max-w-sm text-fg-muted">
               Our team will get back to you shortly. For anything urgent, call us directly.
             </p>
             <Button variant="secondary" onClick={() => setStatus("idle")}>
@@ -217,18 +217,18 @@ export function ContactForm({
                     "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23a8a8a3' stroke-width='2'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E\")",
                 }}
               >
-                <option value="" className="bg-ink-850">
+                <option value="" className="bg-panel">
                   Choose a service…
                 </option>
                 {SERVICE_OPTIONS.map((option) => (
-                  <option key={option} value={option} className="bg-ink-850">
+                  <option key={option} value={option} className="bg-panel">
                     {option}
                   </option>
                 ))}
               </select>
               <label
                 htmlFor={`${id}-service`}
-                className="text-fg-subtle pointer-events-none absolute top-2 left-4 text-[11px] font-medium tracking-wide uppercase"
+                className="pointer-events-none absolute top-2 left-4 text-[11px] font-medium tracking-wide text-fg-subtle uppercase"
               >
                 I’m interested in
               </label>
@@ -271,23 +271,23 @@ export function ContactForm({
                 name="smsConsent"
                 checked={values.smsConsent}
                 onChange={(e) => set("smsConsent", e.target.checked)}
-                className="mt-1 size-4 shrink-0 accent-lime-500"
+                className="mt-1 size-4 shrink-0 accent-[#3d7bff]"
               />
-              <label htmlFor={`${id}-sms`} className="text-fg-subtle text-xs leading-relaxed">
+              <label htmlFor={`${id}-sms`} className="text-xs leading-relaxed text-fg-subtle">
                 By opting in for text messages, you agree to receive an appointment reminders and
                 important updates from Akrostech Consulting LLC at the number provided. Message
                 frequency varies. Msg &amp; data rates may apply. Reply STOP to unsubscribe. Reply
                 HELP for help. View our{" "}
                 <Link
                   href="/privacy-policy"
-                  className="text-fg-muted underline underline-offset-2 hover:text-lime-500"
+                  className="text-fg-muted underline underline-offset-2 hover:text-pulse"
                 >
                   Privacy Policy
                 </Link>{" "}
                 and{" "}
                 <Link
                   href="/terms-and-conditions"
-                  className="text-fg-muted underline underline-offset-2 hover:text-lime-500"
+                  className="text-fg-muted underline underline-offset-2 hover:text-pulse"
                 >
                   Terms &amp; Conditions
                 </Link>{" "}

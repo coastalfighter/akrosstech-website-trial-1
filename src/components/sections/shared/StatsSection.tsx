@@ -1,75 +1,80 @@
-import { byTheNumbers } from "@/content/home";
 import type { Stat } from "@/content/site";
 import { Counter } from "@/components/motion/Counter";
 import { Reveal } from "@/components/motion/Reveal";
 import { SectionHeading } from "@/components/ui/SectionHeading";
-import { AccuracyRing } from "./AccuracyRing";
 import { cn } from "@/lib/utils";
 
 interface StatsSectionProps {
   stats: Stat[];
   eyebrow?: string;
+  index?: string;
   title?: string;
   description?: string;
-  /** Show the 98% task-accuracy ring (home page). */
-  showHighlight?: boolean;
+  /** Extra highlight chip, e.g. the 98% task accuracy rate. */
+  highlight?: { value: string; label: string };
   className?: string;
 }
 
+/** Big mono counters in a blueprint-style cell grid. */
 export function StatsSection({
   stats,
-  eyebrow = byTheNumbers.eyebrow,
-  title = "Our journey is just beginning but the momentum is real.",
-  description = "These numbers reflect our commitment to delivering smart, scalable outsourcing solutions to businesses.",
-  showHighlight = true,
+  eyebrow = "By the Numbers",
+  index,
+  title,
+  description,
+  highlight,
   className,
 }: StatsSectionProps) {
   return (
-    <section
-      aria-label={eyebrow}
-      className={cn("relative overflow-hidden py-24 sm:py-32", className)}
-    >
+    <section aria-label={eyebrow} className={cn("relative py-24 sm:py-32", className)}>
       <div className="container-page">
-        <div className={cn("grid items-center gap-14", showHighlight && "lg:grid-cols-[1fr_auto]")}>
-          <SectionHeading eyebrow={eyebrow} title={title} description={description} />
-          {showHighlight && (
-            <Reveal className="flex items-center gap-6" scale={0.9}>
-              <AccuracyRing value={byTheNumbers.highlight.value} />
-              <div>
-                <p className="font-display text-fg-subtle text-xs tracking-[0.25em] uppercase">
-                  {byTheNumbers.highlight.title}
-                </p>
-                <p className="text-fg mt-2 text-xl font-medium">
-                  {byTheNumbers.highlight.value}% {byTheNumbers.highlight.label}
-                </p>
-              </div>
-            </Reveal>
-          )}
-        </div>
-
+        {(title || description) && (
+          <div className="mb-14 flex flex-col items-start justify-between gap-8 lg:flex-row lg:items-end">
+            <SectionHeading
+              eyebrow={eyebrow}
+              index={index}
+              title={title ?? eyebrow}
+              description={description}
+            />
+            {highlight && (
+              <Reveal className="flex items-center gap-4 rounded-xl px-5 py-4 glass">
+                <span className="font-display text-4xl font-bold text-signal-soft">
+                  {highlight.value}
+                </span>
+                <span className="max-w-[10rem] font-mono text-[11px] leading-relaxed tracking-[0.12em] text-fg-muted uppercase">
+                  {highlight.label}
+                </span>
+              </Reveal>
+            )}
+          </div>
+        )}
         <Reveal
-          stagger={0.1}
-          className="border-line mt-16 grid grid-cols-2 border-t lg:grid-cols-4"
+          stagger={0.08}
+          className="grid grid-cols-2 [gap:1px] overflow-hidden rounded-2xl border border-line bg-line lg:grid-cols-4"
         >
           {stats.map((stat, i) => (
             <div
               key={stat.label}
-              className={cn(
-                "group border-line flex flex-col gap-3 border-b py-10 pr-4 lg:border-b-0",
-                i % 2 === 0 ? "border-r lg:border-r" : "pl-6 lg:border-r",
-                i > 0 && "lg:pl-8",
-                i === stats.length - 1 && "lg:border-r-0",
-              )}
+              className="group relative flex flex-col justify-between gap-10 bg-canvas p-6 transition-colors duration-500 hover:bg-panel sm:p-8"
             >
-              <p className="font-display text-fg text-[clamp(2.75rem,1.8rem+3.5vw,5rem)] leading-none font-semibold transition-colors duration-300 group-hover:text-lime-500">
-                <Counter
-                  value={stat.value}
-                  decimals={stat.decimals}
-                  prefix={stat.prefix}
-                  suffix={stat.suffix}
-                />
-              </p>
-              <p className="text-fg-muted text-sm sm:text-base">{stat.label}</p>
+              <span className="font-mono text-[11px] tracking-[0.14em] text-fg-subtle uppercase">
+                {String(i + 1).padStart(2, "0")} {"//"} metric
+              </span>
+              <div>
+                <p className="font-display text-[clamp(2.75rem,1.6rem+4vw,5.25rem)] leading-none font-bold tracking-tight text-fg transition-colors duration-500 group-hover:text-signal-soft">
+                  <Counter
+                    value={stat.value}
+                    decimals={stat.decimals}
+                    prefix={stat.prefix}
+                    suffix={stat.suffix}
+                  />
+                </p>
+                <p className="mt-3 text-sm text-fg-muted sm:text-base">{stat.label}</p>
+              </div>
+              <span
+                className="absolute inset-x-0 bottom-0 h-px origin-left scale-x-0 bg-gradient-to-r from-signal to-pulse transition-transform duration-700 group-hover:scale-x-100"
+                aria-hidden="true"
+              />
             </div>
           ))}
         </Reveal>

@@ -10,10 +10,7 @@ export interface AccordionItem {
   answer: string;
 }
 
-/**
- * Accessible accordion (WAI-ARIA disclosure pattern): buttons expose
- * aria-expanded / aria-controls; panels are labelled regions.
- */
+/** Accessible accordion (WAI-ARIA disclosure pattern). */
 export function Accordion({
   items,
   className,
@@ -27,13 +24,21 @@ export function Accordion({
   const baseId = useId();
 
   return (
-    <div className={cn("divide-line border-line divide-y border-y", className)}>
+    <div className={cn("flex flex-col gap-3", className)}>
       {items.map((item, index) => {
         const isOpen = open === index;
         const buttonId = `${baseId}-button-${index}`;
         const panelId = `${baseId}-panel-${index}`;
         return (
-          <div key={item.question}>
+          <div
+            key={item.question}
+            className={cn(
+              "rounded-xl border transition-colors duration-300",
+              isOpen
+                ? "border-signal/40 bg-signal/[0.05]"
+                : "border-line bg-panel/60 hover:border-line-strong",
+            )}
+          >
             <h3>
               <button
                 id={buttonId}
@@ -41,13 +46,20 @@ export function Accordion({
                 aria-expanded={isOpen}
                 aria-controls={panelId}
                 onClick={() => setOpen(isOpen ? null : index)}
-                className="group text-fg flex w-full items-center justify-between gap-6 py-6 text-left font-sans text-base font-semibold transition-colors hover:text-lime-500 sm:text-lg"
+                className="flex w-full items-center justify-between gap-6 px-5 py-5 text-left font-sans text-base font-semibold text-fg sm:px-6"
               >
-                <span>{item.question}</span>
+                <span className="flex items-baseline gap-4">
+                  <span className="font-mono text-xs text-fg-subtle" aria-hidden="true">
+                    {String(index + 1).padStart(2, "0")}
+                  </span>
+                  <span>{item.question}</span>
+                </span>
                 <span
                   className={cn(
-                    "border-line-strong grid size-9 shrink-0 place-items-center rounded-full border transition-all duration-300",
-                    isOpen && "text-ink-950 rotate-45 border-lime-500 bg-lime-500",
+                    "grid size-8 shrink-0 place-items-center rounded-md border transition-all duration-300",
+                    isOpen
+                      ? "rotate-45 border-signal bg-signal text-white"
+                      : "border-line-strong text-fg-muted",
                   )}
                   aria-hidden="true"
                 >
@@ -64,10 +76,12 @@ export function Accordion({
                   initial={{ height: 0, opacity: 0 }}
                   animate={{ height: "auto", opacity: 1 }}
                   exit={{ height: 0, opacity: 0 }}
-                  transition={{ duration: 0.45, ease: [0.16, 1, 0.3, 1] }}
+                  transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
                   className="overflow-hidden"
                 >
-                  <p className="text-fg-muted max-w-3xl pb-6 leading-relaxed">{item.answer}</p>
+                  <p className="max-w-3xl px-5 pb-6 pl-14 leading-relaxed text-fg-muted sm:px-6 sm:pl-[3.75rem]">
+                    {item.answer}
+                  </p>
                 </m.div>
               )}
             </AnimatePresence>
