@@ -21,7 +21,7 @@ export default function Error({
         <h1 className="h-lg">
           We hit an <span className="opacity-50">unexpected error.</span>
         </h1>
-        <p className="max-w-md text-[15px] leading-relaxed text-stone">
+        <p className="max-w-md text-base leading-[1.4] text-stone">
           Please try again. If the problem continues, contact us and we’ll sort it out.
         </p>
         <div className="flex flex-wrap gap-3">

@@ -100,7 +100,7 @@ export default function AboutPage() {
               size="lg"
             />
             <Reveal y={16}>
-              <p className="text-[15px] leading-relaxed text-fog">{experience.body}</p>
+              <p className="text-base leading-[1.4] text-fog">{experience.body}</p>
             </Reveal>
           </div>
           <div className="grid gap-10 lg:grid-cols-[1fr_20rem] lg:items-end">

@@ -14,7 +14,7 @@ import { Logo } from "./Logo";
 const isActive = (pathname: string, href: string) =>
   href === "/" ? pathname === "/" : pathname.startsWith(href);
 
-/** Two small link columns next to the logo (studio-site style). */
+/** Two link columns beside the logo, shown at the top of the page. */
 const navColumns = [
   [
     { label: "Services", href: "/services" },
@@ -23,8 +23,8 @@ const navColumns = [
   ],
   [
     { label: "Journal", href: "/blog" },
+    { label: "Industries", href: "/#industries" },
     { label: "Contact", href: "/contact" },
-    { label: "LinkedIn", href: site.social.linkedin },
   ],
 ];
 
@@ -37,44 +37,36 @@ const menuLinks = [
   { label: "Contact", href: "/contact" },
 ];
 
+/** Past this scroll offset the nav columns fold away (logo + burger remain). */
+const COMPACT_AFTER = 80;
+
 function NavLinkItem({ href, label, active }: { href: string; label: string; active: boolean }) {
-  const external = href.startsWith("http");
-  const className = "group inline-flex items-center gap-1.5 text-[13px] leading-[1.35]";
-  const inner = (
-    <>
-      <span
-        className={cn(
-          "size-1 rounded-full bg-lime transition-opacity",
-          active ? "opacity-100" : "opacity-0",
-        )}
-        aria-hidden="true"
-      />
+  return (
+    <Link
+      href={href}
+      aria-current={active ? "page" : undefined}
+      className="group inline-flex items-center gap-2 font-display text-[18px] leading-[1.4] tracking-[-0.02em]"
+    >
       <span className="roll">
         <span>{label}</span>
         <span aria-hidden="true">{label}</span>
       </span>
-    </>
-  );
-  return external ? (
-    <a href={href} target="_blank" rel="noopener noreferrer" className={className}>
-      {inner}
-    </a>
-  ) : (
-    <Link href={href} aria-current={active ? "page" : undefined} className={className}>
-      {inner}
+      {active && <span className="size-1.5 rounded-full bg-lime" aria-hidden="true" />}
     </Link>
   );
 }
 
 /**
- * Fixed studio header. Text colour follows the section underneath (see the
- * theme sensor in <MotionController>): light over dark sections, ink over
- * paper. The burger opens a full-screen ink menu.
+ * Fixed studio header (juncastudio-style). At the top of the page it shows
+ * the logo, two link columns and the burger; once you scroll, the columns
+ * fold away and only the logo and burger remain. Text colour follows the
+ * section beneath (theme sensor in <MotionController>).
  */
 export function Header() {
   const pathname = usePathname();
   const lenis = useLenisInstance();
   const [menuOpen, setMenuOpen] = useState(false);
+  const [compact, setCompact] = useState(false);
   const [previousPath, setPreviousPath] = useState(pathname);
   const menuButtonRef = useRef<HTMLButtonElement>(null);
 
@@ -82,6 +74,14 @@ export function Header() {
     setPreviousPath(pathname);
     setMenuOpen(false);
   }
+
+  // Compact mode: only re-render when the threshold is actually crossed.
+  useEffect(() => {
+    const onScroll = () => setCompact(window.scrollY > COMPACT_AFTER);
+    onScroll();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, []);
 
   // Lock scroll while the menu is open; Escape closes it.
   useEffect(() => {
@@ -106,12 +106,19 @@ export function Header() {
   return (
     <>
       <header className={cn("site-header fixed inset-x-0 top-0 z-50", menuOpen && "is-menu-open")}>
-        <div className="container-page grid h-18 grid-cols-[auto_1fr_auto] items-start gap-6 pt-5 lg:grid-cols-[1fr_1fr_1fr_auto]">
+        <div className="container-page grid grid-cols-[auto_1fr_auto] items-start gap-6 pt-6 lg:grid-cols-[1fr_1fr_1fr_auto]">
           <Link href="/" aria-label="Akrostech — home" className="w-fit">
             <Logo />
           </Link>
 
-          <nav aria-label="Main" className="hidden lg:col-span-2 lg:block">
+          <nav
+            aria-label="Main"
+            className={cn(
+              "hidden transition-[opacity,transform] duration-500 ease-[cubic-bezier(0.16,1,0.3,1)] lg:col-span-2 lg:block",
+              compact && !menuOpen && "pointer-events-none -translate-y-2 opacity-0",
+            )}
+            aria-hidden={compact && !menuOpen ? true : undefined}
+          >
             <div className="grid grid-cols-2 gap-6">
               {navColumns.map((column, i) => (
                 <ul key={i} className="flex flex-col">
@@ -120,7 +127,7 @@ export function Header() {
                       <NavLinkItem
                         href={item.href}
                         label={item.label}
-                        active={!item.href.startsWith("http") && isActive(pathname, item.href)}
+                        active={!item.href.includes("#") && isActive(pathname, item.href)}
                       />
                     </li>
                   ))}
@@ -136,10 +143,9 @@ export function Header() {
             aria-expanded={menuOpen}
             aria-controls="site-menu"
             aria-label={menuOpen ? "Close menu" : "Open menu"}
-            className="group col-start-3 flex h-7 items-center gap-3 justify-self-end lg:col-start-4"
+            className="group col-start-3 grid h-8 w-10 place-items-center justify-self-end lg:col-start-4"
           >
-            <span className="hidden text-[13px] sm:block">{menuOpen ? "Close" : "Menu"}</span>
-            <span className="relative block h-2.5 w-6" aria-hidden="true">
+            <span className="relative block h-2.5 w-7" aria-hidden="true">
               <span
                 className={cn(
                   "absolute left-0 h-[1.5px] w-full bg-current transition-transform duration-500",
@@ -148,10 +154,9 @@ export function Header() {
               />
               <span
                 className={cn(
-                  "absolute left-0 h-[1.5px] w-full bg-current transition-transform duration-500",
+                  "absolute left-0 h-[1.5px] w-full origin-right bg-current transition-transform duration-500",
                   menuOpen ? "top-1/2 -rotate-45" : "bottom-0 group-hover:scale-x-75",
                 )}
-                style={{ transformOrigin: "right" }}
               />
             </span>
           </button>
@@ -169,11 +174,12 @@ export function Header() {
             animate={{ clipPath: "inset(0 0 0% 0)" }}
             exit={{ clipPath: "inset(0 0 100% 0)" }}
             transition={{ duration: 0.8, ease: [0.76, 0, 0.24, 1] }}
-            className="fixed inset-0 z-40 overflow-y-auto bg-ink text-paper"
+            className="fixed inset-0 z-40 overflow-y-auto bg-paper text-ink"
             data-lenis-prevent
           >
-            <div className="container-page grid min-h-full gap-12 pt-28 pb-24 lg:grid-cols-[1.4fr_1fr] lg:items-end">
-              <nav aria-label="Menu">
+            <div className="container-page grid min-h-full gap-14 pt-32 pb-24 lg:grid-cols-[1.4fr_1fr] lg:items-end">
+              <nav aria-label="Menu" className="flex flex-col gap-6">
+                <p className="eyebrow text-stone">Navigation</p>
                 <ul className="flex flex-col">
                   {menuLinks.map((item, i) => {
                     const active = isActive(pathname, item.href);
@@ -191,19 +197,15 @@ export function Header() {
                         <Link
                           href={item.href}
                           aria-current={active ? "page" : undefined}
-                          className="group flex items-baseline gap-5 border-b border-paper/10 py-2.5"
+                          className={cn(
+                            "group flex items-center gap-4 py-1 font-display text-[clamp(2.4rem,1.6rem+2vw,3rem)] leading-[1.1] font-medium tracking-[-0.03em] transition-colors duration-300 hover:text-ink",
+                            active ? "text-ink" : "text-stone",
+                          )}
                         >
-                          <span className="w-8 mono text-fog tabular-nums">
-                            {String(i + 1).padStart(2, "0")}
-                          </span>
-                          <span
-                            className={cn(
-                              "h-md transition-[color,transform] duration-500 group-hover:translate-x-2 group-hover:text-lime",
-                              active && "text-lime",
-                            )}
-                          >
-                            {item.label}
-                          </span>
+                          {item.label}
+                          {active && (
+                            <span className="size-2.5 rounded-full bg-lime" aria-hidden="true" />
+                          )}
                         </Link>
                       </m.li>
                     );
@@ -218,13 +220,13 @@ export function Header() {
                 className="grid gap-10 sm:grid-cols-2"
               >
                 <div className="flex flex-col gap-3">
-                  <p className="mono text-fog">Services</p>
-                  <ul className="flex flex-col gap-1.5 text-[15px]">
+                  <p className="text-base">Our services</p>
+                  <ul className="flex flex-col gap-1 text-base text-stone">
                     {serviceLinks.map((s) => (
                       <li key={s.href}>
                         <Link
                           href={s.href}
-                          className="inline-flex items-center gap-2 transition-colors hover:text-lime"
+                          className="inline-flex items-center gap-2 transition-colors hover:text-ink"
                         >
                           {s.label}
                           {s.badge && <Badge>{s.badge}</Badge>}
@@ -234,16 +236,30 @@ export function Header() {
                   </ul>
                 </div>
                 <div className="flex flex-col gap-3">
-                  <p className="mono text-fog">Contact</p>
-                  <a href={`mailto:${site.contact.email}`} className="link-line w-fit text-[15px]">
+                  <p className="text-base">Contact</p>
+                  <a
+                    href={`mailto:${site.contact.email}`}
+                    className="w-fit text-base text-stone transition-colors hover:text-ink"
+                  >
                     {site.contact.email}
                   </a>
-                  <a href={site.contact.phoneHref} className="link-line w-fit text-[15px]">
+                  <a
+                    href={site.contact.phoneHref}
+                    className="w-fit text-base text-stone transition-colors hover:text-ink"
+                  >
                     {site.contact.phone}
+                  </a>
+                  <a
+                    href={site.social.linkedin}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="w-fit text-base text-stone transition-colors hover:text-ink"
+                  >
+                    LinkedIn ↗
                   </a>
                   <Link
                     href="/contact"
-                    className="mt-4 inline-flex h-11 w-fit items-center rounded-[3px] bg-lime px-5 text-[13px] font-medium text-ink transition-colors hover:bg-paper"
+                    className="mt-4 inline-flex h-11 w-fit items-center rounded-[2px] bg-lime px-6 text-[15px] text-ink transition-colors hover:bg-ink hover:text-lime"
                   >
                     Book a call ↗
                   </Link>

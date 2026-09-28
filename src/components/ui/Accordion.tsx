@@ -43,7 +43,7 @@ export function Accordion({
                 onClick={() => setOpen(isOpen ? null : index)}
                 className="group flex w-full items-center gap-6 py-5 text-left"
               >
-                <span className="flex-1 text-[15px] leading-snug font-medium transition-opacity duration-300 group-hover:opacity-70 sm:text-base">
+                <span className="flex-1 text-lg leading-[1.35] tracking-[-0.03em] transition-opacity duration-300 group-hover:opacity-70 sm:text-xl">
                   {item.question}
                 </span>
                 <span
@@ -70,7 +70,7 @@ export function Accordion({
                   transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
                   className="overflow-hidden"
                 >
-                  <p className="max-w-2xl pr-12 pb-6 text-[15px] leading-relaxed opacity-70">
+                  <p className="max-w-2xl pr-12 pb-6 text-base leading-[1.4] opacity-75">
                     {item.answer}
                   </p>
                 </m.div>

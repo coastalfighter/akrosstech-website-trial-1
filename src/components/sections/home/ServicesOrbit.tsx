@@ -5,6 +5,7 @@ import Link from "next/link";
 import Image from "next/image";
 import { ArrowUpRight } from "lucide-react";
 import { allServiceCards } from "@/content/services";
+import { serviceTaglines } from "@/content/studio";
 import { photos, servicePhotos } from "@/content/media";
 import { gsap, useGSAP } from "@/lib/gsap";
 import { ButtonLink } from "@/components/ui/Button";
@@ -103,7 +104,7 @@ export function ServicesOrbit() {
       ref={sectionRef}
       id="services"
       aria-labelledby="services-title"
-      className="relative py-24 motion-safe:md:h-[430vh] motion-safe:md:py-0"
+      className="relative py-24 motion-safe:md:h-[360vh] motion-safe:md:py-0"
     >
       <div className="motion-safe:md:sticky motion-safe:md:top-0 motion-safe:md:h-svh motion-safe:md:overflow-hidden motion-safe:md:[perspective:1100px]">
         {/* Centre title */}
@@ -144,21 +145,26 @@ export function ServicesOrbit() {
               <li
                 key={item.key}
                 data-orbit-item=""
-                className="motion-safe:md:invisible motion-safe:md:absolute motion-safe:md:top-1/2 motion-safe:md:left-1/2 motion-safe:md:w-[19rem] motion-safe:md:will-change-transform"
+                className="motion-safe:md:invisible motion-safe:md:absolute motion-safe:md:top-1/2 motion-safe:md:left-1/2 motion-safe:md:w-[17rem] motion-safe:md:will-change-transform"
               >
                 <Link
                   href={`/services/${item.service.slug}`}
-                  className="group flex h-full flex-col gap-4 rounded-[4px] bg-ink p-5 text-paper transition-colors hover:bg-moss-800"
+                  className="group flex h-full flex-col gap-3 rounded-[4px] bg-ink p-5 text-paper transition-colors hover:bg-moss-800"
                 >
                   <span className="flex items-center justify-between mono">
                     <span className="text-lime">{String(item.index + 1).padStart(2, "0")}</span>
                     {item.service.slug === "website-development" && <Badge>New</Badge>}
                   </span>
-                  <h3 className="h-sm">{item.service.title}</h3>
-                  <span className="line-clamp-4 text-[13px] leading-relaxed text-fog">
+                  <h3 className="font-display text-[22px] leading-[1.1] font-medium tracking-[-0.03em]">
+                    {item.service.title}
+                  </h3>
+                  <span className="text-[13px] leading-tight text-paper/55">
+                    {serviceTaglines[item.service.slug]}
+                  </span>
+                  <span className="line-clamp-4 text-sm leading-[1.35] text-paper/80">
                     {item.service.cardSummary}
                   </span>
-                  <span className="mt-auto inline-flex items-center gap-1.5 text-[13px] text-lime">
+                  <span className="mt-2 inline-flex items-center gap-1.5 text-[13px] text-lime">
                     Learn more
                     <ArrowUpRight
                       className="size-3.5 transition-transform group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
@@ -173,7 +179,7 @@ export function ServicesOrbit() {
                 data-orbit-item=""
                 aria-hidden="true"
                 className={cn(
-                  "hidden motion-safe:md:invisible motion-safe:md:absolute motion-safe:md:top-1/2 motion-safe:md:left-1/2 motion-safe:md:block motion-safe:md:w-[15rem] motion-safe:md:will-change-transform",
+                  "hidden motion-safe:md:invisible motion-safe:md:absolute motion-safe:md:top-1/2 motion-safe:md:left-1/2 motion-safe:md:block motion-safe:md:w-[13rem] motion-safe:md:will-change-transform",
                 )}
               >
                 <div className="relative aspect-[4/3] overflow-hidden rounded-[4px] bg-paper-2">

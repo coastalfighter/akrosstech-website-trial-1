@@ -24,7 +24,7 @@ export function ServiceWhy({ service }: { service: OutsourcingService }) {
           />
           <Reveal stagger={0.06} className="flex max-w-lg flex-col gap-4">
             {why.body.map((p) => (
-              <p key={p} className="text-[15px] leading-relaxed text-stone">
+              <p key={p} className="text-base leading-[1.4] text-stone">
                 {p}
               </p>
             ))}
@@ -43,7 +43,7 @@ export function ServiceWhy({ service }: { service: OutsourcingService }) {
               <div className="flex flex-col gap-2">
                 <h3 className="h-sm">{benefit.title}</h3>
                 {benefit.description && (
-                  <p className="text-[14px] leading-relaxed text-stone">{benefit.description}</p>
+                  <p className="text-[15px] leading-[1.4] text-stone">{benefit.description}</p>
                 )}
               </div>
             </li>
@@ -72,7 +72,7 @@ export function ServiceCapabilities({ service }: { service: OutsourcingService }
             size="lg"
           />
           <Reveal y={16}>
-            <p className="text-[15px] leading-relaxed text-fog">{capabilities.body}</p>
+            <p className="text-base leading-[1.4] text-fog">{capabilities.body}</p>
           </Reveal>
         </div>
         <Reveal stagger={0.06} as="ol" className="border-t border-paper/12">
@@ -85,7 +85,7 @@ export function ServiceCapabilities({ service }: { service: OutsourcingService }
               <h3 className="h-sm transition-transform duration-500 group-hover:translate-x-2">
                 {item.title}
               </h3>
-              <p className="max-w-xl text-[15px] leading-relaxed text-fog">{item.description}</p>
+              <p className="max-w-xl text-base leading-[1.4] text-fog">{item.description}</p>
             </li>
           ))}
         </Reveal>
@@ -123,7 +123,7 @@ export function OtherServices({ currentSlug }: { currentSlug: string }) {
                     />
                   </div>
                   <div className="flex items-start justify-between gap-4">
-                    <h3 className="text-[17px] leading-snug font-medium">
+                    <h3 className="font-display text-[1.375rem] leading-[1.15] font-medium tracking-[-0.02em]">
                       <span className="link-line">{s.title}</span>
                     </h3>
                     <span className="flex items-center gap-2">
@@ -131,7 +131,7 @@ export function OtherServices({ currentSlug }: { currentSlug: string }) {
                       <ArrowUpRight className="size-4 shrink-0" aria-hidden="true" />
                     </span>
                   </div>
-                  <p className="line-clamp-3 text-[14px] leading-relaxed text-stone">
+                  <p className="line-clamp-3 text-[15px] leading-[1.4] text-stone">
                     {s.cardSummary}
                   </p>
                 </Link>

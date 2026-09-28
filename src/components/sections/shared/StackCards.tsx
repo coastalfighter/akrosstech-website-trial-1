@@ -3,6 +3,8 @@ import { photos, type PhotoKey } from "@/content/media";
 
 export interface StackCard {
   title: string;
+  /** Bold one-liner above the description. */
+  subline?: string;
   description: string;
   photo: PhotoKey;
 }
@@ -17,7 +19,7 @@ const shades = [
 ];
 
 /** Height of each card's title bar that stays visible once stacked. */
-const BAR_REM = 3.75;
+const BAR_REM = 4;
 
 /**
  * Sticky stacked cards (juncastudio-style). Each card pins just below the
@@ -28,17 +30,24 @@ export function StackCards({ items }: { items: StackCard[] }) {
   return (
     <ol className="relative" data-theme="dark" data-theme-edges="bar">
       {items.map((item, i) => (
-        <li key={item.title} className="sticky" style={{ top: `calc(6.75rem + ${i * BAR_REM}rem)` }}>
+        <li key={item.title} className="sticky" style={{ top: `calc(6rem + ${i * BAR_REM}rem)` }}>
           <article
-            className={`grid min-h-[68svh] gap-8 rounded-t-[6px] bg-linear-to-b ${shades[i % shades.length]} p-5 text-paper md:grid-cols-[4rem_1fr_1.15fr] md:gap-10 md:p-7`}
+            className={`grid min-h-[70svh] gap-6 border-t border-paper/10 bg-linear-to-b ${shades[i % shades.length]} px-5 pt-5 pb-10 text-paper md:grid-cols-[5.5rem_1fr_1.1fr] md:gap-8 md:px-7`}
           >
-            <span className="mono text-lime tabular-nums">{String(i + 1).padStart(2, "0")}</span>
-            <h3 className="h-sm md:-mt-1">{item.title}</h3>
-            <div className="flex flex-col gap-6">
-              <p className="max-w-md text-[15px] leading-relaxed text-paper/80">
-                {item.description}
-              </p>
-              <div className="relative aspect-[16/9] overflow-hidden rounded-[4px] bg-ink/40">
+            <span className="pt-2 font-mono text-[12px] text-lime tabular-nums">
+              {String(i + 1).padStart(2, "0")}
+            </span>
+            <h3 className="font-display text-[clamp(1.6rem,1.2rem+1.1vw,2rem)] leading-[1.1] font-light tracking-[-0.03em]">
+              {item.title}
+            </h3>
+            <div className="flex flex-col gap-3 md:pt-1">
+              {item.subline && (
+                <p className="text-[clamp(1.15rem,1rem+0.4vw,1.35rem)] leading-tight font-medium tracking-[-0.02em]">
+                  {item.subline}
+                </p>
+              )}
+              <p className="max-w-md text-base leading-[1.4] text-paper/72">{item.description}</p>
+              <div className="relative mt-5 aspect-[16/8] overflow-hidden rounded-[3px] bg-ink/40">
                 <Image
                   src={photos[item.photo].src}
                   alt={photos[item.photo].alt}

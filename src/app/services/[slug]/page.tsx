@@ -76,7 +76,7 @@ export default async function ServicePage({ params }: PageProps<"/services/[slug
         ]}
       >
         {rest.map((p) => (
-          <p key={p} className="text-[15px] leading-relaxed text-stone">
+          <p key={p} className="text-base leading-[1.4] text-stone">
             {p}
           </p>
         ))}

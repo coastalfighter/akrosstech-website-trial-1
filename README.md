@@ -8,7 +8,8 @@ GSAP, Framer Motion and Lenis, and it deploys to Vercel.
   [`docs/CONTENT_INVENTORY.md`](docs/CONTENT_INVENTORY.md)), and old URLs 301-redirect to the new routes.
 - **"Studio" design** (inspired by juncastudio.com) in the Akrostech palette: warm paper
   `#F3F2EE` pages, ink `#0A0A0A` sections, brand lime `#BFF747` as the single accent and a deep
-  moss family (`#0B1004` → `#344C12`) for rich dark surfaces. Geist + Geist Mono throughout.
+  moss family (`#0B1004` → `#344C12`) for rich dark surfaces. Cabinet Grotesk (self-hosted, see
+  `docs/FONT_LICENSES.md`) for display type, Geist for text, Geist Mono for meta labels.
 - **Smooth scrolling:** Lenis (lerp-based) driven by the GSAP ticker, so ScrollTrigger pins and
   scrubs share one frame. No full-screen blend layers, backdrop blurs or page-wide colour
   transitions, which keeps scrolling cheap to paint.
@@ -149,7 +150,7 @@ an existing Chromium binary.
 
 - **Contact details, stats and social links:** `src/content/site.ts`
 - **Navigation:** `src/content/navigation.ts`
-- **Home page copy:** `src/content/home.ts`
+- **Home page copy:** `src/content/studio.ts` (studio layout) and `src/content/home.ts`
 - **About page:** `src/content/about.ts`
 - **Outsourcing services (4):** `src/content/services.ts`
 - **Website Development (services, stack, process, pricing, FAQs):** `src/content/website-development.ts`

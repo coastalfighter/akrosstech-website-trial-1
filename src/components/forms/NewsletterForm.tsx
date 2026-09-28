@@ -38,7 +38,7 @@ export function NewsletterForm({ className }: { className?: string }) {
 
   return (
     <form onSubmit={onSubmit} noValidate className={cn("w-full", className)}>
-      <label htmlFor={`${id}-email`} className="mb-3 block mono opacity-60">
+      <label htmlFor={`${id}-email`} className="mb-4 block text-lg font-medium uppercase">
         Subscribe to our newsletter
       </label>
       <div className="flex items-center gap-2 border-b border-current/25 pb-2 focus-within:border-lime">

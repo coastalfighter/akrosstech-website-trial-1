@@ -18,7 +18,7 @@ export default function NotFound() {
         <h1 className="max-w-4xl h-lg">
           This page took an <span className="opacity-50">offshore vacation.</span>
         </h1>
-        <p className="max-w-md text-[15px] leading-relaxed text-fog">
+        <p className="max-w-md text-base leading-[1.4] text-fog">
           The page you’re looking for doesn’t exist or has moved. Let’s get you back on track.
         </p>
         <div className="flex flex-wrap gap-3">

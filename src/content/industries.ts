@@ -38,9 +38,3 @@ export const industries: Industry[] = [
   },
   { name: "Education", src: education, alt: "Stack of books with an apple and alphabet blocks" },
 ];
-
-export const industriesIntro = {
-  eyebrow: "Industries",
-  title: "Every industry hires differently.",
-  body: "We specialize in recruitment across a wide range of U.S. industries, including Healthcare, IT, BFSI, Manufacturing, Sales, Customer Service, Construction, E-commerce, Education, and Administration.",
-};

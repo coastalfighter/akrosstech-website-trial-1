@@ -24,7 +24,7 @@ export const metadata: Metadata = {
   title: { absolute: `${site.name} — ${site.tagline} | Outsourcing & Website Development` },
 };
 
-const homeFaqs = serviceFaqs.slice(0, 6);
+const homeFaqs = serviceFaqs.slice(0, 8);
 
 export default function HomePage() {
   const posts = getAllBlogPosts().slice(0, 3);

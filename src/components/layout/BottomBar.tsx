@@ -45,34 +45,49 @@ export function formatZone(ms: number, timeZone: string): { time: string; offset
   return { time, offset };
 }
 
-function Clock({ label, timeZone }: { label: string; timeZone: string }) {
+function Clock({
+  label,
+  timeZone,
+  showOffset,
+}: {
+  label?: string;
+  timeZone: string;
+  showOffset?: boolean;
+}) {
   const ms = useSyncExternalStore(subscribe, getSnapshot, getServerSnapshot);
-  const { time, offset } = ms ? formatZone(ms, timeZone) : { time: "--:--:--", offset: "" };
+  const { time, offset } = ms ? formatZone(ms, timeZone) : { time: "--:--:-- --", offset: "" };
   return (
-    <span className="flex items-center gap-2 tabular-nums">
-      <span className="opacity-60">
-        {label}
-        {offset && ` (${offset.replace("-", "−")})`}
+    <>
+      {label && <span className="opacity-60">{label}</span>}
+      {showOffset && offset && (
+        <span className="opacity-80">({offset.replace("GMT", "UTC").replace("-", "−")})</span>
+      )}
+      <span className="font-medium tabular-nums" suppressHydrationWarning>
+        {time}
       </span>
-      <span suppressHydrationWarning>{time}</span>
-    </span>
+    </>
   );
 }
 
 /**
- * Fixed studio status bar along the bottom edge: copyright, live clocks for
- * the U.S. office and the India delivery team, and a quick call link. Text
- * colour follows the section underneath (theme sensor).
+ * Fixed studio status bar along the bottom edge (juncastudio-style): the
+ * year, the U.S. office's UTC offset and live time, the India delivery
+ * team's time, and a quick call link. Text colour follows the section
+ * underneath (theme sensor).
  */
 export function BottomBar() {
   const year = new Date().getFullYear();
   return (
     <div className="site-bar pointer-events-none fixed inset-x-0 bottom-0 z-40">
-      <div className="container-page flex h-11 items-center justify-between gap-6 mono !text-[10px] sm:!text-[11px]">
-        <span className="opacity-60">©{year}</span>
-        <div className="hidden items-center gap-8 md:flex">
-          <Clock label="Wilmington" timeZone="America/New_York" />
-          <Clock label="India" timeZone="Asia/Kolkata" />
+      <div className="container-page flex h-12 items-center justify-between gap-6 text-[13px] sm:text-sm">
+        <div className="flex items-center gap-8 sm:gap-12">
+          <span>©{year}</span>
+          <span className="hidden items-center gap-3 sm:flex">
+            <Clock timeZone="America/New_York" showOffset />
+          </span>
+          <span className="hidden items-center gap-3 lg:flex">
+            <Clock label="India" timeZone="Asia/Kolkata" />
+          </span>
         </div>
         <Link
           href="/contact"

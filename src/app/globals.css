@@ -4,7 +4,8 @@
    Akrostech — "Studio" design system
    Warm paper pages, ink sections, the brand lime as the single accent
    and a deep moss family (derived from the lime) for rich dark surfaces.
-   Geist for everything, Geist Mono for small technical labels.
+   Cabinet Grotesk for display type, Geist for text, Geist Mono for
+   small technical labels (type scale measured from juncastudio.com).
    ────────────────────────────────────────────────────────────── */
 @theme {
   --color-paper: #f3f2ee;
@@ -23,6 +24,7 @@
 
   --font-sans: var(--font-geist), ui-sans-serif, system-ui, sans-serif;
   --font-mono: var(--font-geist-mono), ui-monospace, SFMono-Regular, Menlo, monospace;
+  --font-display: var(--font-cabinet), var(--font-geist), ui-sans-serif, system-ui, sans-serif;
 
   --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
   --ease-in-out-quart: cubic-bezier(0.76, 0, 0.24, 1);
@@ -45,10 +47,13 @@
     -webkit-text-size-adjust: 100%;
   }
   body {
-    background: var(--color-paper);
+    /* Warm paper with a faint static grain (scrolls with the page; no
+       fixed or blended overlay, so it costs nothing while scrolling). */
+    background-color: var(--color-paper);
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0.1 0 0 0 0 0.1 0 0 0 0 0.08 0 0 0 0.05 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
     color: var(--color-ink);
     font-family: var(--font-sans);
-    font-feature-settings: "ss01", "cv11";
+    font-size: 1rem;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     overflow-x: clip;
@@ -100,45 +105,81 @@
   mask-image: linear-gradient(90deg, transparent, #000 7%, #000 93%, transparent);
 }
 
-/* Small technical label, e.g. "01 / 05 · NEW YORK". */
+/* Small technical meta, e.g. "01 / 05 · E-COMMERCE". */
 @utility mono {
   font-family: var(--font-mono);
-  font-size: 0.6875rem;
-  line-height: 1.4;
-  letter-spacing: 0.08em;
+  font-size: 0.75rem;
+  line-height: 1.2;
+  letter-spacing: 0.06em;
   text-transform: uppercase;
 }
 
-/* Display type — Geist medium with tight tracking. */
+/* Section eyebrow, e.g. "WHY WORK WITH US". */
+@utility eyebrow {
+  font-family: var(--font-sans);
+  font-size: 0.75rem;
+  line-height: 1.2;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  font-weight: 500;
+}
+
+/* Display scale (Cabinet Grotesk). Sizes at 1440px in comments. */
 @utility h-display {
-  font-size: clamp(3rem, 1rem + 7.4vw, 9.5rem);
-  line-height: 0.92;
-  letter-spacing: -0.055em;
+  /* 100px — "GET IN TOUCH." */
+  font-family: var(--font-display);
+  font-size: clamp(3rem, 1.2rem + 5.6vw, 6.25rem);
+  line-height: 0.9;
+  letter-spacing: -0.03em;
+  font-weight: 400;
+}
+@utility h-hero {
+  /* 60px — hero sentence */
+  font-family: var(--font-display);
+  font-size: clamp(2.1rem, 1.1rem + 3.1vw, 3.75rem);
+  line-height: 0.96;
+  letter-spacing: -0.03em;
   font-weight: 500;
 }
 @utility h-xl {
-  font-size: clamp(2.5rem, 1.2rem + 4.2vw, 6rem);
-  line-height: 0.96;
-  letter-spacing: -0.045em;
-  font-weight: 500;
-}
-@utility h-lg {
-  font-size: clamp(2rem, 1.2rem + 2.6vw, 4.25rem);
+  /* 72px — "Our services.", page titles */
+  font-family: var(--font-display);
+  font-size: clamp(2.5rem, 1.2rem + 4vw, 4.5rem);
   line-height: 1;
   letter-spacing: -0.04em;
   font-weight: 500;
 }
+@utility h-lg {
+  /* 43px — section titles */
+  font-family: var(--font-display);
+  font-size: clamp(2rem, 1.35rem + 1.8vw, 2.7rem);
+  line-height: 1.05;
+  letter-spacing: -0.03em;
+  font-weight: 500;
+}
 @utility h-md {
-  font-size: clamp(1.6rem, 1.1rem + 1.4vw, 2.6rem);
-  line-height: 1.08;
+  /* 32px — card and list titles */
+  font-family: var(--font-display);
+  font-size: clamp(1.6rem, 1.25rem + 0.9vw, 2rem);
+  line-height: 1.1;
   letter-spacing: -0.03em;
   font-weight: 500;
 }
 @utility h-sm {
-  font-size: clamp(1.25rem, 1rem + 0.6vw, 1.6rem);
-  line-height: 1.2;
+  /* 22–26px — small card titles */
+  font-family: var(--font-display);
+  font-size: clamp(1.3rem, 1.1rem + 0.45vw, 1.6rem);
+  line-height: 1.12;
   letter-spacing: -0.02em;
   font-weight: 500;
+}
+/* 60px Geist regular — the big brand statement. */
+@utility text-statement {
+  font-family: var(--font-sans);
+  font-size: clamp(1.9rem, 1rem + 3vw, 3.75rem);
+  line-height: 1.1;
+  letter-spacing: -0.03em;
+  font-weight: 400;
 }
 
 @layer components {
@@ -151,9 +192,20 @@
   }
   html[data-header="dark"] .site-header,
   html[data-hero-header="dark"] .site-header,
-  .site-header.is-menu-open,
   html[data-bar="dark"] .site-bar {
     color: var(--color-paper);
+  }
+  /* Logo tile follows the text colour; its glyph flips to ink on light tiles. */
+  html[data-header="dark"] .site-header .logo-glyph,
+  html[data-hero-header="dark"] .site-header .logo-glyph {
+    color: var(--color-ink);
+  }
+  html .site-header.is-menu-open .logo-glyph {
+    color: var(--color-lime);
+  }
+  /* The menu overlay is paper, so the bar above it reads ink. */
+  html .site-header.is-menu-open {
+    color: var(--color-ink);
   }
 
   /* Photos: optimised, subtle zoom on hover. */
@@ -327,8 +379,8 @@
 }
 
 /* ──────────────────────────────────────────────────────────────
-   Preloader — pure CSS: counter + progress line (0–1.0s), then the
-   ink panel slides up (1.0–1.8s). Hero intro is offset to match.
+   Preloader — pure CSS: status lines + progress line (0–1.15s), then
+   the ink panel slides up (1.25–2.05s). Hero intro is offset to match.
    ────────────────────────────────────────────────────────────── */
 @property --preload-count {
   syntax: "<integer>";
@@ -346,17 +398,35 @@
   transform-origin: left;
 }
 html[data-preloader="active"] {
-  --intro-offset: 1.1s;
+  --intro-offset: 1.35s;
   --fade-from: 1;
 }
 html[data-preloader="active"] .preloader {
-  animation: preload-out 0.8s var(--ease-in-out-quart) 1s forwards;
+  animation: preload-out 0.8s var(--ease-in-out-quart) 1.25s forwards;
 }
 html[data-preloader="active"] .preloader-count {
-  animation: preload-count 0.95s cubic-bezier(0.3, 0.7, 0.2, 1) forwards;
+  animation: preload-count 1.15s cubic-bezier(0.3, 0.7, 0.2, 1) forwards;
+}
+.preloader-line {
+  opacity: 0;
+  transform: translate3d(0, 0.4em, 0);
+}
+html[data-preloader="active"] .preloader-line {
+  animation: preload-line 0.5s var(--ease-out-expo) forwards;
+  animation-delay: calc(0.08s + var(--line) * 0.26s);
+}
+html[data-preloader="done"] .preloader-line {
+  opacity: 1;
+  transform: none;
+}
+@keyframes preload-line {
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
+  }
 }
 html[data-preloader="active"] .preloader-bar {
-  animation: preload-bar 0.95s cubic-bezier(0.3, 0.7, 0.2, 1) forwards;
+  animation: preload-bar 1.15s cubic-bezier(0.3, 0.7, 0.2, 1) forwards;
 }
 @keyframes preload-count {
   to {

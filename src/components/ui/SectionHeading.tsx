@@ -5,7 +5,7 @@ import { IntroFade, IntroTitle } from "@/components/motion/Intro";
 import { plain, rich } from "@/lib/rich";
 import { cn } from "@/lib/utils";
 
-/** Mono eyebrow with a lime marker, e.g. "■ WHY WORK WITH US". */
+/** Section eyebrow, e.g. "WHY WORK WITH US" (12px uppercase). */
 export function Eyebrow({
   children,
   index,
@@ -16,8 +16,7 @@ export function Eyebrow({
   className?: string;
 }) {
   return (
-    <p className={cn("flex items-center gap-2.5 mono", className)}>
-      <span className="size-1.5 shrink-0 bg-lime" aria-hidden="true" />
+    <p className={cn("flex items-center gap-2.5 eyebrow", className)}>
       {index && <span className="tabular-nums opacity-60">{index}</span>}
       <span>{children}</span>
     </p>
@@ -64,7 +63,7 @@ export function SectionHeading({
   const desc = description && (
     <p
       className={cn(
-        "max-w-lg text-[15px] leading-relaxed opacity-70 sm:text-base",
+        "max-w-lg text-base leading-[1.4] opacity-70 sm:text-lg",
         align === "center" && "mx-auto",
       )}
     >

@@ -27,7 +27,7 @@ export function CtaBand({
         </TextReveal>
         <Reveal stagger={0.08} className="flex flex-col items-start gap-8">
           <ArrowUpRight className="size-16 stroke-[1.25]" aria-hidden="true" />
-          <p className="max-w-sm text-[15px] leading-relaxed">{body}</p>
+          <p className="max-w-sm text-base leading-[1.4]">{body}</p>
           <ButtonLink href={href} variant="ink" size="lg" arrow>
             {cta}
           </ButtonLink>

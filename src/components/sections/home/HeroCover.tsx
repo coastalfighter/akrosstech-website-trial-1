@@ -2,12 +2,11 @@
 
 import { useRef } from "react";
 import Image from "next/image";
-import { homeHero } from "@/content/home";
+import { studioHero } from "@/content/studio";
 import { photos } from "@/content/media";
 import { gsap, ScrollTrigger, useGSAP } from "@/lib/gsap";
 import { usePrefersReducedMotion } from "@/hooks/useMediaQuery";
-import { IntroFade, IntroTitle } from "@/components/motion/Intro";
-import { ButtonLink } from "@/components/ui/Button";
+import { IntroTitle } from "@/components/motion/Intro";
 
 /** Fraction of the viewport the cover has collapsed to when it scrolls away. */
 const COLLAPSE = 0.88;
@@ -117,27 +116,11 @@ export function HeroCover() {
 
         <div
           ref={contentRef}
-          className="relative container-page flex h-full flex-col justify-end gap-10 pb-20 md:pb-24"
+          className="relative container-page flex h-full flex-col justify-end pb-24 md:pb-28"
         >
-          <IntroTitle as="h1" id="hero-title" className="max-w-5xl h-display">
-            {"Offshore talent. *Onshore quality.*"}
+          <IntroTitle as="h1" id="hero-title" className="max-w-[50rem] h-hero">
+            {studioHero.title}
           </IntroTitle>
-          <div className="flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
-            <IntroFade delay={0.35}>
-              <p className="max-w-md text-[15px] leading-relaxed text-fog sm:text-base">
-                {homeHero.subheadline} Recruitment, virtual assistance, accounting and legal support
-                — and now, the websites that help you grow.
-              </p>
-            </IntroFade>
-            <IntroFade delay={0.5} className="flex flex-wrap gap-3">
-              <ButtonLink href="/contact" variant="solid" size="lg" arrow>
-                Book a call
-              </ButtonLink>
-              <ButtonLink href="/services" size="lg">
-                Our services
-              </ButtonLink>
-            </IntroFade>
-          </div>
         </div>
       </div>
     </section>

@@ -114,6 +114,29 @@ function initImageReveal(el: HTMLElement) {
   if (inner) tl.fromTo(inner, { scale: 1.25 }, { scale: 1, duration: 1.8, ease: "expo.out" }, 0);
 }
 
+/**
+ * Curved media that flattens as it scrolls in (juncastudio's reel): a 3D
+ * tilt plus an elliptical top edge, for `[data-curve]`.
+ */
+function initCurve(el: HTMLElement) {
+  gsap.fromTo(
+    el,
+    {
+      rotateX: 28,
+      scale: 0.9,
+      transformPerspective: 1600,
+      clipPath: "inset(0% 0% 0% 0% round 50% 50% 0.6% 0.6% / 14% 14% 0.6% 0.6%)",
+    },
+    {
+      rotateX: 0,
+      scale: 1,
+      clipPath: "inset(0% 0% 0% 0% round 0.6% 0.6% 0.6% 0.6% / 0.6% 0.6% 0.6% 0.6%)",
+      ease: "none",
+      scrollTrigger: { trigger: el, start: "top bottom", end: "center 50%", scrub: 0.5 },
+    },
+  );
+}
+
 /** Card that tilts upright as it scrolls into view, for `[data-tilt-in]`. */
 function initTiltIn(el: HTMLElement) {
   gsap.fromTo(
@@ -175,6 +198,7 @@ function initElement(el: HTMLElement) {
   if (el.hasAttribute("data-image-reveal")) initImageReveal(el);
   if (el.hasAttribute("data-scramble")) initScramble(el);
   if (el.hasAttribute("data-tilt-in")) initTiltIn(el);
+  if (el.hasAttribute("data-curve")) initCurve(el);
 }
 
 /**
@@ -223,7 +247,7 @@ export function MotionController() {
     const frame = requestAnimationFrame(() => {
       document
         .querySelectorAll<HTMLElement>(
-          "[data-reveal], [data-split], [data-parallax], [data-scrub-words], [data-image-reveal], [data-scramble], [data-tilt-in]",
+          "[data-reveal], [data-split], [data-parallax], [data-scrub-words], [data-image-reveal], [data-scramble], [data-tilt-in], [data-curve]",
         )
         .forEach((el) => observer.observe(el));
     });

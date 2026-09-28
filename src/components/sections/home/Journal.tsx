@@ -1,29 +1,34 @@
 import type { BlogPost } from "@/lib/content";
+import { studioNews } from "@/content/studio";
 import { Reveal } from "@/components/motion/Reveal";
+import { TextReveal } from "@/components/motion/TextReveal";
 import { ButtonLink } from "@/components/ui/Button";
-import { SectionHeading } from "@/components/ui/SectionHeading";
+import { Eyebrow } from "@/components/ui/SectionHeading";
 import { PostCard } from "@/components/sections/shared/PostCard";
 
-/** Latest articles from the journal. */
+/** Latest news: eyebrow, two-line title, "See all articles", then the cards. */
 export function Journal({ posts }: { posts: BlogPost[] }) {
   return (
-    <section id="journal" aria-labelledby="journal-title" className="py-32 md:py-44">
+    <section id="journal" aria-labelledby="journal-title" className="py-40 md:py-52">
       <div className="container-page">
-        <div className="mb-14 flex flex-col gap-8 md:flex-row md:items-end md:justify-between">
-          <SectionHeading
-            id="journal-title"
-            eyebrow="Journal"
-            title="Our take on outsourcing, *hiring and the web.*"
-            size="md"
-            className="max-w-2xl"
-          />
-          <Reveal y={12}>
+        <div className="mb-16 flex flex-col gap-6">
+          <Reveal y={10}>
+            <Eyebrow>{studioNews.eyebrow}</Eyebrow>
+          </Reveal>
+          <TextReveal as="h2" id="journal-title" split="lines" className="max-w-2xl h-lg">
+            {studioNews.title}
+          </TextReveal>
+          <Reveal y={12} className="mt-8">
             <ButtonLink href="/blog" arrow>
-              Read all articles
+              {studioNews.cta}
             </ButtonLink>
           </Reveal>
         </div>
-        <Reveal stagger={0.1} as="ul" className="grid gap-10 sm:grid-cols-2 lg:grid-cols-3">
+        <Reveal
+          stagger={0.1}
+          as="ul"
+          className="grid gap-x-5 gap-y-14 sm:grid-cols-2 lg:grid-cols-3"
+        >
           {posts.map((post) => (
             <li key={post.slug}>
               <PostCard post={post} />

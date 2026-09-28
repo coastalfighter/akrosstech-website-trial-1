@@ -4,27 +4,18 @@ import { footerNav, serviceLinks } from "@/content/navigation";
 import { fullAddress, site } from "@/content/site";
 import { NewsletterForm } from "@/components/forms/NewsletterForm";
 import { Reveal } from "@/components/motion/Reveal";
-import { Badge } from "@/components/ui/Badge";
+import { LogoMark } from "./Logo";
+import { BackToTop } from "./BackToTop";
 
-function Column({
-  title,
-  links,
-}: {
-  title: string;
-  links: { label: string; href: string; badge?: string }[];
-}) {
+function Column({ title, links }: { title: string; links: { label: string; href: string }[] }) {
   return (
-    <nav aria-label={title} className="flex flex-col gap-4">
-      <h2 className="mono">{title}</h2>
-      <ul className="flex flex-col gap-1.5 text-[14px]">
+    <nav aria-label={title} className="flex flex-col gap-5">
+      <h2 className="text-lg font-medium uppercase">{title}</h2>
+      <ul className="flex flex-col gap-1 text-lg">
         {links.map((link) => (
           <li key={link.href}>
-            <Link
-              href={link.href}
-              className="group inline-flex items-center gap-2 opacity-75 transition-opacity hover:opacity-100"
-            >
-              <span className="link-line">{link.label}</span>
-              {link.badge && <Badge>{link.badge}</Badge>}
+            <Link href={link.href} className="text-ink/70 transition-colors hover:text-ink">
+              {link.label}
             </Link>
           </li>
         ))}
@@ -34,41 +25,48 @@ function Column({
 }
 
 /**
- * Studio footer: an oversized "GET IN TOUCH." call to action, link columns,
- * newsletter and a full-width wordmark. Extra bottom padding clears the
- * fixed status bar.
+ * Studio footer (juncastudio-style): an oversized "GET IN TOUCH." with the
+ * company blurb, social rows and link columns, then the logo lockup, legal
+ * line and "back to top". Bottom padding clears the fixed status bar.
  */
 export function Footer() {
+  const year = new Date().getFullYear();
   return (
-    <footer className="relative overflow-hidden bg-paper pt-28 pb-14 text-ink md:pt-36">
+    <footer className="relative pt-32 pb-20 text-ink md:pt-44">
       <div className="container-page">
-        <div className="grid gap-10 pb-14 lg:grid-cols-[1fr_22rem] lg:items-end">
+        <Reveal
+          y={30}
+          className="grid gap-10 border-b border-ink/12 pb-14 lg:grid-cols-[1fr_24rem] lg:items-center"
+        >
           <Link href="/contact" className="group w-fit">
-            <span className="block h-display uppercase transition-colors duration-500 group-hover:text-moss-700">
+            <span className="block h-display uppercase">
               Get in touch
-              <span className="text-lime transition-colors group-hover:text-ink">.</span>
+              <span className="inline-block text-lime transition-transform duration-500 group-hover:translate-x-2">
+                .
+              </span>
             </span>
           </Link>
-          <p className="max-w-sm text-[15px] leading-relaxed text-stone">
-            {site.legalName} helps U.S. businesses scale with offshore talent and onshore quality —
-            recruitment, virtual assistance, accounting, legal support and, now, websites.
+          <p className="max-w-sm text-lg leading-[1.3]">
+            Akrostech is an offshore talent and web studio for ambitious U.S. businesses. We build
+            dedicated remote teams — recruitment, virtual assistance, accounting and legal support —
+            and the websites that help you grow.
           </p>
-        </div>
+        </Reveal>
 
-        <div className="grid gap-12 border-t border-ink/12 py-12 md:grid-cols-2 lg:grid-cols-[1.1fr_1fr_1.3fr_1fr_1.3fr]">
-          <ul className="flex flex-col text-[14px]">
+        <div className="grid gap-14 py-14 md:grid-cols-2 lg:grid-cols-[1fr_1fr_1fr_1fr]">
+          <ul className="flex flex-col text-base lg:max-w-60">
             {[
               { label: "LinkedIn", href: site.social.linkedin },
               { label: "Email", href: `mailto:${site.contact.email}` },
               { label: "Call", href: site.contact.phoneHref },
             ].map((s) => (
-              <li key={s.label} className="border-b border-ink/12 first:border-t">
+              <li key={s.label} className="border-b border-ink/15 first:border-t">
                 <a
                   href={s.href}
                   {...(s.href.startsWith("http")
                     ? { target: "_blank", rel: "noopener noreferrer" }
                     : {})}
-                  className="group flex items-center justify-between py-2.5"
+                  className="group flex items-center justify-between py-2"
                 >
                   {s.label}
                   <ArrowUpRight
@@ -79,35 +77,55 @@ export function Footer() {
               </li>
             ))}
           </ul>
-          <Column title="Navigation" links={footerNav.quickLinks} />
-          <Column title="Services" links={serviceLinks} />
-          <div className="flex flex-col gap-10">
-            <div className="flex flex-col gap-4">
-              <h2 className="mono">Contact</h2>
-              <address className="flex flex-col gap-1.5 text-[14px] not-italic">
-                <a href={`mailto:${site.contact.email}`} className="link-line w-fit">
+
+          <div className="flex flex-col gap-12">
+            <Column title="Navigation" links={footerNav.quickLinks} />
+            <Column title="Our services" links={serviceLinks} />
+          </div>
+
+          <div className="flex flex-col gap-12">
+            <div className="flex flex-col gap-5">
+              <h2 className="text-lg font-medium uppercase">Contact</h2>
+              <address className="flex flex-col gap-1 text-lg not-italic">
+                <a
+                  href={`mailto:${site.contact.email}`}
+                  className="w-fit text-ink/70 transition-colors hover:text-ink"
+                >
                   {site.contact.email}
                 </a>
-                <a href={site.contact.phoneHref} className="link-line w-fit">
+                <a
+                  href={site.contact.phoneHref}
+                  className="w-fit text-ink/70 transition-colors hover:text-ink"
+                >
                   {site.contact.phone}
                 </a>
-                <span className="mt-2 max-w-[14rem] text-stone">{fullAddress}</span>
+                <span className="mt-2 max-w-[16rem] text-base text-stone">{fullAddress}</span>
               </address>
             </div>
-            <Column title="Legal" links={footerNav.help} />
+            <NewsletterForm />
           </div>
-          <NewsletterForm />
+
+          <Column title="Legal" links={footerNav.help} />
+        </div>
+
+        <div className="flex flex-col gap-6 pt-6 md:flex-row md:items-end md:justify-between">
+          <Link href="/" aria-label="Akrostech — home" className="inline-flex items-center gap-3">
+            <span
+              className="grid size-11 place-items-center rounded-[8px] bg-ink"
+              aria-hidden="true"
+            >
+              <LogoMark className="w-7 text-lime" />
+            </span>
+            <span className="font-display text-[2.6rem] leading-none font-medium tracking-[-0.04em]">
+              Akrostech
+            </span>
+          </Link>
+          <p className="text-base text-ink/70">
+            © {year} {site.legalName}. All rights reserved.
+          </p>
+          <BackToTop />
         </div>
       </div>
-
-      <Reveal y={60} className="container-page">
-        <p
-          className="flex items-start text-[21.5vw] leading-[0.8] font-medium tracking-[-0.075em] select-none 2xl:text-[21rem]"
-          aria-hidden="true"
-        >
-          Akrostech
-        </p>
-      </Reveal>
     </footer>
   );
 }

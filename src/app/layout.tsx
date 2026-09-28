@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+import localFont from "next/font/local";
 import { site } from "@/content/site";
 import { organizationJsonLd, serializeJsonLd } from "@/lib/seo";
 import { SmoothScroll } from "@/components/providers/SmoothScroll";
@@ -8,6 +9,7 @@ import { Footer } from "@/components/layout/Footer";
 import { Preloader, preloaderScript } from "@/components/effects/Preloader";
 import { PageTransition } from "@/components/effects/PageTransition";
 import { BottomBar } from "@/components/layout/BottomBar";
+import { ViewCursor } from "@/components/effects/ViewCursor";
 import { MotionController } from "@/components/motion/MotionController";
 import { MotionProvider } from "@/components/providers/MotionProvider";
 import "./globals.css";
@@ -15,6 +17,17 @@ import "./globals.css";
 const geist = Geist({
   subsets: ["latin"],
   variable: "--font-geist",
+  display: "swap",
+});
+
+/** Cabinet Grotesk (Indian Type Foundry, ITF Free Font License) — display type. */
+const cabinet = localFont({
+  src: [
+    { path: "../assets/fonts/CabinetGrotesk-Light.woff2", weight: "300", style: "normal" },
+    { path: "../assets/fonts/CabinetGrotesk-Regular.woff2", weight: "400", style: "normal" },
+    { path: "../assets/fonts/CabinetGrotesk-Medium.woff2", weight: "500", style: "normal" },
+  ],
+  variable: "--font-cabinet",
   display: "swap",
 });
 
@@ -80,7 +93,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
       lang="en"
-      className={`${geist.variable} ${geistMono.variable}`}
+      className={`${geist.variable} ${geistMono.variable} ${cabinet.variable}`}
       data-header="light"
       data-bar="light"
       data-scroll-behavior="smooth"
@@ -113,6 +126,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
             </main>
             <Footer />
             <BottomBar />
+            <ViewCursor />
             <MotionController />
           </SmoothScroll>
         </MotionProvider>

@@ -1,5 +1,10 @@
+import { Fragment } from "react";
+import Image from "next/image";
 import { testimonials } from "@/content/testimonials";
+import { photos } from "@/content/media";
+import { studioVoices } from "@/content/studio";
 import { Reveal } from "@/components/motion/Reveal";
+import { ButtonLink } from "@/components/ui/Button";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 
 const initials = (text: string) =>
@@ -10,66 +15,102 @@ const initials = (text: string) =>
     .join("")
     .toUpperCase();
 
+/** `**bold**` → lime emphasis. */
+function emphasise(text: string) {
+  return text.split(/(\*\*[^*]+\*\*)/g).map((part, i) =>
+    part.startsWith("**") ? (
+      <strong key={i} className="font-medium text-lime">
+        {part.slice(2, -2)}
+      </strong>
+    ) : (
+      <Fragment key={i}>{part}</Fragment>
+    ),
+  );
+}
+
 /**
- * Client voices — a horizontally scrolling row (native scroll-snap, so it
- * works with trackpads, touch and keyboard). Testimonials are sample
- * content and labelled as such.
+ * Client voices (juncastudio-style): a large dark intro card with how we
+ * work, beside a 2×2 grid of voice cards. Testimonials are samples and
+ * labelled as such.
  */
 export function Voices() {
+  const voices = testimonials.slice(0, 4);
   return (
-    <section id="voices" aria-labelledby="voices-title" className="pb-32 md:pb-44">
+    <section id="voices" aria-labelledby="voices-title" className="pb-40 md:pb-52">
       <div className="container-page">
         <SectionHeading
           id="voices-title"
-          eyebrow="Client voices — sample testimonials"
-          title="What working with us *feels like.*"
-          size="md"
-          className="mb-12"
+          eyebrow={studioVoices.eyebrow}
+          title={studioVoices.title}
+          size="lg"
+          className="mb-14"
         />
-      </div>
-      <Reveal y={30}>
-        <ul
-          className="container-page flex snap-x snap-mandatory [scrollbar-width:none] gap-4 overflow-x-auto pb-4 [&::-webkit-scrollbar]:hidden"
-          tabIndex={0}
-          aria-label="Sample client testimonials"
-        >
-          <li className="flex w-[82vw] shrink-0 snap-start flex-col justify-between gap-10 rounded-[6px] bg-ink p-6 text-paper sm:w-[30rem] md:p-8">
-            <p className="text-[clamp(1.25rem,1rem+0.8vw,1.75rem)] leading-snug font-medium tracking-[-0.02em]">
-              Akrostech works with <span className="text-lime">startups</span>,{" "}
-              <span className="text-lime">staffing agencies</span> and{" "}
-              <span className="text-lime">enterprises</span> that need reliable people behind their
-              growth — and a website that shows it.
-            </p>
-            <p className="mono text-fog">
-              These testimonials are samples, shown until approved client quotes are published.
-            </p>
-          </li>
-          {testimonials.map((t) => (
-            <li
-              key={t.quote}
-              className="flex w-[82vw] shrink-0 snap-start flex-col justify-between gap-10 rounded-[6px] bg-paper-2 p-6 sm:w-[24rem] md:p-8"
-            >
-              <figure className="flex h-full flex-col justify-between gap-10">
-                <blockquote className="text-[17px] leading-relaxed">“{t.quote}”</blockquote>
-                <figcaption className="flex items-center gap-3">
+
+        <div className="grid gap-3 lg:grid-cols-2">
+          <Reveal
+            y={30}
+            className="relative flex min-h-[34rem] flex-col justify-between gap-10 overflow-hidden rounded-[4px] bg-ink p-6 text-paper md:p-8"
+          >
+            <Image
+              src={photos.circuitTeal.src}
+              alt=""
+              fill
+              sizes="(min-width: 1024px) 50vw, 100vw"
+              className="object-cover opacity-30 grayscale"
+            />
+            <div
+              className="absolute inset-0 bg-linear-to-b from-ink/40 via-ink/70 to-ink"
+              aria-hidden="true"
+            />
+            <div className="relative flex max-w-lg flex-col gap-5 text-[1.0625rem] leading-[1.4]">
+              {studioVoices.intro.map((p) => (
+                <p key={p}>{emphasise(p)}</p>
+              ))}
+            </div>
+            <div className="relative flex flex-col gap-5">
+              <p className="text-sm text-paper/60">{studioVoices.note}</p>
+              <div className="flex flex-wrap gap-2">
+                <ButtonLink href="/contact" arrow className="min-w-0">
+                  Start a project
+                </ButtonLink>
+                <ButtonLink href="/about" variant="ink" className="min-w-0 bg-paper text-ink">
+                  About us
+                </ButtonLink>
+              </div>
+            </div>
+          </Reveal>
+
+          <Reveal stagger={0.08} as="ul" className="grid gap-3 sm:grid-cols-2">
+            {voices.map((t) => (
+              <li
+                key={t.quote}
+                className="group relative flex min-h-[17rem] flex-col justify-between gap-6 overflow-hidden rounded-[4px] bg-moss-900 p-5 text-paper"
+              >
+                <figure className="flex h-full flex-col justify-between gap-6">
+                  <figcaption className="flex items-start justify-between gap-3">
+                    <span className="flex flex-col">
+                      <span className="text-sm font-medium">{t.role}</span>
+                      <span className="text-sm text-paper/80">{t.company}</span>
+                    </span>
+                    <span className="rounded-[2px] bg-paper/10 px-1.5 py-0.5 font-mono text-[10px] tracking-[0.06em] uppercase">
+                      Sample
+                    </span>
+                  </figcaption>
                   <span
-                    className="grid size-10 shrink-0 place-items-center rounded-full bg-lime text-[13px] font-medium text-ink"
+                    className="font-display text-[4.5rem] leading-none font-medium tracking-[-0.05em] text-lime/90 transition-opacity duration-500 group-hover:opacity-0 [@media(hover:none)]:hidden"
                     aria-hidden="true"
                   >
                     {initials(t.company)}
                   </span>
-                  <span className="flex flex-col">
-                    <span className="text-[14px] font-medium">{t.role}</span>
-                    <span className="text-[13px] text-stone">
-                      {t.company} · {t.service}
-                    </span>
-                  </span>
-                </figcaption>
-              </figure>
-            </li>
-          ))}
-        </ul>
-      </Reveal>
+                  <blockquote className="text-[15px] leading-[1.4] transition-opacity duration-500 [@media(hover:hover)]:absolute [@media(hover:hover)]:inset-x-5 [@media(hover:hover)]:bottom-5 [@media(hover:hover)]:opacity-0 [@media(hover:hover)]:group-hover:opacity-100">
+                    “{t.quote}”
+                  </blockquote>
+                </figure>
+              </li>
+            ))}
+          </Reveal>
+        </div>
+      </div>
     </section>
   );
 }

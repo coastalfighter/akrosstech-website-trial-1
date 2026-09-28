@@ -1,66 +1,66 @@
-import { companyStats } from "@/content/site";
+import {
+  Cpu,
+  Factory,
+  GraduationCap,
+  HardHat,
+  Headset,
+  HeartPulse,
+  Landmark,
+  ShoppingCart,
+  type LucideIcon,
+} from "lucide-react";
 import { industries } from "@/content/industries";
+import { studioClients, studioStatement } from "@/content/studio";
 import { Marquee } from "@/components/motion/Marquee";
 import { Reveal } from "@/components/motion/Reveal";
 import { ScrubText } from "@/components/motion/Scroll";
-import { Counter } from "@/components/motion/Counter";
 import { Eyebrow } from "@/components/ui/SectionHeading";
 
+/** Logo-style mark per industry (icon + name), in the order of `industries`. */
+const marks: LucideIcon[] = [
+  HeartPulse,
+  Cpu,
+  Landmark,
+  Factory,
+  HardHat,
+  ShoppingCart,
+  Headset,
+  GraduationCap,
+];
+
 /**
- * Right after the cover: the industries we hire for as a quiet "client
- * row" marquee, then the brand statement lighting up word by word, and the
- * headline numbers.
+ * After the cover: who we work with (eyebrow + one line), a logo-style row
+ * of the industries we hire for, then the brand statement — one large
+ * sentence that lights up word by word.
  */
 export function Statement() {
   return (
-    <section id="about" aria-labelledby="statement-title" className="pt-24 pb-28 md:pt-32 md:pb-40">
-      <div className="container-page grid gap-8 md:grid-cols-[1fr_20rem]">
-        <p className="max-w-xs mono text-stone md:col-start-2">
-          Trusted by startups, staffing agencies and enterprise teams across the U.S.
-        </p>
-      </div>
+    <section id="about" aria-labelledby="statement-title" className="pt-28 pb-36 md:pt-32 md:pb-48">
+      <Reveal y={16} className="container-page flex flex-col gap-4">
+        <Eyebrow>{studioClients.eyebrow}</Eyebrow>
+        <p className="max-w-md text-base leading-[1.35]">{studioClients.body}</p>
+      </Reveal>
 
-      <Marquee duration={45} className="mt-10 border-y border-ink/10 py-7">
-        {industries.map((industry) => (
-          <span
-            key={industry.name}
-            className="flex items-center gap-5 px-6 text-[clamp(1.1rem,0.9rem+0.8vw,1.6rem)] font-medium tracking-[-0.03em] whitespace-nowrap text-ink/60"
-          >
-            <span className="size-1.5 bg-lime" aria-hidden="true" />
-            {industry.name}
-          </span>
-        ))}
+      <Marquee duration={50} className="mt-16 md:mt-20">
+        {industries.map((industry, i) => {
+          const Mark = marks[i] ?? Cpu;
+          return (
+            <span
+              key={industry.name}
+              className="flex items-center gap-3 px-8 font-display text-[clamp(1.25rem,1rem+0.7vw,1.6rem)] font-medium tracking-[-0.03em] whitespace-nowrap text-ink/70"
+            >
+              <Mark className="size-[1.1em] stroke-[1.75]" aria-hidden="true" />
+              {industry.name}
+            </span>
+          );
+        })}
       </Marquee>
 
-      <div className="container-page mt-24 grid gap-14 md:mt-36 lg:grid-cols-[14rem_1fr]">
-        <Reveal y={10}>
-          <Eyebrow>About Akrostech</Eyebrow>
-        </Reveal>
-        <div className="flex flex-col gap-16">
-          <h2 id="statement-title" className="sr-only">
-            About Akrostech
-          </h2>
-          <ScrubText className="max-w-5xl h-md">
-            At Akrostech, we build lean, efficient and high-performing remote teams that integrate
-            seamlessly into your business — recruitment, virtual assistance, accounting and legal
-            support. And now, we build the websites that help you grow, too.
-          </ScrubText>
-
-          <Reveal
-            stagger={0.08}
-            as="dl"
-            className="grid grid-cols-2 gap-y-10 border-t border-ink/12 pt-10 md:grid-cols-4"
-          >
-            {companyStats.map((stat) => (
-              <div key={stat.label} className="flex flex-col gap-2 pr-6">
-                <dt className="order-2 text-[13px] text-stone">{stat.label}</dt>
-                <dd className="order-1 h-lg tabular-nums">
-                  <Counter value={stat.value} decimals={stat.decimals} suffix={stat.suffix} />
-                </dd>
-              </div>
-            ))}
-          </Reveal>
-        </div>
+      <div className="container-page mt-40 md:mt-56">
+        <h2 id="statement-title" className="sr-only">
+          About Akrostech
+        </h2>
+        <ScrubText className="max-w-[46rem] text-statement">{studioStatement}</ScrubText>
       </div>
     </section>
   );

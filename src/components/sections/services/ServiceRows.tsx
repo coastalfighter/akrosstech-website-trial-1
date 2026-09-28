@@ -30,7 +30,7 @@ export function ServiceRows() {
                   <Badge className="group-hover:bg-ink group-hover:text-lime">New</Badge>
                 )}
               </h2>
-              <p className="max-w-md text-[14px] leading-relaxed text-stone group-hover:text-ink/80">
+              <p className="max-w-md text-[15px] leading-[1.4] text-stone group-hover:text-ink/80">
                 {s.summary}
               </p>
               <span className="relative hidden aspect-[4/3] w-full overflow-hidden rounded-[4px] md:block">

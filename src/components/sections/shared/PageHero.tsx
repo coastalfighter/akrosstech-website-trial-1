@@ -75,7 +75,7 @@ export function PageHero({
           {(description || children) && (
             <IntroFade delay={0.3} className="flex max-w-lg flex-col gap-6">
               {description && (
-                <p className="text-[15px] leading-relaxed text-stone sm:text-base">{description}</p>
+                <p className="text-base leading-[1.4] text-stone sm:text-base">{description}</p>
               )}
               {children}
             </IntroFade>

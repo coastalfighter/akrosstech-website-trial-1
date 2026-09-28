@@ -4,7 +4,8 @@ import { useCallback, useEffect, useRef, useState } from "react";
 import Image from "next/image";
 import { AnimatePresence, m } from "motion/react";
 import { ArrowLeft, ArrowRight } from "lucide-react";
-import { industries, industriesIntro } from "@/content/industries";
+import { industries } from "@/content/industries";
+import { studioIndustries } from "@/content/studio";
 import { usePrefersReducedMotion } from "@/hooks/useMediaQuery";
 import { ButtonLink } from "@/components/ui/Button";
 import { Eyebrow } from "@/components/ui/SectionHeading";
@@ -131,17 +132,20 @@ export function IndustriesSlider() {
       </div>
 
       {/* Caption */}
-      <div className="absolute inset-x-0 bottom-16 container-page grid gap-8 md:bottom-20 md:grid-cols-[1fr_24rem] md:items-end">
+      <div className="absolute inset-x-0 bottom-20 container-page grid gap-8 md:bottom-24 md:grid-cols-[1fr_22rem] md:items-end">
         <div className="flex flex-col gap-4">
-          <Eyebrow>{industriesIntro.eyebrow}</Eyebrow>
-          <h2 id="industries-title" className="max-w-md h-md">
-            {industriesIntro.title}
+          <Eyebrow>{studioIndustries.eyebrow}</Eyebrow>
+          <h2
+            id="industries-title"
+            className="max-w-xl font-display text-[clamp(2rem,1.3rem+2vw,3.05rem)] leading-[1.02] font-medium tracking-[-0.03em]"
+          >
+            {studioIndustries.title}
           </h2>
         </div>
         <div className="flex flex-col gap-5">
-          <p className="text-[14px] leading-relaxed text-fog">{industriesIntro.body}</p>
+          <p className="text-base leading-[1.35] text-paper/82">{studioIndustries.body}</p>
           <ButtonLink href="/services/recruitment-process-outsourcing" arrow className="w-fit">
-            Recruitment services
+            {studioIndustries.cta}
           </ButtonLink>
         </div>
       </div>

@@ -84,11 +84,11 @@ export function ProcessTrack() {
             <Icon name={step.icon} className="size-7 text-lime" />
             <div className="flex flex-col gap-3">
               <h3 className="h-md">{step.title}</h3>
-              <p className="text-[14px] leading-relaxed text-fog">{step.description}</p>
+              <p className="text-[15px] leading-[1.4] text-fog">{step.description}</p>
             </div>
             <ul className="mt-auto flex flex-wrap gap-2">
               {step.deliverables.map((d) => (
-                <li key={d} className="rounded-[3px] border border-paper/15 px-2 py-1 text-[12px]">
+                <li key={d} className="rounded-[2px] border border-paper/15 px-2 py-1 text-[13px]">
                   {d}
                 </li>
               ))}

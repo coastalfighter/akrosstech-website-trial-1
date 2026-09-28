@@ -43,10 +43,13 @@ export function LogoMark({
 export function Logo({ className }: { className?: string }) {
   return (
     <span className={cn("inline-flex items-center gap-2.5", className)}>
-      <span className="grid size-7 place-items-center rounded-[6px] bg-ink" aria-hidden="true">
-        <LogoMark className="w-[18px] text-lime" />
+      {/* Tile takes the text colour, so it inverts over dark sections. */}
+      <span className="grid size-7 place-items-center rounded-[6px] bg-current" aria-hidden="true">
+        <LogoMark className="logo-glyph w-[18px] text-lime" />
       </span>
-      <span className="text-[17px] font-medium tracking-[-0.03em]">Akrostech</span>
+      <span className="font-display text-[21px] leading-none font-medium tracking-[-0.03em]">
+        Akrostech
+      </span>
     </span>
   );
 }

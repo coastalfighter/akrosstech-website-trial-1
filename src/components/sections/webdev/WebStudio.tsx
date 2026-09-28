@@ -32,7 +32,7 @@ export function WebServicesList() {
                   <Icon name={service.icon} className="size-5 shrink-0" />
                   {service.title}
                 </h3>
-                <p className="text-[14px] leading-relaxed text-stone">{service.description}</p>
+                <p className="text-[15px] leading-[1.4] text-stone">{service.description}</p>
               </div>
               <ul className="flex flex-col gap-2 text-[14px]">
                 {service.points.map((point) => (
@@ -124,7 +124,7 @@ export function Pricing({
         <div className="mb-14 grid gap-8 lg:grid-cols-[1fr_24rem] lg:items-end">
           <SectionHeading id={`${id}-title`} eyebrow={eyebrow} title={title} size="lg" />
           <Reveal y={16}>
-            <p className="text-[15px] leading-relaxed text-stone">{description}</p>
+            <p className="text-base leading-[1.4] text-stone">{description}</p>
           </Reveal>
         </div>
         <Reveal
@@ -223,7 +223,7 @@ export function WebWhyUs() {
               </span>
               <div className="flex flex-col gap-2">
                 <h3 className="h-sm">{item.title}</h3>
-                <p className="text-[14px] leading-relaxed text-stone">{item.description}</p>
+                <p className="text-[15px] leading-[1.4] text-stone">{item.description}</p>
               </div>
             </li>
           ))}
