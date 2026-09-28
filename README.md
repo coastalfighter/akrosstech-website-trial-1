@@ -14,7 +14,7 @@ GSAP, Framer Motion and Lenis, and it deploys to Vercel.
 - **Real photography** (Unsplash licence) graded to black and white. Photos warm to full colour on
   hover.
 - Effects: counter preloader that wipes up, a full-bleed AKROSTECH wordmark that rises in and
-  spreads apart on scroll (hovering it paints a liquid, photo-filled trail — `HeroTrail`), a
+  spreads apart on scroll (moving the pointer stirs a WebGL fluid simulation — a port of the noth.in hero — whose dye reveals a colour photo, `FluidReveal`), a
   scroll-expanding image, scroll-scrubbed manifesto text, tilted marquee
   ribbons, hover-flood service rows with a cursor-following photo, a spreading "WORKS" title over an
   asymmetric parallax grid, a horizontal principles accordion, a pinned process timeline, a

@@ -4,13 +4,15 @@ import { site } from "@/content/site";
 import { IntroFade, IntroTitle } from "@/components/motion/Intro";
 import { Wordmark } from "@/components/layout/Wordmark";
 import { ButtonLink } from "@/components/ui/Button";
-import { HeroTrail } from "@/components/effects/HeroTrail";
+import { FluidRevealLazy } from "@/components/effects/FluidRevealLazy";
 
 /**
  * noth.in-inspired opener: serif statement + call to action up top, the
  * full-bleed AKROSTECH wordmark in the middle (letters rise in, then drift
- * apart as you scroll; hovering paints it with a photo trail), and a quiet
- * meta row along the bottom.
+ * apart as you scroll), and a quiet meta row along the bottom. Moving the
+ * pointer stirs a fluid simulation whose dye reveals a photo over the
+ * wordmark (FluidReveal, a port of the noth.in hero). Layering: wordmark
+ * below the fluid canvas, copy and controls above it.
  */
 export function Hero() {
   return (
@@ -19,9 +21,10 @@ export function Hero() {
       data-tone="paper"
       data-index-label="Start"
       aria-labelledby="hero-title"
-      className="relative flex min-h-[100svh] flex-col justify-between pt-24 pb-6"
+      className="relative isolate flex min-h-[100svh] flex-col justify-between pt-24 pb-6"
     >
-      <div className="container-page grid gap-8 md:grid-cols-2 md:items-start">
+      <FluidRevealLazy className="z-[1]" />
+      <div className="relative z-[2] container-page grid gap-8 md:grid-cols-2 md:items-start">
         <IntroTitle id="hero-title" as="h1" className="max-w-xl display-md text-fg">
           {"Offshore talent. *Onshore quality.*"}
         </IntroTitle>
@@ -36,14 +39,11 @@ export function Hero() {
         </IntroFade>
       </div>
 
-      {/* Hover paints the wordmark with a liquid, photo-filled trail. */}
-      <HeroTrail className="py-10 text-fg">
-        <Wordmark intro spread className="px-2 md:px-4" />
-      </HeroTrail>
+      <Wordmark intro spread className="my-10 px-2 text-fg md:px-4" />
 
       <IntroFade
         delay={0.5}
-        className="container-page flex items-end justify-between gap-4 label text-muted"
+        className="relative z-[2] container-page flex items-end justify-between gap-4 label text-muted"
       >
         <span className="hidden sm:block">( Outsourcing &amp; web studio )</span>
         <span>Wilmington, DE — India</span>
