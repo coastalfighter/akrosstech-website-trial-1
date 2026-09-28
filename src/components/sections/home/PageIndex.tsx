@@ -29,11 +29,16 @@ export function PageIndex() {
   }, []);
 
   if (sections.length === 0) return null;
+  // Stay out of the way of the full-bleed hero wordmark.
+  const onHero = active === null || active === sections[0]?.id;
 
   return (
     <nav
       aria-label="On this page"
-      className="fixed top-1/2 left-6 z-40 hidden -translate-y-1/2 text-fg transition-colors duration-700 2xl:block"
+      className={cn(
+        "fixed top-1/2 left-6 z-40 hidden -translate-y-1/2 text-fg transition-[color,opacity] duration-700 2xl:block",
+        onHero && "pointer-events-none opacity-0",
+      )}
     >
       <p className="mb-4 label opacity-50">On this page</p>
       <ul className="flex flex-col gap-2">

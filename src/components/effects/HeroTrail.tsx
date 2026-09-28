@@ -7,23 +7,25 @@ import { coverFit, interpolate, lifeScale, type TrailPoint } from "@/lib/trail";
 import { cn } from "@/lib/utils";
 
 /** How long a painted blob lives before it has fully retracted (ms). */
-const LIFE = 1700;
+const LIFE = 1100;
 /** Hard cap so a frantic cursor can never grow the draw list unbounded. */
 const MAX_POINTS = 360;
-/** Ink rim around the photo, as a fraction of the blob radius. */
-const RIM = 0.2;
+/** Hairline ink rim around the photo (CSS px). */
+const RIM = 2;
 /** Canvas overflow above/below the band so blobs near its edge stay round. */
-const BLEED = 140;
+const BLEED = 80;
 /** Focal point of the photo: the lit-up cities in the lower half. */
-const FOCUS = { x: 0.5, y: 0.69 };
+const FOCUS = { x: 0.5, y: 0.72 };
 /** Zoomed in so the whole band stays over the city lights, not the sky. */
-const ZOOM = 1.8;
+const ZOOM = 1.35;
 
-// Resolved once at module level: responsive, optimised variants of the photo.
+// Resolved once at module level: an optimised 1920px variant of the photo
+// (sharp at the zoom it is drawn with, without shipping the 2400px original).
 const { props: photoProps } = getImageProps({
   src: heroEarth,
   alt: "",
-  sizes: "100vw",
+  width: 1920,
+  height: Math.round((1920 * heroEarth.height) / heroEarth.width),
   quality: 70,
 });
 
@@ -87,8 +89,6 @@ export function HeroTrail({
       imageRequested = true;
       const img = new Image();
       img.decoding = "async";
-      if (photoProps.srcSet) img.srcset = photoProps.srcSet;
-      if (photoProps.sizes) img.sizes = photoProps.sizes;
       img.src = photoProps.src;
       img
         .decode()
@@ -97,7 +97,7 @@ export function HeroTrail({
           image = brighten(img);
         })
         .catch(() => {
-          // Photo unavailable: the stroke still paints in solid ink.
+          // Photo unavailable: the effect simply stays off.
         });
     };
 
@@ -117,8 +117,9 @@ export function HeroTrail({
       ctx.beginPath();
       for (const p of points) {
         const wobble = 1 + 0.07 * Math.sin(now * 0.004 + p.seed);
-        const r = p.r * lifeScale(now - p.born, LIFE) * wobble * factor + extra;
-        if (r <= 0.5) continue;
+        const core = p.r * lifeScale(now - p.born, LIFE) * wobble * factor;
+        if (core <= 0.5) continue;
+        const r = core + extra;
         ctx.moveTo(p.x + r, p.y);
         ctx.arc(p.x, p.y, r, 0, Math.PI * 2);
       }
@@ -132,9 +133,9 @@ export function HeroTrail({
         return;
       }
 
-      // 1. Ink body (slightly larger) — merges with the letters like wet paint.
+      // 1. Hairline ink rim — just enough to separate photo from paper.
       ctx.fillStyle = ink;
-      circles(now, 1 + RIM, 0);
+      circles(now, 1, RIM);
       ctx.fill();
 
       // 2. The photo, clipped to the inner blobs, drifting against the cursor.
@@ -164,24 +165,26 @@ export function HeroTrail({
     const onMove = (e: PointerEvent) => {
       if (e.pointerType !== "mouse" && e.pointerType !== "pen") return;
       requestImage();
+      // Never paint a bare ink stroke: wait until the photo is ready.
+      if (!image) return;
       const rect = wrap.getBoundingClientRect();
       const x = e.clientX - rect.left;
       // Canvas space: shifted by the bleed, and kept within the band so the
       // stroke never paints over the headline or the footer row.
       const y = Math.min(Math.max(e.clientY - rect.top, 0), rect.height) + BLEED;
       pointer = { x: x / Math.max(width, 1), y: y / Math.max(height, 1) };
-      const base = Math.min(Math.max(width * 0.045, 38), 110);
+      const base = Math.min(Math.max(width * 0.026, 22), 50);
       const now = performance.now();
       const from = last ?? { x, y };
       const speed = Math.hypot(x - from.x, y - from.y);
       // Faster strokes paint wider, like a loaded brush.
-      const boost = 0.75 + Math.min(speed / 60, 1) * 0.55;
+      const boost = 0.85 + Math.min(speed / 80, 1) * 0.3;
       const along = last ? interpolate(from, { x, y }, base * 0.35) : [{ x, y }];
       for (const pt of along) {
         points.push({
           x: pt.x,
           y: pt.y,
-          r: base * boost * (0.85 + Math.random() * 0.3),
+          r: base * boost * (0.9 + Math.random() * 0.2),
           born: now,
           seed: Math.random() * Math.PI * 2,
         });
@@ -195,6 +198,12 @@ export function HeroTrail({
       last = null;
     };
 
+    // Warm the photo once the page is idle, so the very first stroke has it.
+    const hasIdle = typeof window.requestIdleCallback === "function";
+    const idle = hasIdle
+      ? window.requestIdleCallback(requestImage, { timeout: 4000 })
+      : window.setTimeout(requestImage, 2500);
+
     wrap.addEventListener("pointerenter", onEnter);
     wrap.addEventListener("pointermove", onMove);
     wrap.addEventListener("pointerleave", onLeave);
@@ -203,6 +212,8 @@ export function HeroTrail({
       wrap.removeEventListener("pointermove", onMove);
       wrap.removeEventListener("pointerleave", onLeave);
       observer.disconnect();
+      if (hasIdle) window.cancelIdleCallback(idle);
+      else window.clearTimeout(idle);
       if (frame) cancelAnimationFrame(frame);
     };
   }, []);
