@@ -8,17 +8,20 @@ import {
 } from "@/content/website-development";
 import { pageMetadata, serializeJsonLd, serviceJsonLd } from "@/lib/seo";
 import { PageHero } from "@/components/sections/shared/PageHero";
-import { StatsSection } from "@/components/sections/shared/StatsSection";
-import { FaqSection } from "@/components/sections/shared/FaqSection";
-import { CtaBanner } from "@/components/sections/shared/CtaBanner";
-import { ContactSection } from "@/components/sections/shared/ContactSection";
+import { StatsRow } from "@/components/sections/shared/StatsRow";
+import { FaqBlock } from "@/components/sections/shared/FaqBlock";
+import { CtaBand } from "@/components/sections/shared/CtaBand";
+import { ContactPanel } from "@/components/sections/shared/ContactPanel";
 import { OtherServices } from "@/components/sections/services/ServiceDetail";
-import { Works } from "@/components/sections/home/Works";
-import { WebServicesList } from "@/components/sections/webdev/WebServicesList";
-import { TechStack } from "@/components/sections/webdev/TechStack";
-import { ProcessTimeline } from "@/components/sections/webdev/ProcessTimeline";
-import { Pricing } from "@/components/sections/webdev/Pricing";
-import { WebWhyUs } from "@/components/sections/webdev/WebWhyUs";
+import { SelectedWork } from "@/components/sections/home/SelectedWork";
+import {
+  Pricing,
+  TechStack,
+  WebServicesList,
+  WebWhyUs,
+} from "@/components/sections/webdev/WebStudio";
+import { ProcessTrack } from "@/components/sections/webdev/ProcessTrack";
+import { Eyebrow } from "@/components/ui/SectionHeading";
 import { ButtonLink } from "@/components/ui/Button";
 
 const description =
@@ -57,7 +60,7 @@ export default function WebsiteDevelopmentPage() {
         }}
       />
       <PageHero
-        label="New — Website Development"
+        eyebrow="New — Website Development"
         title="Websites that work as hard as *your team.*"
         description={webDevHero.intro}
         breadcrumbs={[
@@ -66,63 +69,59 @@ export default function WebsiteDevelopmentPage() {
         ]}
         photo="codeDark"
       >
-        <ul className="flex flex-wrap gap-2 label text-fg">
+        <ul className="flex flex-wrap gap-2 text-[13px]">
           {webDevHero.highlights.map((h) => (
-            <li key={h} className="rounded-full border border-line-strong px-3 py-1.5">
+            <li key={h} className="rounded-[3px] border border-ink/15 px-2.5 py-1.5">
               {h}
             </li>
           ))}
         </ul>
         <div className="flex flex-wrap gap-3">
-          <ButtonLink href="#contact" arrow>
+          <ButtonLink href="#contact" variant="solid" arrow>
             Start your project
           </ButtonLink>
-          <ButtonLink href="#packages" variant="outline">
-            View pricing
-          </ButtonLink>
+          <ButtonLink href="#packages">View pricing</ButtonLink>
         </div>
       </PageHero>
       <WebServicesList />
-      <ProcessTimeline />
+      <ProcessTrack />
       <TechStack />
       <Pricing
         id="packages"
-        label="Website packages"
-        index="04"
-        title="Transparent pricing for every *stage of growth*"
+        eyebrow="Website packages"
+        title="Transparent pricing for every *stage of growth.*"
         description="Starting prices for the most common website types. After a free discovery call you’ll receive a fixed quote—no surprises, no hidden fees."
         tiers={websitePackages}
         footnote="All packages include mobile-first design, basic SEO, analytics setup, launch support and 30 days of free post-launch fixes. Prices in USD."
       />
       <Pricing
         id="maintenance"
-        label="Maintenance & support"
-        index="04.1"
-        title="Keep it secure, fast and *improving*"
+        eyebrow="Maintenance & support"
+        title="Keep it secure, fast and *improving.*"
         description="Flexible monthly plans with no long-term contracts. Upgrade, downgrade or cancel anytime."
         tiers={maintenancePlans}
         footnote="Maintenance plans are available for websites we build and for existing sites after a quick technical audit. Prices in USD."
       />
       <WebWhyUs />
-      <StatsSection
-        stats={webStats}
-        label="Web by the numbers"
-        title="Built for startups, *scaled by enterprises.*"
-        tone="paper"
-      />
-      <Works />
-      <FaqSection faqs={webFaqs} index="07" title="Website development *FAQs*" />
-      <CtaBanner
-        eyebrow="Let's Get Started"
-        heading="Ready to elevate your brand online? *start now!*"
+      <section aria-labelledby="webstats-title" className="pb-32 md:pb-44">
+        <div className="container-page flex flex-col gap-10">
+          <Eyebrow>Web by the numbers</Eyebrow>
+          <h2 id="webstats-title" className="sr-only">
+            Web by the numbers
+          </h2>
+          <StatsRow stats={webStats} />
+        </div>
+      </section>
+      <SelectedWork showCta={false} />
+      <FaqBlock faqs={webFaqs} title="Website development *FAQs.*" />
+      <CtaBand
+        heading="Ready to elevate your brand online? Start now!"
         body="Tell us about your project and we’ll follow up with a tailored, fixed-price proposal."
         cta="Start your project"
         href="#contact"
-        photo="codeLaptop"
       />
-      <ContactSection
-        label="Start your project"
-        title="Let’s build something *remarkable*"
+      <ContactPanel
+        title="Let’s build something *remarkable.*"
         defaultService="Website Development"
       />
       <OtherServices currentSlug="website-development" />

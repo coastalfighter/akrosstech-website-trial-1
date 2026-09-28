@@ -1,29 +1,33 @@
 @import "tailwindcss";
 
 /* ──────────────────────────────────────────────────────────────
-   Akrostech — "Editorial" design system in the Akrostech brand
-   palette: lime #BFF747 on near-black, off-white type.
-   Sections alternate between two dark tones as they pass the middle
-   of the viewport (see <ToneController>):
-     data-tone="paper" → charcoal #1B1B1B (brand secondary)
-     data-tone="ink"   → black    #0B0B0B
+   Akrostech — "Studio" design system
+   Warm paper pages, ink sections, the brand lime as the single accent
+   and a deep moss family (derived from the lime) for rich dark surfaces.
+   Geist for everything, Geist Mono for small technical labels.
    ────────────────────────────────────────────────────────────── */
 @theme {
-  /* Off-white type colour (named "paper" for the tone system). */
-  --color-paper: #f5f5f4;
-  --color-ink: #0b0b0b;
-  --color-charcoal: #1b1b1b;
+  --color-paper: #f3f2ee;
+  --color-paper-2: #e9e7e1;
+  --color-ink: #0a0a0a;
+  --color-ink-2: #151515;
+  --color-stone: #62615c; /* muted text on paper (5.6:1) */
+  --color-fog: #a3a29c; /* muted text on ink (7.9:1) */
   --color-lime: #bff747;
   --color-lime-soft: #d6fb85;
+  --color-moss-950: #0b1004;
+  --color-moss-900: #111906;
+  --color-moss-800: #1a2709;
+  --color-moss-700: #26380d;
+  --color-moss-600: #344c12;
 
-  --font-sans: var(--font-grotesk), ui-sans-serif, system-ui, sans-serif;
-  --font-serif: var(--font-serif-display), ui-serif, Georgia, serif;
+  --font-sans: var(--font-geist), ui-sans-serif, system-ui, sans-serif;
+  --font-mono: var(--font-geist-mono), ui-monospace, SFMono-Regular, Menlo, monospace;
 
   --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
   --ease-in-out-quart: cubic-bezier(0.76, 0, 0.24, 1);
 
   --animate-marquee: marquee var(--marquee-duration, 40s) linear infinite;
-  --animate-spin-slow: spin 16s linear infinite;
 
   @keyframes marquee {
     from {
@@ -35,52 +39,19 @@
   }
 }
 
-/* Tone-aware tokens: utilities like bg-bg / text-fg follow the current tone. */
-@theme inline {
-  --color-bg: var(--tone-bg);
-  --color-fg: var(--tone-fg);
-  --color-muted: var(--tone-muted);
-  --color-line: var(--tone-line);
-  --color-line-strong: var(--tone-line-strong);
-  --color-soft: var(--tone-soft);
-}
-
-:root,
-html[data-tone="paper"],
-[data-tone="paper"][data-tone-scope] {
-  --tone-bg: #1b1b1b;
-  --tone-fg: #f5f5f4;
-  --tone-muted: #a8a8a3;
-  --tone-line: rgb(255 255 255 / 0.1);
-  --tone-line-strong: rgb(255 255 255 / 0.22);
-  --tone-soft: rgb(255 255 255 / 0.05);
-}
-html[data-tone="ink"],
-[data-tone="ink"][data-tone-scope] {
-  --tone-bg: #0b0b0b;
-  --tone-fg: #f5f5f4;
-  --tone-muted: #a8a8a3;
-  --tone-line: rgb(255 255 255 / 0.1);
-  --tone-line-strong: rgb(255 255 255 / 0.22);
-  --tone-soft: rgb(255 255 255 / 0.05);
-}
-
 @layer base {
   html {
-    background: var(--tone-bg);
+    background: var(--color-paper);
     -webkit-text-size-adjust: 100%;
-    transition: background-color 0.8s var(--ease-out-expo);
   }
   body {
-    background: var(--tone-bg);
-    color: var(--tone-fg);
+    background: var(--color-paper);
+    color: var(--color-ink);
     font-family: var(--font-sans);
+    font-feature-settings: "ss01", "cv11";
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     overflow-x: clip;
-    transition:
-      background-color 0.8s var(--ease-out-expo),
-      color 0.8s var(--ease-out-expo);
   }
   ::selection {
     background: var(--color-lime);
@@ -88,25 +59,19 @@ html[data-tone="ink"],
   }
   :focus-visible {
     outline: 2px solid var(--color-lime);
-    outline-offset: 4px;
+    outline-offset: 3px;
   }
   h1,
   h2,
   h3,
   h4 {
     text-wrap: balance;
-    font-weight: 400;
+    font-weight: 500;
   }
   p {
     text-wrap: pretty;
   }
-  em {
-    font-style: italic;
-  }
-  /* Italic accent words in headlines carry the brand lime. */
-  :where(h1, h2, h3, blockquote, [class*="display-"]) em {
-    color: var(--color-lime);
-  }
+  /* Smooth scrolling (Lenis) — native scroll-behavior must stay off. */
   html.lenis,
   html.lenis body {
     height: auto;
@@ -119,57 +84,84 @@ html[data-tone="ink"],
   }
 }
 
+/* Page gutter: full-bleed like a studio site, capped on ultra-wide screens. */
 @utility container-page {
   width: 100%;
-  max-width: 1480px;
+  max-width: 1680px;
   margin-inline: auto;
   padding-inline: 1.25rem;
   @media (min-width: 768px) {
-    padding-inline: 2.5rem;
+    padding-inline: 1.75rem;
   }
 }
 
-/* Small uppercase label, e.g. "( The Studio )". */
-@utility label {
-  font-family: var(--font-sans);
+/* Soft fade on both horizontal edges (marquees, carousels). */
+@utility mask-fade-x {
+  mask-image: linear-gradient(90deg, transparent, #000 7%, #000 93%, transparent);
+}
+
+/* Small technical label, e.g. "01 / 05 · NEW YORK". */
+@utility mono {
+  font-family: var(--font-mono);
   font-size: 0.6875rem;
   line-height: 1.4;
-  letter-spacing: 0.16em;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
+}
+
+/* Display type — Geist medium with tight tracking. */
+@utility h-display {
+  font-size: clamp(3rem, 1rem + 7.4vw, 9.5rem);
+  line-height: 0.92;
+  letter-spacing: -0.055em;
+  font-weight: 500;
+}
+@utility h-xl {
+  font-size: clamp(2.5rem, 1.2rem + 4.2vw, 6rem);
+  line-height: 0.96;
+  letter-spacing: -0.045em;
+  font-weight: 500;
+}
+@utility h-lg {
+  font-size: clamp(2rem, 1.2rem + 2.6vw, 4.25rem);
+  line-height: 1;
+  letter-spacing: -0.04em;
+  font-weight: 500;
+}
+@utility h-md {
+  font-size: clamp(1.6rem, 1.1rem + 1.4vw, 2.6rem);
+  line-height: 1.08;
+  letter-spacing: -0.03em;
+  font-weight: 500;
+}
+@utility h-sm {
+  font-size: clamp(1.25rem, 1rem + 0.6vw, 1.6rem);
+  line-height: 1.2;
+  letter-spacing: -0.02em;
   font-weight: 500;
 }
 
-/* Editorial serif display sizes. */
-@utility display-xl {
-  font-family: var(--font-serif);
-  font-size: clamp(3.25rem, 1.4rem + 7vw, 9.5rem);
-  line-height: 0.92;
-  letter-spacing: -0.02em;
-}
-@utility display-lg {
-  font-family: var(--font-serif);
-  font-size: clamp(2.6rem, 1.4rem + 4.6vw, 6.5rem);
-  line-height: 0.95;
-  letter-spacing: -0.015em;
-}
-@utility display-md {
-  font-family: var(--font-serif);
-  font-size: clamp(2rem, 1.3rem + 2.6vw, 4rem);
-  line-height: 1.02;
-  letter-spacing: -0.01em;
-}
-
 @layer components {
-  /* Full-colour photography, slightly muted until hovered. */
+  /* Fixed chrome takes the colour of the section beneath it (theme sensor
+     in <MotionController> sets html[data-header] / html[data-bar]). */
+  .site-header,
+  .site-bar {
+    color: var(--color-ink);
+    transition: color 0.45s var(--ease-out-expo);
+  }
+  html[data-header="dark"] .site-header,
+  html[data-hero-header="dark"] .site-header,
+  .site-header.is-menu-open,
+  html[data-bar="dark"] .site-bar {
+    color: var(--color-paper);
+  }
+
+  /* Photos: optimised, subtle zoom on hover. */
   .photo img {
-    filter: saturate(0.85) brightness(0.92);
-    transition:
-      filter 0.9s var(--ease-out-expo),
-      transform 1.4s var(--ease-out-expo);
+    transition: transform 1.4s var(--ease-out-expo);
   }
   .group:hover .photo img,
   .photo-hover:hover img {
-    filter: saturate(1.05) brightness(1);
     transform: scale(1.04);
   }
 
@@ -202,17 +194,6 @@ html[data-tone="ink"],
     transform: translateY(-100%);
   }
 
-  /* Film grain for tactile depth (static; no repaint cost). */
-  .noise-overlay {
-    pointer-events: none;
-    position: fixed;
-    inset: 0;
-    z-index: 60;
-    opacity: 0.06;
-    mix-blend-mode: overlay;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.9 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
-  }
-
   /* ── Above-the-fold intro (pure CSS, runs before hydration). ── */
   .hero-mask {
     display: inline-block;
@@ -226,73 +207,74 @@ html[data-tone="ink"],
     display: inline-block;
     transform: translate3d(0, 115%, 0);
     animation: intro-in 1.2s var(--ease-out-expo) forwards;
-    animation-delay: calc(var(--intro-offset, 0s) + var(--hero-delay, 0.05s) + var(--i) * 0.06s);
+    animation-delay: calc(var(--intro-offset, 0s) + var(--hero-delay, 0.05s) + var(--i) * 0.05s);
   }
   @keyframes intro-in {
     to {
       transform: translate3d(0, 0, 0);
     }
   }
-  /* --fade-from is 1 while the preloader covers the page (content paints
-     immediately and only rises), 0 otherwise. */
   .hero-fade {
     opacity: var(--fade-from, 0);
-    transform: translate3d(0, 20px, 0);
+    transform: translate3d(0, 16px, 0);
     animation: hero-fade-in 1.1s var(--ease-out-expo) forwards;
     animation-delay: calc(var(--intro-offset, 0s) + var(--d, 0.4s));
   }
   @keyframes hero-fade-in {
     from {
       opacity: var(--fade-from, 0);
-      transform: translate3d(0, 20px, 0);
+      transform: translate3d(0, 16px, 0);
     }
     to {
       opacity: 1;
       transform: translate3d(0, 0, 0);
     }
   }
-
-  /* Custom cursor — enabled for fine pointers by the component. */
-  html.has-custom-cursor,
-  html.has-custom-cursor a,
-  html.has-custom-cursor button {
-    cursor: none;
+  /* Slow cinematic push-in for the hero photograph. */
+  .ken-burns {
+    animation: ken-burns 24s ease-out both;
   }
-  html.has-custom-cursor input,
-  html.has-custom-cursor textarea,
-  html.has-custom-cursor select {
-    cursor: text;
+  @keyframes ken-burns {
+    from {
+      transform: scale(1.14);
+    }
+    to {
+      transform: scale(1.02);
+    }
   }
 
   /* Prose (blog + legal). */
   .prose-ak {
-    color: var(--tone-muted);
+    color: var(--color-stone);
     font-size: 1.0625rem;
-    line-height: 1.8;
+    line-height: 1.75;
   }
   .prose-ak > * + * {
     margin-top: 1.25em;
   }
   .prose-ak h2 {
-    color: var(--tone-fg);
-    font-family: var(--font-serif);
-    font-size: clamp(1.75rem, 1.3rem + 1.4vw, 2.5rem);
+    color: var(--color-ink);
+    font-size: clamp(1.6rem, 1.2rem + 1.2vw, 2.25rem);
     line-height: 1.1;
+    letter-spacing: -0.03em;
+    font-weight: 500;
     margin-top: 2em;
   }
   .prose-ak h3 {
-    color: var(--tone-fg);
+    color: var(--color-ink);
     font-size: 1.2rem;
     font-weight: 600;
     margin-top: 1.8em;
   }
   .prose-ak strong {
-    color: var(--tone-fg);
+    color: var(--color-ink);
     font-weight: 600;
   }
   .prose-ak a {
-    color: var(--tone-fg);
+    color: var(--color-ink);
     text-decoration: underline;
+    text-decoration-color: var(--color-lime);
+    text-decoration-thickness: 2px;
     text-underline-offset: 3px;
   }
   .prose-ak ul,
@@ -310,10 +292,11 @@ html[data-tone="ink"],
     content: "";
     position: absolute;
     left: -0.9rem;
-    top: 0.8em;
-    width: 8px;
-    height: 1px;
-    background: var(--tone-fg);
+    top: 0.7em;
+    width: 6px;
+    height: 6px;
+    background: var(--color-lime);
+    border-radius: 999px;
   }
   .prose-ak ol {
     list-style: decimal;
@@ -328,23 +311,24 @@ html[data-tone="ink"],
   }
   .prose-ak th,
   .prose-ak td {
-    border-bottom: 1px solid var(--tone-line);
+    border-bottom: 1px solid rgb(10 10 10 / 0.12);
     padding: 0.85rem 1rem 0.85rem 0;
     text-align: left;
     vertical-align: top;
   }
   .prose-ak th {
-    color: var(--tone-fg);
+    color: var(--color-ink);
+    font-family: var(--font-mono);
     font-size: 0.7rem;
-    letter-spacing: 0.14em;
+    letter-spacing: 0.08em;
     text-transform: uppercase;
     font-weight: 500;
   }
 }
 
 /* ──────────────────────────────────────────────────────────────
-   Preloader — pure CSS: mark draws + counter (0–0.9s), then the
-   ink panel slides up (1.0–1.6s). Hero intro is offset to match.
+   Preloader — pure CSS: counter + progress line (0–1.0s), then the
+   ink panel slides up (1.0–1.8s). Hero intro is offset to match.
    ────────────────────────────────────────────────────────────── */
 @property --preload-count {
   syntax: "<integer>";
@@ -355,7 +339,11 @@ html[data-tone="ink"],
   counter-reset: preload var(--preload-count);
 }
 .preloader-count::before {
-  content: counter(preload, decimal-leading-zero);
+  content: counter(preload);
+}
+.preloader-bar {
+  transform: scaleX(0);
+  transform-origin: left;
 }
 html[data-preloader="active"] {
   --intro-offset: 1.1s;
@@ -365,11 +353,31 @@ html[data-preloader="active"] .preloader {
   animation: preload-out 0.8s var(--ease-in-out-quart) 1s forwards;
 }
 html[data-preloader="active"] .preloader-count {
-  animation: preload-count 0.9s cubic-bezier(0.3, 0.7, 0.2, 1) forwards;
+  animation: preload-count 0.95s cubic-bezier(0.3, 0.7, 0.2, 1) forwards;
 }
-html[data-preloader="active"] .preloader-inner {
-  animation: preload-inner 0.8s var(--ease-in-out-quart) 1s forwards;
+html[data-preloader="active"] .preloader-bar {
+  animation: preload-bar 0.95s cubic-bezier(0.3, 0.7, 0.2, 1) forwards;
 }
+@keyframes preload-count {
+  to {
+    --preload-count: 100;
+  }
+}
+@keyframes preload-bar {
+  to {
+    transform: scaleX(1);
+  }
+}
+@keyframes preload-out {
+  to {
+    transform: translate3d(0, -100%, 0);
+    visibility: hidden;
+  }
+}
+html[data-preloader="done"] .preloader {
+  display: none !important;
+}
+
 .logo-draw {
   stroke-dasharray: 1;
   stroke-dashoffset: 1;
@@ -383,26 +391,6 @@ html[data-preloader="active"] .preloader-inner {
   to {
     stroke-dashoffset: 0;
   }
-}
-@keyframes preload-count {
-  to {
-    --preload-count: 100;
-  }
-}
-@keyframes preload-out {
-  to {
-    transform: translate3d(0, -100%, 0);
-    visibility: hidden;
-  }
-}
-@keyframes preload-inner {
-  to {
-    transform: translate3d(0, 40%, 0);
-    opacity: 0;
-  }
-}
-html[data-preloader="done"] .preloader {
-  display: none !important;
 }
 
 @media (prefers-reduced-motion: reduce) {

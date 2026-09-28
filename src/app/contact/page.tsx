@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
 import { breadcrumbJsonLd, pageMetadata, serializeJsonLd } from "@/lib/seo";
-import { ContactSection } from "@/components/sections/shared/ContactSection";
-import { FaqSection } from "@/components/sections/shared/FaqSection";
 import { serviceFaqs } from "@/content/faqs";
+import { ContactPanel } from "@/components/sections/shared/ContactPanel";
+import { FaqBlock } from "@/components/sections/shared/FaqBlock";
 
 export const metadata: Metadata = pageMetadata({
   title: "Contact Us",
@@ -25,8 +25,14 @@ export default function ContactPage() {
           ),
         }}
       />
-      <ContactSection headingLevel="h1" />
-      <FaqSection faqs={serviceFaqs.slice(-4)} title="Before you *reach out*" tone="ink" />
+      <ContactPanel
+        asPage
+        title="Get in *touch.*"
+        description="We’re always here to assist you! Whether you have questions, need support, or want to discuss your next project, feel free to reach out anytime."
+      />
+      <div className="pt-24 md:pt-32">
+        <FaqBlock faqs={serviceFaqs.slice(-4)} title="Before you *reach out.*" />
+      </div>
     </>
   );
 }

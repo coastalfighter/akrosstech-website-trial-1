@@ -4,48 +4,44 @@ import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { AnimatePresence, m } from "motion/react";
-import { mainNav, serviceLinks } from "@/content/navigation";
+import { serviceLinks } from "@/content/navigation";
 import { site } from "@/content/site";
-import { servicePhotos, type PhotoKey } from "@/content/media";
-import { Photo } from "@/components/ui/Photo";
 import { useLenisInstance } from "@/components/providers/SmoothScroll";
+import { Badge } from "@/components/ui/Badge";
 import { cn } from "@/lib/utils";
 import { Logo } from "./Logo";
 
 const isActive = (pathname: string, href: string) =>
   href === "/" ? pathname === "/" : pathname.startsWith(href);
 
-/** Menu overlay entries: pages + every service, each with a preview photo. */
-const menuItems: { label: string; href: string; photo: PhotoKey; badge?: string }[] = [
-  { label: "Home", href: "/", photo: "heroEarth" },
-  { label: "Studio", href: "/about", photo: "teamLaptops" },
-  { label: "Services", href: "/services", photo: "meeting" },
-  ...serviceLinks.map((s) => ({
-    label: s.label,
-    href: s.href,
-    badge: s.badge,
-    photo: servicePhotos[s.href.split("/").pop() ?? ""]?.hero ?? ("blocks" as PhotoKey),
-  })),
-  { label: "Journal", href: "/blog", photo: "library" },
-  { label: "Contact", href: "/contact", photo: "handshake" },
+/** Two small link columns next to the logo (studio-site style). */
+const navColumns = [
+  [
+    { label: "Services", href: "/services" },
+    { label: "Websites", href: "/services/website-development" },
+    { label: "About", href: "/about" },
+  ],
+  [
+    { label: "Journal", href: "/blog" },
+    { label: "Contact", href: "/contact" },
+    { label: "LinkedIn", href: site.social.linkedin },
+  ],
 ];
 
-/** Nav link whose label rolls to a duplicate on hover. */
-function RollLink({
-  href,
-  children,
-  active,
-}: {
-  href: string;
-  children: React.ReactNode;
-  active?: boolean;
-}) {
-  return (
-    <Link
-      href={href}
-      aria-current={active ? "page" : undefined}
-      className="group relative inline-flex items-center gap-2 py-2 label"
-    >
+/** Full-screen menu entries. */
+const menuLinks = [
+  { label: "Home", href: "/" },
+  { label: "Services", href: "/services" },
+  { label: "About", href: "/about" },
+  { label: "Journal", href: "/blog" },
+  { label: "Contact", href: "/contact" },
+];
+
+function NavLinkItem({ href, label, active }: { href: string; label: string; active: boolean }) {
+  const external = href.startsWith("http");
+  const className = "group inline-flex items-center gap-1.5 text-[13px] leading-[1.35]";
+  const inner = (
+    <>
       <span
         className={cn(
           "size-1 rounded-full bg-lime transition-opacity",
@@ -54,41 +50,38 @@ function RollLink({
         aria-hidden="true"
       />
       <span className="roll">
-        <span>{children}</span>
-        <span aria-hidden="true">{children}</span>
+        <span>{label}</span>
+        <span aria-hidden="true">{label}</span>
       </span>
+    </>
+  );
+  return external ? (
+    <a href={href} target="_blank" rel="noopener noreferrer" className={className}>
+      {inner}
+    </a>
+  ) : (
+    <Link href={href} aria-current={active ? "page" : undefined} className={className}>
+      {inner}
     </Link>
   );
 }
 
+/**
+ * Fixed studio header. Text colour follows the section underneath (see the
+ * theme sensor in <MotionController>): light over dark sections, ink over
+ * paper. The burger opens a full-screen ink menu.
+ */
 export function Header() {
   const pathname = usePathname();
   const lenis = useLenisInstance();
-  const [hidden, setHidden] = useState(false);
-  const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
-  const [hovered, setHovered] = useState(0);
   const [previousPath, setPreviousPath] = useState(pathname);
-  const lastY = useRef(0);
   const menuButtonRef = useRef<HTMLButtonElement>(null);
 
   if (pathname !== previousPath) {
     setPreviousPath(pathname);
     setMenuOpen(false);
   }
-
-  // Hide on scroll down, reveal on scroll up.
-  useEffect(() => {
-    const onScroll = () => {
-      const y = window.scrollY;
-      setScrolled(y > 40);
-      if (y > 300 && y > lastY.current + 4) setHidden(true);
-      else if (y < lastY.current - 4 || y < 300) setHidden(false);
-      lastY.current = y;
-    };
-    window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
-  }, []);
 
   // Lock scroll while the menu is open; Escape closes it.
   useEffect(() => {
@@ -112,73 +105,56 @@ export function Header() {
 
   return (
     <>
-      <header
-        // While the ink menu overlay is open the bar must read as ink too.
-        data-tone={menuOpen ? "ink" : undefined}
-        data-tone-scope={menuOpen ? "" : undefined}
-        className={cn(
-          "fixed inset-x-0 top-0 z-50 text-fg transition-[transform,color,background-color,border-color] duration-700 ease-[cubic-bezier(0.16,1,0.3,1)]",
-          hidden && !menuOpen && "-translate-y-full",
-          // Once the page moves, a quiet backdrop keeps links legible over content.
-          scrolled && !menuOpen && "border-b border-line bg-bg/80 backdrop-blur-md",
-        )}
-      >
-        <div className="container-page flex h-20 items-center justify-between gap-6">
-          <Link href="/" aria-label="Akrostech — home" className="relative z-10 shrink-0">
+      <header className={cn("site-header fixed inset-x-0 top-0 z-50", menuOpen && "is-menu-open")}>
+        <div className="container-page grid h-18 grid-cols-[auto_1fr_auto] items-start gap-6 pt-5 lg:grid-cols-[1fr_1fr_1fr_auto]">
+          <Link href="/" aria-label="Akrostech — home" className="w-fit">
             <Logo />
           </Link>
 
-          <nav aria-label="Main" className="hidden lg:block">
-            <ul className="flex items-center gap-8">
-              {mainNav.map((item) => (
-                <li key={item.href}>
-                  <RollLink href={item.href} active={isActive(pathname, item.href)}>
-                    {item.label}
-                  </RollLink>
-                </li>
+          <nav aria-label="Main" className="hidden lg:col-span-2 lg:block">
+            <div className="grid grid-cols-2 gap-6">
+              {navColumns.map((column, i) => (
+                <ul key={i} className="flex flex-col">
+                  {column.map((item) => (
+                    <li key={item.href}>
+                      <NavLinkItem
+                        href={item.href}
+                        label={item.label}
+                        active={!item.href.startsWith("http") && isActive(pathname, item.href)}
+                      />
+                    </li>
+                  ))}
+                </ul>
               ))}
-            </ul>
+            </div>
           </nav>
 
-          <div className="flex items-center gap-2 sm:gap-4">
-            <Link
-              href="/contact"
-              className="group hidden h-10 items-center rounded-full border border-line-strong px-5 label transition-colors hover:border-lime hover:bg-lime hover:text-ink sm:inline-flex"
-            >
-              <span className="roll">
-                <span>Book a call</span>
-                <span aria-hidden="true">Book a call</span>
-              </span>
-            </Link>
-            <button
-              ref={menuButtonRef}
-              type="button"
-              onClick={() => setMenuOpen((v) => !v)}
-              aria-expanded={menuOpen}
-              aria-controls="site-menu"
-              aria-label={menuOpen ? "Close menu" : "Open menu"}
-              className="group flex h-10 items-center gap-3 pl-2 label"
-            >
-              <span className="roll hidden sm:inline-flex">
-                <span>{menuOpen ? "Close" : "Menu"}</span>
-                <span aria-hidden="true">{menuOpen ? "Close" : "Menu"}</span>
-              </span>
-              <span className="relative block h-3 w-7" aria-hidden="true">
-                <span
-                  className={cn(
-                    "absolute left-0 h-px w-full bg-current transition-transform duration-500",
-                    menuOpen ? "top-1/2 rotate-45" : "top-0 group-hover:translate-x-1",
-                  )}
-                />
-                <span
-                  className={cn(
-                    "absolute left-0 h-px w-full bg-current transition-transform duration-500",
-                    menuOpen ? "top-1/2 -rotate-45" : "bottom-0 group-hover:-translate-x-1",
-                  )}
-                />
-              </span>
-            </button>
-          </div>
+          <button
+            ref={menuButtonRef}
+            type="button"
+            onClick={() => setMenuOpen((v) => !v)}
+            aria-expanded={menuOpen}
+            aria-controls="site-menu"
+            aria-label={menuOpen ? "Close menu" : "Open menu"}
+            className="group col-start-3 flex h-7 items-center gap-3 justify-self-end lg:col-start-4"
+          >
+            <span className="hidden text-[13px] sm:block">{menuOpen ? "Close" : "Menu"}</span>
+            <span className="relative block h-2.5 w-6" aria-hidden="true">
+              <span
+                className={cn(
+                  "absolute left-0 h-[1.5px] w-full bg-current transition-transform duration-500",
+                  menuOpen ? "top-1/2 rotate-45" : "top-0",
+                )}
+              />
+              <span
+                className={cn(
+                  "absolute left-0 h-[1.5px] w-full bg-current transition-transform duration-500",
+                  menuOpen ? "top-1/2 -rotate-45" : "bottom-0 group-hover:scale-x-75",
+                )}
+                style={{ transformOrigin: "right" }}
+              />
+            </span>
+          </button>
         </div>
       </header>
 
@@ -191,96 +167,86 @@ export function Header() {
             aria-label="Site menu"
             initial={{ clipPath: "inset(0 0 100% 0)" }}
             animate={{ clipPath: "inset(0 0 0% 0)" }}
-            exit={{ clipPath: "inset(100% 0 0% 0)" }}
+            exit={{ clipPath: "inset(0 0 100% 0)" }}
             transition={{ duration: 0.8, ease: [0.76, 0, 0.24, 1] }}
             className="fixed inset-0 z-40 overflow-y-auto bg-ink text-paper"
-            data-tone="ink"
-            data-tone-scope=""
             data-lenis-prevent
           >
-            <div className="container-page grid min-h-full gap-10 pt-28 pb-10 lg:grid-cols-[1.3fr_1fr] lg:items-center">
+            <div className="container-page grid min-h-full gap-12 pt-28 pb-24 lg:grid-cols-[1.4fr_1fr] lg:items-end">
               <nav aria-label="Menu">
-                <ul>
-                  {menuItems.map((item, i) => (
-                    <m.li
-                      key={item.href}
-                      initial={{ opacity: 0, y: 40 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ delay: 0.3 + i * 0.04, duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
-                      onPointerEnter={() => setHovered(i)}
-                      onFocus={() => setHovered(i)}
-                    >
-                      <Link
-                        href={item.href}
-                        className="group flex items-baseline gap-4 py-1.5 md:py-1"
+                <ul className="flex flex-col">
+                  {menuLinks.map((item, i) => {
+                    const active = isActive(pathname, item.href);
+                    return (
+                      <m.li
+                        key={item.href}
+                        initial={{ opacity: 0, y: 36 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{
+                          delay: 0.3 + i * 0.05,
+                          duration: 0.8,
+                          ease: [0.16, 1, 0.3, 1],
+                        }}
                       >
-                        <span className="w-8 label text-paper/50 tabular-nums">
-                          {String(i + 1).padStart(2, "0")}
-                        </span>
-                        <span
-                          className={cn(
-                            "font-serif text-[2rem] leading-[1.05] transition-[transform,opacity] duration-500 md:text-[2.75rem] lg:text-5xl",
-                            "group-hover:translate-x-3 group-hover:italic",
-                            isActive(pathname, item.href) && item.href !== "/" ? "italic" : "",
-                            hovered === i ? "opacity-100" : "opacity-60 lg:opacity-40",
-                          )}
+                        <Link
+                          href={item.href}
+                          aria-current={active ? "page" : undefined}
+                          className="group flex items-baseline gap-5 border-b border-paper/10 py-2.5"
                         >
-                          {item.label}
-                        </span>
-                        {item.badge && (
-                          <span className="rounded-full border border-paper/40 px-2 py-0.5 label !text-[9px]">
-                            {item.badge}
+                          <span className="w-8 mono text-fog tabular-nums">
+                            {String(i + 1).padStart(2, "0")}
                           </span>
-                        )}
-                      </Link>
-                    </m.li>
-                  ))}
+                          <span
+                            className={cn(
+                              "h-md transition-[color,transform] duration-500 group-hover:translate-x-2 group-hover:text-lime",
+                              active && "text-lime",
+                            )}
+                          >
+                            {item.label}
+                          </span>
+                        </Link>
+                      </m.li>
+                    );
+                  })}
                 </ul>
               </nav>
+
               <m.div
-                initial={{ opacity: 0, scale: 0.95 }}
-                animate={{ opacity: 1, scale: 1 }}
-                transition={{ delay: 0.45, duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
-                className="hidden flex-col gap-8 lg:flex"
+                initial={{ opacity: 0, y: 24 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.5, duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
+                className="grid gap-10 sm:grid-cols-2"
               >
-                <div className="relative aspect-[4/5] w-full overflow-hidden">
-                  {menuItems.map((item, i) => (
-                    <Photo
-                      key={item.href}
-                      name={item.photo}
-                      baked
-                      sizes="480px"
-                      className={cn(
-                        "absolute inset-0 transition-opacity duration-700",
-                        hovered === i ? "opacity-100" : "opacity-0",
-                      )}
-                    />
-                  ))}
+                <div className="flex flex-col gap-3">
+                  <p className="mono text-fog">Services</p>
+                  <ul className="flex flex-col gap-1.5 text-[15px]">
+                    {serviceLinks.map((s) => (
+                      <li key={s.href}>
+                        <Link
+                          href={s.href}
+                          className="inline-flex items-center gap-2 transition-colors hover:text-lime"
+                        >
+                          {s.label}
+                          {s.badge && <Badge>{s.badge}</Badge>}
+                        </Link>
+                      </li>
+                    ))}
+                  </ul>
                 </div>
-                <div className="grid grid-cols-2 gap-6 label text-paper/70">
-                  <div className="flex flex-col gap-1.5">
-                    <span className="text-paper/40">( Contact )</span>
-                    <a href={site.contact.phoneHref} className="link-line w-fit">
-                      {site.contact.phone}
-                    </a>
-                    <a
-                      href={`mailto:${site.contact.email}`}
-                      className="link-line w-fit tracking-normal normal-case"
-                    >
-                      {site.contact.email}
-                    </a>
-                  </div>
-                  <div className="flex flex-col gap-1.5">
-                    <span className="text-paper/40">( Follow )</span>
-                    <a
-                      href={site.social.linkedin}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="link-line w-fit"
-                    >
-                      LinkedIn
-                    </a>
-                  </div>
+                <div className="flex flex-col gap-3">
+                  <p className="mono text-fog">Contact</p>
+                  <a href={`mailto:${site.contact.email}`} className="link-line w-fit text-[15px]">
+                    {site.contact.email}
+                  </a>
+                  <a href={site.contact.phoneHref} className="link-line w-fit text-[15px]">
+                    {site.contact.phone}
+                  </a>
+                  <Link
+                    href="/contact"
+                    className="mt-4 inline-flex h-11 w-fit items-center rounded-[3px] bg-lime px-5 text-[13px] font-medium text-ink transition-colors hover:bg-paper"
+                  >
+                    Book a call ↗
+                  </Link>
                 </div>
               </m.div>
             </div>

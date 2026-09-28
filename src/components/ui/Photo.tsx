@@ -39,7 +39,7 @@ export function Photo({
   return (
     <div
       className={cn(
-        plain ? "relative overflow-hidden bg-soft" : "photo relative overflow-hidden bg-soft",
+        plain ? "relative overflow-hidden bg-paper-2" : "photo relative overflow-hidden bg-paper-2",
         hover && !plain && "photo-hover",
         className,
       )}

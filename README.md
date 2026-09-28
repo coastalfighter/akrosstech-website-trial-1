@@ -6,20 +6,22 @@ GSAP, Framer Motion and Lenis, and it deploys to Vercel.
 
 - All content from the previous WordPress site is preserved verbatim (see
   [`docs/CONTENT_INVENTORY.md`](docs/CONTENT_INVENTORY.md)), and old URLs 301-redirect to the new routes.
-- **"Editorial" design in the Akrostech brand palette:** lime `#BFF747` accents on near-black
-  (`#0B0B0B` / charcoal `#1B1B1B`) with off-white `#F5F5F4` type. Instrument Serif display type
-  with lime italic accents, Inter Tight for UI, tiny numbered `( labels )` and hairline rules.
-  Inspired by the storytelling of rebrandgurus.com, scfo.de and noth.in.
-- **Tone-shifting page:** each section declares `data-tone="paper"` (charcoal) or `"ink"` (black),
-  and the page background shifts as sections cross the middle of the viewport.
-- **Real photography** (Unsplash licence) in full colour, gently muted until hovered.
-- Effects: counter preloader that wipes up, a full-bleed AKROSTECH wordmark that rises in and
-  spreads apart on scroll (moving the pointer stirs a WebGL fluid simulation — a port of the noth.in hero — whose dye reveals a lime liquid-ink texture, `FluidReveal`), a
-  scroll-expanding image, scroll-scrubbed manifesto text, tilted marquee
-  ribbons, hover-flood service rows with a cursor-following photo, a spreading "WORKS" title over an
-  asymmetric parallax grid, a horizontal principles accordion, a pinned process timeline, a
-  rotating circular CTA, rolling hover labels, a difference-blend cursor, page-name transitions,
-  smooth scrolling and animated counters.
+- **"Studio" design** (inspired by juncastudio.com) in the Akrostech palette: warm paper
+  `#F3F2EE` pages, ink `#0A0A0A` sections, brand lime `#BFF747` as the single accent and a deep
+  moss family (`#0B1004` → `#344C12`) for rich dark surfaces. Geist + Geist Mono throughout.
+- **Smooth scrolling:** Lenis (lerp-based) driven by the GSAP ticker, so ScrollTrigger pins and
+  scrubs share one frame. No full-screen blend layers, backdrop blurs or page-wide colour
+  transitions, which keeps scrolling cheap to paint.
+- **Real photography** (Unsplash licence) in full colour, including an industry set in
+  `src/assets/images/industries/`.
+- Home flow: a cinematic dark cover that collapses into a strip as you scroll, an industries
+  marquee and word-by-word statement, "Our services." pinned while service cards fly out of depth
+  in 3D (`ServicesOrbit`), a staggered sample-work grid, a card that tilts upright, sticky stacked
+  moss cards (`StackCards`), a full-screen industries slider, journal, sample client voices, FAQ
+  and contact, then a giant "GET IN TOUCH." footer.
+- Details: scramble-text headings (`Scramble`), a fixed status bar with live Wilmington and India
+  clocks, a header/bar that switches colour over dark sections (theme sensor in
+  `MotionController`), a full-screen menu, a counter preloader and page-name transitions.
 - Contact and newsletter forms send email through Resend to **gaurang@akrosstech.com**.
 
 ---
@@ -61,12 +63,12 @@ GSAP, Framer Motion and Lenis, and it deploys to Vercel.
 │   │   ├── layout.tsx  globals.css  not-found.tsx  error.tsx
 │   │   └── sitemap.ts  robots.ts  manifest.ts  opengraph-image.tsx  icon.svg  apple-icon.tsx
 │   ├── components/
-│   │   ├── effects/               # Preloader, cursor, page transition, noise overlay
+│   │   ├── effects/               # Preloader, page transition
 │   │   ├── forms/                 # ContactForm, NewsletterForm
-│   │   ├── layout/                # Header (+ full-screen menu), Footer, Logo, Wordmark
+│   │   ├── layout/                # Header (+ full-screen menu), Footer, BottomBar, Logo
 │   │   ├── mdx/                   # MDX renderer
 │   │   ├── motion/                # Reveal, TextReveal, Parallax, TiltCard, Counter, Marquee,
-│   │   │                          # Scroll (ScrubText, ImageReveal, SpreadWord), Intro
+│   │   │                          # Scroll (ScrubText, ImageReveal), Scramble, Intro
 │   │   │                          # + MotionController (single client driver, tone switching)
 │   │   ├── providers/             # SmoothScroll (Lenis), MotionProvider (LazyMotion)
 │   │   ├── sections/              # home/, services/, webdev/, shared/
@@ -159,12 +161,11 @@ an existing Chromium binary.
 
 ## Architecture notes
 
-- **Tones.** Colours are tone-aware tokens (`bg-bg`, `text-fg`, `text-muted`, `border-line`) that
-  read CSS variables set on `html[data-tone]`. The `ToneController` in `MotionController` flips the
-  `html` tone with ScrollTrigger as each `[data-tone]` section passes mid-viewport. Add
-  `data-tone-scope` to pin a subtree to its own tone (the menu overlay does this).
-- **Italic accents.** Headline strings in `src/content` and page props accept `*word*` markup, which
-  renders as serif italic (`src/lib/rich.tsx`).
+- **Theme sensor.** Dark sections carry `data-theme="dark"` (optionally
+  `data-theme-edges="header" | "bar"`). ScrollTrigger sets `html[data-header]` / `html[data-bar]`
+  so only the fixed header and status bar recolour — nothing page-wide repaints while scrolling.
+- **Two-tone headings.** Headline strings accept `*words*` markup, which renders as the muted half
+  of the title (`src/lib/rich.tsx`). Plain section titles scramble in; two-tone titles rise by line.
 - **Rendering.** Every page is statically prerendered; only `/api/*` runs on demand.
 - **Motion without hydration cost.** `Reveal`, `TextReveal`, `Parallax` and `TiltCard` are _server_
   components that only render `data-*` attributes. One client `MotionController` sets them up lazily

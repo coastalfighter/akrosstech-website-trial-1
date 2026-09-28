@@ -1,15 +1,12 @@
 import Link from "next/link";
-import { footerNav } from "@/content/navigation";
-import { collaborate } from "@/content/home";
+import { ArrowUpRight } from "lucide-react";
+import { footerNav, serviceLinks } from "@/content/navigation";
 import { fullAddress, site } from "@/content/site";
 import { NewsletterForm } from "@/components/forms/NewsletterForm";
-import { CircleLink } from "@/components/ui/Button";
-import { Label } from "@/components/ui/SectionHeading";
+import { Reveal } from "@/components/motion/Reveal";
 import { Badge } from "@/components/ui/Badge";
-import { TextReveal } from "@/components/motion/TextReveal";
-import { Wordmark } from "./Wordmark";
 
-function FooterColumn({
+function Column({
   title,
   links,
 }: {
@@ -17,14 +14,17 @@ function FooterColumn({
   links: { label: string; href: string; badge?: string }[];
 }) {
   return (
-    <nav aria-label={title}>
-      <h2 className="mb-5 label text-muted">( {title} )</h2>
-      <ul className="flex flex-col gap-2.5">
+    <nav aria-label={title} className="flex flex-col gap-4">
+      <h2 className="mono">{title}</h2>
+      <ul className="flex flex-col gap-1.5 text-[14px]">
         {links.map((link) => (
           <li key={link.href}>
-            <Link href={link.href} className="group inline-flex items-center gap-2 text-[15px]">
+            <Link
+              href={link.href}
+              className="group inline-flex items-center gap-2 opacity-75 transition-opacity hover:opacity-100"
+            >
               <span className="link-line">{link.label}</span>
-              {link.badge && <Badge className="!text-[9px]">{link.badge}</Badge>}
+              {link.badge && <Badge>{link.badge}</Badge>}
             </Link>
           </li>
         ))}
@@ -33,66 +33,81 @@ function FooterColumn({
   );
 }
 
+/**
+ * Studio footer: an oversized "GET IN TOUCH." call to action, link columns,
+ * newsletter and a full-width wordmark. Extra bottom padding clears the
+ * fixed status bar.
+ */
 export function Footer() {
-  const year = new Date().getFullYear();
-
   return (
-    <footer className="relative overflow-hidden" data-tone="ink">
-      {/* Closing statement */}
-      <div className="container-page flex flex-col gap-12 pt-32 pb-20 md:pt-44 lg:flex-row lg:items-end lg:justify-between">
-        <div className="flex flex-col gap-8">
-          <Label>{collaborate.eyebrow}</Label>
-          <TextReveal as="h2" split="words" className="max-w-5xl display-xl text-fg">
-            Let’s work <em className="italic">together</em>
-          </TextReveal>
-          <p className="max-w-md text-lg leading-relaxed text-muted">{collaborate.tagline}</p>
-        </div>
-        <CircleLink href="/contact" label={collaborate.cta} />
-      </div>
-
+    <footer className="relative overflow-hidden bg-paper pt-28 pb-14 text-ink md:pt-36">
       <div className="container-page">
-        <div className="grid gap-12 border-t border-line py-16 md:grid-cols-2 lg:grid-cols-12">
-          <div className="flex flex-col gap-8 lg:col-span-4">
-            <address className="flex flex-col gap-2 not-italic">
-              <span className="mb-3 label text-muted">( Contact )</span>
-              <a href={site.contact.phoneHref} className="link-line w-fit font-serif text-3xl">
-                {site.contact.phone}
-              </a>
-              <a
-                href={`mailto:${site.contact.email}`}
-                className="link-line w-fit font-serif text-3xl italic"
-              >
-                {site.contact.email}
-              </a>
-              <span className="mt-3 max-w-xs text-sm text-muted">{fullAddress}</span>
-            </address>
-          </div>
-          <div className="grid grid-cols-2 gap-10 sm:grid-cols-3 lg:col-span-5">
-            <FooterColumn title="Quick Link" links={footerNav.quickLinks} />
-            <FooterColumn title="Services" links={footerNav.services} />
-            <div className="flex flex-col gap-10">
-              <FooterColumn title="Help" links={footerNav.help} />
-              <FooterColumn
-                title="Follow on"
-                links={[{ label: "LinkedIn ↗", href: site.social.linkedin }]}
-              />
-            </div>
-          </div>
-          <div className="lg:col-span-3">
-            <NewsletterForm />
-          </div>
+        <div className="grid gap-10 pb-14 lg:grid-cols-[1fr_22rem] lg:items-end">
+          <Link href="/contact" className="group w-fit">
+            <span className="block h-display uppercase transition-colors duration-500 group-hover:text-moss-700">
+              Get in touch
+              <span className="text-lime transition-colors group-hover:text-ink">.</span>
+            </span>
+          </Link>
+          <p className="max-w-sm text-[15px] leading-relaxed text-stone">
+            {site.legalName} helps U.S. businesses scale with offshore talent and onshore quality —
+            recruitment, virtual assistance, accounting, legal support and, now, websites.
+          </p>
         </div>
 
-        <div className="flex flex-col gap-2 border-t border-line py-6 label text-muted sm:flex-row sm:justify-between">
-          <p>
-            © {year} {site.legalName}
-          </p>
-          <p>{site.tagline}</p>
-          <p>All Rights Reserved</p>
+        <div className="grid gap-12 border-t border-ink/12 py-12 md:grid-cols-2 lg:grid-cols-[1.1fr_1fr_1.3fr_1fr_1.3fr]">
+          <ul className="flex flex-col text-[14px]">
+            {[
+              { label: "LinkedIn", href: site.social.linkedin },
+              { label: "Email", href: `mailto:${site.contact.email}` },
+              { label: "Call", href: site.contact.phoneHref },
+            ].map((s) => (
+              <li key={s.label} className="border-b border-ink/12 first:border-t">
+                <a
+                  href={s.href}
+                  {...(s.href.startsWith("http")
+                    ? { target: "_blank", rel: "noopener noreferrer" }
+                    : {})}
+                  className="group flex items-center justify-between py-2.5"
+                >
+                  {s.label}
+                  <ArrowUpRight
+                    className="size-3.5 transition-transform duration-500 group-hover:translate-x-0.5 group-hover:-translate-y-0.5"
+                    aria-hidden="true"
+                  />
+                </a>
+              </li>
+            ))}
+          </ul>
+          <Column title="Navigation" links={footerNav.quickLinks} />
+          <Column title="Services" links={serviceLinks} />
+          <div className="flex flex-col gap-10">
+            <div className="flex flex-col gap-4">
+              <h2 className="mono">Contact</h2>
+              <address className="flex flex-col gap-1.5 text-[14px] not-italic">
+                <a href={`mailto:${site.contact.email}`} className="link-line w-fit">
+                  {site.contact.email}
+                </a>
+                <a href={site.contact.phoneHref} className="link-line w-fit">
+                  {site.contact.phone}
+                </a>
+                <span className="mt-2 max-w-[14rem] text-stone">{fullAddress}</span>
+              </address>
+            </div>
+            <Column title="Legal" links={footerNav.help} />
+          </div>
+          <NewsletterForm />
         </div>
       </div>
 
-      <Wordmark className="px-2 pb-2 text-lime md:px-4" />
+      <Reveal y={60} className="container-page">
+        <p
+          className="flex items-start text-[21.5vw] leading-[0.8] font-medium tracking-[-0.075em] select-none 2xl:text-[21rem]"
+          aria-hidden="true"
+        >
+          Akrostech
+        </p>
+      </Reveal>
     </footer>
   );
 }

@@ -1,30 +1,28 @@
 import type { Metadata, Viewport } from "next";
-import { Instrument_Serif, Inter_Tight } from "next/font/google";
+import { Geist, Geist_Mono } from "next/font/google";
 import { site } from "@/content/site";
 import { organizationJsonLd, serializeJsonLd } from "@/lib/seo";
 import { SmoothScroll } from "@/components/providers/SmoothScroll";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 import { Preloader, preloaderScript } from "@/components/effects/Preloader";
-import { CustomCursor } from "@/components/effects/CustomCursor";
 import { PageTransition } from "@/components/effects/PageTransition";
-import { NoiseOverlay } from "@/components/effects/Backgrounds";
+import { BottomBar } from "@/components/layout/BottomBar";
 import { MotionController } from "@/components/motion/MotionController";
 import { MotionProvider } from "@/components/providers/MotionProvider";
 import "./globals.css";
 
-const grotesk = Inter_Tight({
+const geist = Geist({
   subsets: ["latin"],
-  variable: "--font-grotesk",
+  variable: "--font-geist",
   display: "swap",
 });
 
-const serif = Instrument_Serif({
+const geistMono = Geist_Mono({
   subsets: ["latin"],
-  variable: "--font-serif-display",
+  variable: "--font-geist-mono",
   display: "swap",
-  weight: "400",
-  style: ["normal", "italic"],
+  weight: ["400", "500"],
 });
 
 export const metadata: Metadata = {
@@ -72,8 +70,8 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: "#0b0b0b",
-  colorScheme: "light dark",
+  themeColor: "#0a0a0a",
+  colorScheme: "light",
   width: "device-width",
   initialScale: 1,
 };
@@ -82,8 +80,9 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
       lang="en"
-      className={`${grotesk.variable} ${serif.variable}`}
-      data-tone="paper"
+      className={`${geist.variable} ${geistMono.variable}`}
+      data-header="light"
+      data-bar="light"
       data-scroll-behavior="smooth"
       suppressHydrationWarning
     >
@@ -91,7 +90,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
         {/* Decide preloader visibility before first paint (no flash on repeat visits). */}
         <script dangerouslySetInnerHTML={{ __html: preloaderScript }} />
         <noscript>
-          <style>{`.preloader{display:none!important}.hero-word,.hero-fade{opacity:1!important;transform:none!important}`}</style>
+          <style>{`.preloader{display:none!important}.hero-word,.hero-fade{opacity:1!important;transform:none!important}[data-orbit-item]{visibility:visible!important}`}</style>
         </noscript>
         <script
           type="application/ld+json"
@@ -113,11 +112,10 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
               <PageTransition>{children}</PageTransition>
             </main>
             <Footer />
+            <BottomBar />
             <MotionController />
           </SmoothScroll>
         </MotionProvider>
-        <CustomCursor />
-        <NoiseOverlay />
       </body>
     </html>
   );

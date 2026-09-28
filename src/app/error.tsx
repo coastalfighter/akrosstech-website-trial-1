@@ -15,20 +15,18 @@ export default function Error({
   }, [error]);
 
   return (
-    <section data-tone="paper" className="flex min-h-[80svh] items-center pt-24">
+    <section className="flex min-h-[80svh] items-center pt-24">
       <div className="container-page flex flex-col gap-6">
-        <p className="label text-muted">( Something went wrong )</p>
-        <h1 className="display-lg text-fg">
-          We hit an <em className="italic">unexpected</em> error.
+        <p className="mono text-stone">( Something went wrong )</p>
+        <h1 className="h-lg">
+          We hit an <span className="opacity-50">unexpected error.</span>
         </h1>
-        <p className="max-w-md text-muted">
+        <p className="max-w-md text-[15px] leading-relaxed text-stone">
           Please try again. If the problem continues, contact us and we’ll sort it out.
         </p>
         <div className="flex flex-wrap gap-3">
           <Button onClick={reset}>Try again</Button>
-          <ButtonLink href="/" variant="outline">
-            Back to home
-          </ButtonLink>
+          <ButtonLink href="/">Back to home</ButtonLink>
         </div>
       </div>
     </section>

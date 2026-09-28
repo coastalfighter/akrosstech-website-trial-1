@@ -35,7 +35,8 @@ export function useLenisInstance(): Lenis | null {
 
 /**
  * Lenis smooth scrolling driven by GSAP's ticker so ScrollTrigger and Lenis
- * share a single animation frame. Disabled entirely for reduced-motion users.
+ * share a single animation frame (no double rAF, no pin jitter). Disabled
+ * entirely for reduced-motion users.
  */
 export function SmoothScroll({ children }: { children: React.ReactNode }) {
   const reducedMotion = usePrefersReducedMotion();
@@ -45,13 +46,19 @@ export function SmoothScroll({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     if (reducedMotion) return;
 
+    // Lerp-based smoothing glides consistently at any wheel speed or refresh
+    // rate; touch keeps native momentum (smoother on phones than emulation).
     const instance = new Lenis({
-      duration: 1.15,
-      easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+      lerp: 0.085,
+      wheelMultiplier: 0.95,
+      touchMultiplier: 1,
       smoothWheel: true,
+      syncTouch: false,
       anchors: { offset: -80 },
       autoRaf: false,
     });
+    // Mobile URL-bar show/hide resizes the viewport; don't re-layout pins for it.
+    ScrollTrigger.config({ ignoreMobileResize: true });
 
     instance.on("scroll", ScrollTrigger.update);
     const tick = (time: number) => instance.raf(time * 1000);

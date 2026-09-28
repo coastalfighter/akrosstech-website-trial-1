@@ -9,7 +9,7 @@ import { cn } from "@/lib/utils";
  */
 
 interface IntroTitleProps {
-  /** Supports `*italic*` accents, e.g. "Work that *works*". */
+  /** Supports `*muted*` two-tone accents, e.g. "Work that *works*". */
   children: string;
   as?: "h1" | "h2" | "p";
   className?: string;
@@ -50,7 +50,7 @@ export function IntroTitle({ children, as = "h1", className, id, delay = 0.05 }:
         <Fragment key={`${word}-${i}`}>
           <span aria-hidden="true" className="hero-mask">
             <span
-              className={cn("hero-word", italic && "text-lime italic")}
+              className={cn("hero-word", italic && "opacity-50")}
               style={{ ["--i" as string]: i, ["--hero-delay" as string]: `${delay}s` }}
             >
               {word}

@@ -6,25 +6,31 @@ const STORAGE_KEY = "ak-preloaded";
 export const INTRO_DURATION_MS = 1800;
 
 /**
- * First-visit intro (noth.in-style): an ink panel with the drawn mark and a
- * 00→100 counter, which then slides up to reveal the page. Entirely CSS, so
- * it starts on first paint without waiting for JavaScript.
+ * First-visit intro: an ink panel with the drawn mark, a 0→100 counter and
+ * a lime progress line, which then slides up to reveal the page. Entirely
+ * CSS, so it starts on first paint without waiting for JavaScript.
  */
 export function Preloader() {
   return (
     <div className="preloader fixed inset-0 z-[100] bg-ink text-paper" aria-hidden="true">
-      <div className="preloader-inner flex h-full flex-col justify-between p-5 md:p-10">
-        <div className="flex justify-between label">
-          <span>Akrostech Consulting</span>
-          <span>Offshore talent · Onshore quality</span>
+      <div className="flex h-full flex-col justify-between p-5 md:p-7">
+        <div className="flex items-start justify-between mono text-fog">
+          <span className="flex items-center gap-2.5 text-paper">
+            <LogoMark animated className="w-6 text-lime" />
+            Akrostech
+          </span>
+          <span className="hidden sm:block">Offshore talent · Onshore quality</span>
         </div>
-        <div className="flex items-center justify-center">
-          <LogoMark animated className="w-24 text-lime md:w-32" />
-        </div>
-        <div className="flex items-end justify-between">
-          <span className="label">Wilmington, DE — India</span>
-          <span className="font-serif text-6xl leading-none md:text-8xl">
-            (<span className="preloader-count text-lime tabular-nums" />)
+        <div className="flex flex-col gap-5">
+          <div className="flex items-end justify-between gap-6">
+            <span className="h-display tabular-nums">
+              <span className="preloader-count" />
+              <span className="text-lime">%</span>
+            </span>
+            <span className="mb-3 mono text-fog">Wilmington, DE — India</span>
+          </div>
+          <span className="block h-px w-full bg-paper/15">
+            <span className="preloader-bar block h-full w-full bg-lime" />
           </span>
         </div>
       </div>
@@ -33,4 +39,4 @@ export function Preloader() {
 }
 
 /** Inline script (runs before paint) — decides whether the preloader shows. */
-export const preloaderScript = `(function(){var d=document.documentElement,k='${STORAGE_KEY}';try{var r=window.matchMedia('(prefers-reduced-motion: reduce)').matches,s=sessionStorage.getItem(k);d.dataset.preloader=(s||r)?'done':'active';if(!s)sessionStorage.setItem(k,'1');}catch(e){d.dataset.preloader='done';}})();`;
+export const preloaderScript = `(function(){var d=document.documentElement,k='${STORAGE_KEY}';if(location.pathname==='/')d.dataset.heroHeader='dark';try{var r=window.matchMedia('(prefers-reduced-motion: reduce)').matches,s=sessionStorage.getItem(k);d.dataset.preloader=(s||r)?'done':'active';if(!s)sessionStorage.setItem(k,'1');}catch(e){d.dataset.preloader='done';}})();`;

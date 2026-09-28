@@ -24,10 +24,10 @@ const initialValues: Required<Omit<ContactInput, "service">> & { service: string
 };
 
 const inputClass =
-  "peer w-full border-0 border-b border-line-strong bg-transparent px-0 pt-7 pb-3 text-lg text-fg placeholder-transparent transition-colors focus:border-fg focus:outline-none aria-[invalid=true]:border-red-500";
+  "peer w-full border-0 border-b border-current/25 bg-transparent px-0 pt-7 pb-3 text-lg placeholder-transparent transition-colors focus:border-lime focus:outline-none aria-[invalid=true]:border-red-500";
 
 const labelClass =
-  "pointer-events-none absolute top-1 left-0 text-[11px] font-medium tracking-[0.14em] text-muted uppercase transition-all peer-placeholder-shown:top-7 peer-placeholder-shown:text-lg peer-placeholder-shown:tracking-normal peer-placeholder-shown:normal-case peer-focus:top-1 peer-focus:text-[11px] peer-focus:tracking-[0.14em] peer-focus:uppercase peer-focus:text-fg";
+  "pointer-events-none absolute top-1 left-0 text-[11px] font-medium tracking-[0.08em] uppercase opacity-60 transition-all peer-placeholder-shown:top-7 peer-placeholder-shown:text-lg peer-placeholder-shown:tracking-normal peer-placeholder-shown:normal-case peer-focus:top-1 peer-focus:text-[11px] peer-focus:tracking-[0.14em] peer-focus:uppercase peer-focus:opacity-100";
 
 export function ContactForm({
   defaultService,
@@ -97,7 +97,7 @@ export function ContactForm({
 
   const errorText = (name: string) =>
     errors[name] ? (
-      <p id={`${id}-${name}-error`} className="mt-1.5 pl-1 text-xs text-red-500">
+      <p id={`${id}-${name}-error`} className="mt-1.5 pl-1 text-xs text-red-600">
         {errors[name]}
       </p>
     ) : null;
@@ -115,11 +115,11 @@ export function ContactForm({
             role="status"
             aria-live="polite"
           >
-            <span className="grid size-16 place-items-center rounded-xl bg-soft text-fg">
+            <span className="grid size-16 place-items-center rounded-[6px] bg-lime text-ink">
               <CheckCircle2 className="size-8" aria-hidden="true" />
             </span>
-            <h3 className="text-2xl font-medium text-fg">Thank you — message received.</h3>
-            <p className="max-w-sm text-muted">
+            <h3 className="h-sm">Thank you — message received.</h3>
+            <p className="max-w-sm opacity-70">
               Our team will get back to you shortly. For anything urgent, call us directly.
             </p>
             <Button variant="outline" onClick={() => setStatus("idle")}>
@@ -214,21 +214,21 @@ export function ContactForm({
                 )}
                 style={{
                   backgroundImage:
-                    "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23a8a8a3' stroke-width='2'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E\")",
+                    "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%2362615c' stroke-width='2'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E\")",
                 }}
               >
-                <option value="" className="bg-bg">
+                <option value="" className="bg-paper text-ink">
                   Choose a service…
                 </option>
                 {SERVICE_OPTIONS.map((option) => (
-                  <option key={option} value={option} className="bg-bg">
+                  <option key={option} value={option} className="bg-paper text-ink">
                     {option}
                   </option>
                 ))}
               </select>
               <label
                 htmlFor={`${id}-service`}
-                className="pointer-events-none absolute top-2 left-0 text-[11px] font-medium tracking-[0.14em] text-muted uppercase"
+                className="pointer-events-none absolute top-2 left-0 text-[11px] font-medium tracking-[0.08em] uppercase opacity-60"
               >
                 I’m interested in
               </label>
@@ -273,21 +273,21 @@ export function ContactForm({
                 onChange={(e) => set("smsConsent", e.target.checked)}
                 className="mt-1 size-4 shrink-0 accent-current"
               />
-              <label htmlFor={`${id}-sms`} className="text-xs leading-relaxed text-muted">
+              <label htmlFor={`${id}-sms`} className="text-xs leading-relaxed opacity-70">
                 By opting in for text messages, you agree to receive an appointment reminders and
                 important updates from Akrostech Consulting LLC at the number provided. Message
                 frequency varies. Msg &amp; data rates may apply. Reply STOP to unsubscribe. Reply
                 HELP for help. View our{" "}
                 <Link
                   href="/privacy-policy"
-                  className="text-muted underline underline-offset-2 hover:text-fg"
+                  className="underline underline-offset-2 hover:text-lime"
                 >
                   Privacy Policy
                 </Link>{" "}
                 and{" "}
                 <Link
                   href="/terms-and-conditions"
-                  className="text-muted underline underline-offset-2 hover:text-fg"
+                  className="underline underline-offset-2 hover:text-lime"
                 >
                   Terms &amp; Conditions
                 </Link>{" "}
@@ -296,7 +296,7 @@ export function ContactForm({
             </div>
 
             <div className="flex flex-col gap-3 sm:col-span-2 sm:flex-row sm:items-center sm:justify-between">
-              <p id={`${id}-server`} role="alert" className="text-sm text-red-500">
+              <p id={`${id}-server`} role="alert" className="text-sm text-red-600">
                 {status === "error" ? serverMessage : ""}
               </p>
               <Button

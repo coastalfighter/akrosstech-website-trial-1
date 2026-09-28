@@ -1,12 +1,10 @@
 import type { Metadata } from "next";
 import { getAllBlogPosts } from "@/lib/content";
-import { blogPhotos } from "@/content/media";
 import { pageMetadata } from "@/lib/seo";
-import { formatDate } from "@/lib/utils";
 import { PageHero } from "@/components/sections/shared/PageHero";
-import { HoverList } from "@/components/sections/shared/HoverList";
-import { CtaBanner } from "@/components/sections/shared/CtaBanner";
-import { ctaBanner } from "@/content/home";
+import { PostCard } from "@/components/sections/shared/PostCard";
+import { CtaBand } from "@/components/sections/shared/CtaBand";
+import { Reveal } from "@/components/motion/Reveal";
 
 export const metadata: Metadata = pageMetadata({
   title: "Blog — Outsourcing & Growth Insights",
@@ -20,29 +18,30 @@ export default function BlogPage() {
   return (
     <>
       <PageHero
-        label="Journal"
-        title="Our latest *insight* news"
+        eyebrow="Journal"
+        title="Our take on outsourcing, *hiring and the web.*"
         description="Practical guides on outsourcing, hiring and scaling your business with remote teams."
         breadcrumbs={[{ name: "Blog", path: "/blog" }]}
       />
-      <section data-tone="paper" aria-labelledby="articles-title" className="pb-28 md:pb-40">
+      <section aria-labelledby="articles-title" className="pt-20 pb-32 md:pt-28 md:pb-44">
         <div className="container-page">
           <h2 id="articles-title" className="sr-only">
             All articles
           </h2>
-          <HoverList
-            size="md"
-            items={posts.map((p) => ({
-              href: `/blog/${p.slug}`,
-              title: p.title,
-              meta: `${formatDate(p.date)} — ${p.readingMinutes} min read`,
-              tag: p.category,
-              photo: blogPhotos[p.slug] ?? "blocks",
-            }))}
-          />
+          <Reveal
+            stagger={0.1}
+            as="ul"
+            className="grid gap-x-6 gap-y-14 sm:grid-cols-2 lg:grid-cols-3"
+          >
+            {posts.map((post) => (
+              <li key={post.slug}>
+                <PostCard post={post} />
+              </li>
+            ))}
+          </Reveal>
         </div>
       </section>
-      <CtaBanner {...ctaBanner} />
+      <CtaBand />
     </>
   );
 }

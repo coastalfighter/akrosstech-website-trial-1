@@ -7,7 +7,7 @@ import { usePrefersReducedMotion } from "@/hooks/useMediaQuery";
 
 const names: Record<string, string> = {
   "/": "Home",
-  "/about": "Studio",
+  "/about": "About",
   "/services": "Services",
   "/contact": "Contact",
   "/blog": "Journal",
@@ -49,7 +49,10 @@ export function PageTransition({ children }: { children: React.ReactNode }) {
             exit={{ opacity: 0 }}
             transition={{ duration: 0.9, ease: [0.76, 0, 0.24, 1], delay: 0.15 }}
           >
-            <span className="font-serif text-5xl italic md:text-7xl">{pageName(pathname)}</span>
+            <span className="flex items-center gap-4 h-lg">
+              <span className="size-3 bg-lime" aria-hidden="true" />
+              {pageName(pathname)}
+            </span>
           </m.div>
         )}
       </AnimatePresence>

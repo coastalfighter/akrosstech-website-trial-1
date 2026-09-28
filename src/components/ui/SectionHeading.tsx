@@ -1,11 +1,12 @@
 import { TextReveal } from "@/components/motion/TextReveal";
 import { Reveal } from "@/components/motion/Reveal";
+import { Scramble } from "@/components/motion/Scramble";
 import { IntroFade, IntroTitle } from "@/components/motion/Intro";
-import { rich } from "@/lib/rich";
+import { plain, rich } from "@/lib/rich";
 import { cn } from "@/lib/utils";
 
-/** Parenthesised editorial label, e.g. "( The Studio )", with optional index. */
-export function Label({
+/** Mono eyebrow with a lime marker, e.g. "■ WHY WORK WITH US". */
+export function Eyebrow({
   children,
   index,
   className,
@@ -15,17 +16,18 @@ export function Label({
   className?: string;
 }) {
   return (
-    <p className={cn("flex items-center gap-3 label text-muted", className)}>
-      {index && <span className="text-lime tabular-nums">{index}</span>}
-      <span>( {children} )</span>
+    <p className={cn("flex items-center gap-2.5 mono", className)}>
+      <span className="size-1.5 shrink-0 bg-lime" aria-hidden="true" />
+      {index && <span className="tabular-nums opacity-60">{index}</span>}
+      <span>{children}</span>
     </p>
   );
 }
 
 interface SectionHeadingProps {
-  label?: string;
+  eyebrow?: string;
   index?: string;
-  /** Title; wrap words in *asterisks* for italic serif accents. */
+  /** Wrap words in *asterisks* for the muted half of a two-tone title. */
   title: string;
   description?: string;
   align?: "left" | "center";
@@ -37,8 +39,12 @@ interface SectionHeadingProps {
   intro?: boolean;
 }
 
+/**
+ * Eyebrow + headline + optional description. Plain titles scramble in;
+ * two-tone titles (with *markup*) rise line by line.
+ */
 export function SectionHeading({
-  label,
+  eyebrow,
   index,
   title,
   description,
@@ -49,19 +55,16 @@ export function SectionHeading({
   id,
   intro = false,
 }: SectionHeadingProps) {
-  const titleClass = cn(
-    size === "xl" ? "display-xl" : size === "lg" ? "display-lg" : "display-md",
-    "text-fg",
-  );
+  const titleClass = size === "xl" ? "h-xl" : size === "lg" ? "h-lg" : "h-md";
   const wrapper = cn(
-    "flex flex-col gap-6",
+    "flex flex-col gap-5",
     align === "center" && "items-center text-center",
     className,
   );
   const desc = description && (
     <p
       className={cn(
-        "max-w-xl text-base leading-relaxed text-muted sm:text-lg",
+        "max-w-lg text-[15px] leading-relaxed opacity-70 sm:text-base",
         align === "center" && "mx-auto",
       )}
     >
@@ -72,9 +75,9 @@ export function SectionHeading({
   if (intro) {
     return (
       <div className={wrapper}>
-        {label && (
+        {eyebrow && (
           <IntroFade delay={0}>
-            <Label index={index}>{label}</Label>
+            <Eyebrow index={index}>{eyebrow}</Eyebrow>
           </IntroFade>
         )}
         <IntroTitle as={as === "h1" ? "h1" : "h2"} id={id} className={titleClass}>
@@ -85,18 +88,25 @@ export function SectionHeading({
     );
   }
 
+  const hasMarkup = title.includes("*");
   return (
     <div className={wrapper}>
-      {label && (
-        <Reveal y={12}>
-          <Label index={index}>{label}</Label>
+      {eyebrow && (
+        <Reveal y={10}>
+          <Eyebrow index={index}>{eyebrow}</Eyebrow>
         </Reveal>
       )}
-      <TextReveal as={as} id={id} split="lines" className={titleClass}>
-        {rich(title)}
-      </TextReveal>
+      {hasMarkup ? (
+        <TextReveal as={as} id={id} split="lines" className={titleClass}>
+          {rich(title)}
+        </TextReveal>
+      ) : (
+        <Scramble as={as} id={id} className={titleClass}>
+          {plain(title)}
+        </Scramble>
+      )}
       {desc && (
-        <Reveal y={20} delay={0.1}>
+        <Reveal y={16} delay={0.1}>
           {desc}
         </Reveal>
       )}

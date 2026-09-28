@@ -1,13 +1,10 @@
 import type { Metadata } from "next";
-import { allServiceCards } from "@/content/services";
-import { servicePhotos } from "@/content/media";
 import { serviceFaqs } from "@/content/faqs";
-import { ctaBanner } from "@/content/home";
 import { pageMetadata } from "@/lib/seo";
 import { PageHero } from "@/components/sections/shared/PageHero";
-import { HoverList } from "@/components/sections/shared/HoverList";
-import { FaqSection } from "@/components/sections/shared/FaqSection";
-import { CtaBanner } from "@/components/sections/shared/CtaBanner";
+import { ServiceRows } from "@/components/sections/services/ServiceRows";
+import { FaqBlock } from "@/components/sections/shared/FaqBlock";
+import { CtaBand } from "@/components/sections/shared/CtaBand";
 
 export const metadata: Metadata = pageMetadata({
   title: "Our Services",
@@ -20,28 +17,18 @@ export default function ServicesPage() {
   return (
     <>
       <PageHero
-        label="Our services"
-        title="Innovative services for your *business growth*"
+        eyebrow="Our services"
+        title="Innovative services for your *business growth.*"
         description="From hiring and daily operations to finance, legal support—and now your website—Akrostech gives you one reliable partner for building lean, high-performing remote teams."
         breadcrumbs={[{ name: "Services", path: "/services" }]}
-        photo="networkCables"
       />
-      <section data-tone="ink" aria-label="All services" className="py-28 md:py-40">
+      <section aria-label="All services" className="pt-20 pb-32 md:pt-28 md:pb-44">
         <div className="container-page">
-          <HoverList
-            headingLevel="h2"
-            items={allServiceCards.map((s) => ({
-              href: `/services/${s.slug}`,
-              title: s.title,
-              meta: s.summary,
-              photo: servicePhotos[s.slug]?.hero ?? "blocks",
-              badge: s.slug === "website-development" ? "New" : undefined,
-            }))}
-          />
+          <ServiceRows />
         </div>
       </section>
-      <FaqSection faqs={serviceFaqs} />
-      <CtaBanner {...ctaBanner} />
+      <FaqBlock faqs={serviceFaqs} />
+      <CtaBand />
     </>
   );
 }

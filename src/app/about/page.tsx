@@ -1,15 +1,15 @@
 import type { Metadata } from "next";
 import { aboutCta, aboutHero, approach, edge, experience, support } from "@/content/about";
-import { site } from "@/content/site";
 import { pageMetadata } from "@/lib/seo";
 import { PageHero } from "@/components/sections/shared/PageHero";
-import { StatsSection } from "@/components/sections/shared/StatsSection";
-import { CtaBanner } from "@/components/sections/shared/CtaBanner";
-import { Label, SectionHeading } from "@/components/ui/SectionHeading";
+import { StatsRow } from "@/components/sections/shared/StatsRow";
+import { CtaBand } from "@/components/sections/shared/CtaBand";
+import { StackCards, type StackCard } from "@/components/sections/shared/StackCards";
+import { Eyebrow, SectionHeading } from "@/components/ui/SectionHeading";
 import { ButtonLink } from "@/components/ui/Button";
-import { Photo } from "@/components/ui/Photo";
 import { Reveal } from "@/components/motion/Reveal";
-import { ScrubText, ImageReveal } from "@/components/motion/Scroll";
+import { ScrubText } from "@/components/motion/Scroll";
+import { Scramble } from "@/components/motion/Scramble";
 
 export const metadata: Metadata = pageMetadata({
   title: "About Us",
@@ -18,48 +18,52 @@ export const metadata: Metadata = pageMetadata({
   path: "/about",
 });
 
+const edgeCards: StackCard[] = edge.items.map((item, i) => ({
+  title: item.title,
+  description: item.description,
+  photo: (["teamLaptops", "developers", "analytics", "handshake"] as const)[i] ?? "meeting",
+}));
+
 export default function AboutPage() {
   return (
     <>
       <PageHero
-        label={aboutHero.eyebrow}
-        title="Outsourcing, reimagined for the *modern business*"
+        eyebrow={aboutHero.eyebrow}
+        title="Outsourcing, reimagined for the *modern business.*"
         description={aboutHero.body}
         breadcrumbs={[{ name: "About Us", path: "/about" }]}
         photo="meeting"
       >
-        <ul className="flex flex-wrap gap-2 label text-fg">
+        <ul className="flex flex-wrap gap-2 text-[13px]">
           {aboutHero.tags.map((t) => (
-            <li key={t} className="rounded-full border border-line-strong px-3 py-1.5">
+            <li key={t} className="rounded-[3px] border border-ink/15 px-2.5 py-1.5">
               {t}
             </li>
           ))}
         </ul>
-        <div className="flex flex-wrap items-center gap-5">
-          <ButtonLink href="/contact" arrow>
+        <div className="flex flex-wrap gap-3">
+          <ButtonLink href="/contact" variant="solid" arrow>
             Contact us
           </ButtonLink>
-          <a href={site.contact.phoneHref} className="link-line label text-muted">
-            Need help? {site.contact.phone}
-          </a>
+          <ButtonLink href="/services">Our services</ButtonLink>
         </div>
       </PageHero>
 
-      {/* Approach: mission & vision */}
-      <section data-tone="paper" aria-labelledby="approach-title" className="py-28 md:py-40">
-        <div className="container-page grid gap-10 lg:grid-cols-[1fr_3fr]">
-          <Label index="01">{approach.eyebrow}</Label>
+      {/* Approach */}
+      <section aria-labelledby="approach-title" className="py-32 md:py-44">
+        <div className="container-page grid gap-14 lg:grid-cols-[14rem_1fr]">
+          <Reveal y={10}>
+            <Eyebrow>{approach.eyebrow}</Eyebrow>
+          </Reveal>
           <div className="flex flex-col gap-16">
-            <h2 id="approach-title" className="display-lg text-fg">
-              Global teams. <em className="italic">Local precision.</em>
-            </h2>
-            <div className="grid gap-12 border-t border-line pt-10 md:grid-cols-2">
-              {[approach.mission, approach.vision].map((item) => (
-                <div key={item.title} className="flex flex-col gap-5">
-                  <p className="label text-muted">( {item.title} )</p>
-                  <ScrubText className="font-serif text-[clamp(1.6rem,1rem+1.6vw,2.6rem)] leading-[1.12] text-fg">
-                    {item.body}
-                  </ScrubText>
+            <Scramble as="h2" id="approach-title" className="h-xl">
+              {approach.heading}
+            </Scramble>
+            <div className="grid gap-10 border-t border-ink/12 pt-10 md:grid-cols-2">
+              {[approach.mission, approach.vision].map((block) => (
+                <div key={block.title} className="flex flex-col gap-4">
+                  <p className="mono text-stone">( {block.title} )</p>
+                  <ScrubText className="h-sm">{block.body}</ScrubText>
                 </div>
               ))}
             </div>
@@ -68,69 +72,48 @@ export default function AboutPage() {
       </section>
 
       {/* Our edge */}
-      <section data-tone="ink" aria-labelledby="edge-title" className="py-28 md:py-40">
-        <div className="container-page grid gap-16 lg:grid-cols-2">
-          <div className="flex flex-col gap-10 lg:sticky lg:top-28 lg:self-start">
+      <section aria-labelledby="edge-title" className="pb-32 md:pb-44">
+        <div className="container-page">
+          <SectionHeading
+            id="edge-title"
+            eyebrow={edge.eyebrow}
+            title="The Akrostech difference: *built for results.*"
+            size="lg"
+            className="mb-16"
+          />
+          <StackCards items={edgeCards} />
+        </div>
+      </section>
+
+      {/* Experience */}
+      <section
+        aria-labelledby="experience-title"
+        className="bg-ink py-32 text-paper md:py-44"
+        data-theme="dark"
+      >
+        <div className="container-page flex flex-col gap-16">
+          <div className="grid gap-8 lg:grid-cols-[1fr_24rem] lg:items-end">
             <SectionHeading
-              id="edge-title"
-              label={edge.eyebrow}
-              index="02"
-              title="The Akrostech difference: *built for results*"
-              size="md"
+              id="experience-title"
+              eyebrow={experience.eyebrow}
+              title="Proven partnerships, *measurable impact.*"
+              size="lg"
             />
-            <ImageReveal className="aspect-[4/3]">
-              <Photo
-                name="highFive"
-                hover
-                sizes="(min-width: 1024px) 45vw, 100vw"
-                className="size-full"
-              />
-            </ImageReveal>
+            <Reveal y={16}>
+              <p className="text-[15px] leading-relaxed text-fog">{experience.body}</p>
+            </Reveal>
           </div>
-          <Reveal stagger={0.08} as="ol" className="border-t border-line">
-            {edge.items.map((item, i) => (
-              <li
-                key={item.title}
-                className="group grid grid-cols-[3rem_1fr] gap-4 border-b border-line py-10"
-              >
-                <span className="pt-3 label text-muted">{String(i + 1).padStart(2, "0")}</span>
-                <div>
-                  <h3 className="font-serif text-4xl leading-tight text-fg transition-transform duration-700 group-hover:translate-x-2 group-hover:italic">
-                    {item.title}
-                  </h3>
-                  <p className="mt-3 max-w-md leading-relaxed text-muted">{item.description}</p>
-                </div>
-              </li>
-            ))}
-          </Reveal>
+          <div className="grid gap-10 lg:grid-cols-[1fr_20rem] lg:items-end">
+            <StatsRow stats={experience.stats} className="md:grid-cols-3" />
+            <Reveal className="flex flex-col gap-3 rounded-[6px] bg-lime p-6 text-ink">
+              <p className="h-md">{support.title}</p>
+              <p className="text-[14px]">{support.body}</p>
+            </Reveal>
+          </div>
         </div>
       </section>
 
-      <StatsSection
-        stats={experience.stats}
-        label={experience.eyebrow}
-        index="03"
-        title="Proven partnerships, *measurable impact*"
-        description={experience.body}
-        tone="paper"
-      />
-
-      <section data-tone="paper" aria-label={support.title} className="pb-28">
-        <div className="container-page flex flex-col gap-8 border-t border-line pt-10 md:flex-row md:items-end md:justify-between">
-          <div>
-            <p className="label text-muted">( Always on )</p>
-            <h2 className="mt-4 display-md text-fg">
-              24/7 <em className="italic">support</em>
-            </h2>
-            <p className="mt-3 text-muted">{support.body}</p>
-          </div>
-          <ButtonLink href={site.contact.phoneHref} variant="outline" size="lg">
-            {site.contact.phone}
-          </ButtonLink>
-        </div>
-      </section>
-
-      <CtaBanner {...aboutCta} photo="handshake" />
+      <CtaBand heading={aboutCta.heading} body={aboutCta.body} cta={aboutCta.cta} />
     </>
   );
 }

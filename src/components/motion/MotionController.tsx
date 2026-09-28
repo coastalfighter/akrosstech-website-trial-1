@@ -114,22 +114,56 @@ function initImageReveal(el: HTMLElement) {
   if (inner) tl.fromTo(inner, { scale: 1.25 }, { scale: 1, duration: 1.8, ease: "expo.out" }, 0);
 }
 
-/** Letters drift apart vertically/horizontally while scrolling past. */
-function initSpread(el: HTMLElement) {
-  const letters = el.querySelectorAll<HTMLElement>("[data-spread-letter]");
-  const mid = (letters.length - 1) / 2;
-  letters.forEach((letter, i) => {
-    const offset = i - mid;
-    gsap.fromTo(
-      letter,
-      { yPercent: (i % 2 === 0 ? -1 : 1) * 18, xPercent: offset * -8 },
-      {
-        yPercent: (i % 2 === 0 ? 1 : -1) * 18,
-        xPercent: offset * 8,
-        ease: "none",
-        scrollTrigger: { trigger: el, start: "top bottom", end: "bottom top", scrub: 0.8 },
-      },
-    );
+/** Card that tilts upright as it scrolls into view, for `[data-tilt-in]`. */
+function initTiltIn(el: HTMLElement) {
+  gsap.fromTo(
+    el,
+    { rotateX: 32, rotateZ: -5, scale: 0.84, yPercent: 8, transformPerspective: 1400 },
+    {
+      rotateX: 0,
+      rotateZ: 0,
+      scale: 1,
+      yPercent: 0,
+      ease: "none",
+      scrollTrigger: { trigger: el, start: "top bottom", end: "center 55%", scrub: 0.5 },
+    },
+  );
+}
+
+const SCRAMBLE_CHARS = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+
+/**
+ * Text scramble for `[data-scramble]`: characters resolve left to right out
+ * of random glyphs when the element enters the viewport. Only the visual,
+ * aria-hidden copy is scrambled (see <Scramble>), so assistive tech always
+ * reads the final text.
+ */
+function initScramble(el: HTMLElement) {
+  const final = el.textContent ?? "";
+  if (!final.trim()) return;
+  const duration = num(el.dataset.scrambleDuration, 0.9);
+  const state = { p: 0 };
+  const chars = Array.from(final);
+  el.textContent = chars.map((c) => (c.trim() ? "\u00a0" : c)).join("");
+  gsap.to(state, {
+    p: 1,
+    duration,
+    delay: num(el.dataset.scrambleDelay, 0),
+    ease: "power2.out",
+    scrollTrigger: { trigger: el, start: el.dataset.scrambleStart ?? "top 90%", once: true },
+    onUpdate: () => {
+      const settled = Math.floor(state.p * chars.length);
+      el.textContent = chars
+        .map((c, i) => {
+          if (i < settled || !c.trim()) return c;
+          if (i > settled + 6) return "\u00a0";
+          return SCRAMBLE_CHARS[(Math.random() * SCRAMBLE_CHARS.length) | 0];
+        })
+        .join("");
+    },
+    onComplete: () => {
+      el.textContent = final;
+    },
   });
 }
 
@@ -139,12 +173,14 @@ function initElement(el: HTMLElement) {
   if (el.hasAttribute("data-reveal")) initReveal(el);
   if (el.hasAttribute("data-parallax")) initParallax(el);
   if (el.hasAttribute("data-image-reveal")) initImageReveal(el);
-  if (el.hasAttribute("data-spread")) initSpread(el);
+  if (el.hasAttribute("data-scramble")) initScramble(el);
+  if (el.hasAttribute("data-tilt-in")) initTiltIn(el);
 }
 
 /**
  * One client component that powers every declarative motion primitive
- * (`Reveal`, `TextReveal`, `Parallax`, `TiltCard`) on the page.
+ * (`Reveal`, `TextReveal`, `Parallax`, `Scramble`, `ScrubText`,
+ * `ImageReveal`, `TiltCard`) on the page, plus the header/bar theme sensor.
  *
  * Elements are initialised lazily as they approach the viewport, and all
  * animations/splits are reverted on route change via a GSAP context.
@@ -186,7 +222,9 @@ export function MotionController() {
     // Wait a frame so the incoming route's DOM is committed.
     const frame = requestAnimationFrame(() => {
       document
-        .querySelectorAll<HTMLElement>("[data-reveal], [data-split], [data-parallax]")
+        .querySelectorAll<HTMLElement>(
+          "[data-reveal], [data-split], [data-parallax], [data-scrub-words], [data-image-reveal], [data-scramble], [data-tilt-in]",
+        )
         .forEach((el) => observer.observe(el));
     });
     return () => {
@@ -196,32 +234,42 @@ export function MotionController() {
     };
   }, [pathname, reduced]);
 
-  // Page tone: the whole page inverts (paper ⇄ ink) to match whichever
-  // `[data-tone]` section is crossing the middle of the viewport.
+  // Theme sensor: the fixed header and bottom bar switch to light text
+  // while a `[data-theme="dark"]` section sits beneath them (the home hero
+  // drives the header itself via `data-hero-header`, see <HeroCover>). Only two
+  // attributes on <html> change — no page-wide repaints while scrolling.
   useEffect(() => {
     const html = document.documentElement;
-    const sections = Array.from(
-      document.querySelectorAll<HTMLElement>("main [data-tone], footer[data-tone]"),
-    );
-    if (sections.length === 0) {
-      html.dataset.tone = "paper";
-      return;
-    }
-    const setTone = (tone: string | undefined) => {
-      html.dataset.tone = tone === "ink" ? "ink" : "paper";
+    const dark = Array.from(document.querySelectorAll<HTMLElement>('[data-theme="dark"]'));
+    const counts = { header: 0, bar: 0 };
+    const apply = () => {
+      html.dataset.header = counts.header > 0 ? "dark" : "light";
+      html.dataset.bar = counts.bar > 0 ? "dark" : "light";
     };
-    setTone(sections[0]?.dataset.tone);
-    const triggers = sections.map((section) =>
-      ScrollTrigger.create({
-        trigger: section,
-        start: "top 50%",
-        end: "bottom 50%",
-        onToggle: (self) => {
-          if (self.isActive) setTone(section.dataset.tone);
-        },
-      }),
-    );
-    return () => triggers.forEach((t) => t.kill());
+    apply();
+    // `data-theme-edges="bar"` (or "header") limits a section to one edge.
+    const sense = (edge: "header" | "bar", line: string) =>
+      dark
+        .filter((section) => {
+          const edges = section.dataset.themeEdges;
+          return !edges || edges === edge;
+        })
+        .map((section) =>
+          ScrollTrigger.create({
+            trigger: section,
+            start: `top ${line}`,
+            end: `bottom ${line}`,
+            onToggle: (self) => {
+              counts[edge] = Math.max(0, counts[edge] + (self.isActive ? 1 : -1));
+              apply();
+            },
+          }),
+        );
+    const triggers = [...sense("header", "top+=36"), ...sense("bar", "bottom-=28")];
+    return () => {
+      triggers.forEach((t) => t.kill());
+      counts.header = counts.bar = 0;
+    };
   }, [pathname]);
 
   // 3D tilt — a single delegated pointer listener for every `[data-tilt]`.

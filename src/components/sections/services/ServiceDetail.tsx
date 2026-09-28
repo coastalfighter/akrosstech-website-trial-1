@@ -1,45 +1,49 @@
+import Link from "next/link";
+import Image from "next/image";
+import { ArrowUpRight } from "lucide-react";
 import type { OutsourcingService } from "@/content/services";
 import { allServiceCards } from "@/content/services";
-import { servicePhotos } from "@/content/media";
-import { SectionHeading } from "@/components/ui/SectionHeading";
-import { Photo } from "@/components/ui/Photo";
+import { photos, servicePhotos } from "@/content/media";
 import { Reveal } from "@/components/motion/Reveal";
-import { ImageReveal } from "@/components/motion/Scroll";
-import { HoverList } from "@/components/sections/shared/HoverList";
+import { Icon } from "@/components/ui/Icon";
+import { Badge } from "@/components/ui/Badge";
+import { SectionHeading } from "@/components/ui/SectionHeading";
 
-/** "Why … trust Akrostech": sticky copy + numbered benefit rows. */
+/** Why us: sticky heading + body on the left, benefit cards on the right. */
 export function ServiceWhy({ service }: { service: OutsourcingService }) {
   const { why } = service;
   return (
-    <section data-tone="paper" aria-labelledby="why-service-title" className="py-28 md:py-40">
-      <div className="container-page grid gap-16 lg:grid-cols-2">
+    <section aria-labelledby="why-title" className="py-32 md:py-44">
+      <div className="container-page grid gap-14 lg:grid-cols-[1fr_1.2fr]">
         <div className="flex flex-col gap-8 lg:sticky lg:top-28 lg:self-start">
           <SectionHeading
-            id="why-service-title"
-            label={why.eyebrow}
-            index="01"
-            title={why.heading}
-            size="md"
+            id="why-title"
+            eyebrow="Why Akrostech"
+            title={`${why.eyebrow} *${why.heading}.*`}
+            size="lg"
           />
-          <Reveal className="flex flex-col gap-4 leading-relaxed text-muted">
+          <Reveal stagger={0.06} className="flex max-w-lg flex-col gap-4">
             {why.body.map((p) => (
-              <p key={p}>{p}</p>
+              <p key={p} className="text-[15px] leading-relaxed text-stone">
+                {p}
+              </p>
             ))}
           </Reveal>
         </div>
-        <Reveal stagger={0.06} as="ol" className="border-t border-line">
-          {why.benefits.map((b, i) => (
+        <Reveal stagger={0.06} as="ul" className="grid gap-3 sm:grid-cols-2">
+          {why.benefits.map((benefit, i) => (
             <li
-              key={b.title}
-              className="group grid grid-cols-[3rem_1fr] gap-4 border-b border-line py-7"
+              key={benefit.title}
+              className="flex min-h-48 flex-col justify-between gap-8 rounded-[6px] bg-paper-2 p-6 transition-colors duration-500 hover:bg-lime"
             >
-              <span className="pt-2 label text-muted">{String(i + 1).padStart(2, "0")}</span>
-              <div>
-                <h3 className="font-serif text-3xl leading-tight text-fg transition-transform duration-700 group-hover:translate-x-2 group-hover:italic">
-                  {b.title}
-                </h3>
-                {b.description && (
-                  <p className="mt-2 leading-relaxed text-muted">{b.description}</p>
+              <span className="flex items-center justify-between">
+                <span className="mono text-stone">{String(i + 1).padStart(2, "0")}</span>
+                <Icon name={benefit.icon} className="size-5" />
+              </span>
+              <div className="flex flex-col gap-2">
+                <h3 className="h-sm">{benefit.title}</h3>
+                {benefit.description && (
+                  <p className="text-[14px] leading-relaxed text-stone">{benefit.description}</p>
                 )}
               </div>
             </li>
@@ -50,46 +54,38 @@ export function ServiceWhy({ service }: { service: OutsourcingService }) {
   );
 }
 
-/** "What we can do for you" / industries — big numbered rows + a photo. */
+/** Capabilities: ink section with numbered rows. */
 export function ServiceCapabilities({ service }: { service: OutsourcingService }) {
   const { capabilities } = service;
-  const photo = servicePhotos[service.slug]?.detail ?? "blocks";
   return (
-    <section data-tone="ink" aria-labelledby="capabilities-title" className="py-28 md:py-40">
+    <section
+      aria-labelledby="capabilities-title"
+      className="bg-ink py-32 text-paper md:py-44"
+      data-theme="dark"
+    >
       <div className="container-page">
-        <div className="mb-16 grid gap-10 lg:grid-cols-[1.4fr_1fr] lg:items-end">
+        <div className="mb-16 grid gap-8 lg:grid-cols-[1fr_26rem] lg:items-end">
           <SectionHeading
             id="capabilities-title"
-            label={capabilities.eyebrow}
-            index="02"
+            eyebrow={capabilities.eyebrow}
             title={capabilities.heading}
-            description={capabilities.body}
+            size="lg"
           />
-          <ImageReveal className="aspect-[4/3]">
-            <Photo
-              name={photo}
-              hover
-              sizes="(min-width: 1024px) 40vw, 100vw"
-              className="size-full"
-            />
-          </ImageReveal>
+          <Reveal y={16}>
+            <p className="text-[15px] leading-relaxed text-fog">{capabilities.body}</p>
+          </Reveal>
         </div>
-        <Reveal
-          stagger={0.06}
-          as="ol"
-          className="grid border-t border-line md:grid-cols-2 md:gap-x-16"
-        >
+        <Reveal stagger={0.06} as="ol" className="border-t border-paper/12">
           {capabilities.items.map((item, i) => (
-            <li key={item.title} className="group flex gap-6 border-b border-line py-8">
-              <span className="font-serif text-4xl leading-none text-muted transition-colors group-hover:text-fg">
-                {String(i + 1).padStart(2, "0")}
-              </span>
-              <div>
-                <h3 className="font-serif text-3xl leading-tight text-fg group-hover:italic">
-                  {item.title}
-                </h3>
-                <p className="mt-3 leading-relaxed text-muted">{item.description}</p>
-              </div>
+            <li
+              key={item.title}
+              className="group grid gap-4 border-b border-paper/12 py-8 md:grid-cols-[4rem_1fr_1.3fr] md:gap-10"
+            >
+              <span className="mono text-lime tabular-nums">{String(i + 1).padStart(2, "0")}</span>
+              <h3 className="h-sm transition-transform duration-500 group-hover:translate-x-2">
+                {item.title}
+              </h3>
+              <p className="max-w-xl text-[15px] leading-relaxed text-fog">{item.description}</p>
             </li>
           ))}
         </Reveal>
@@ -98,29 +94,51 @@ export function ServiceCapabilities({ service }: { service: OutsourcingService }
   );
 }
 
-/** Cross-links to the other services. */
+/** The other services as photo cards. */
 export function OtherServices({ currentSlug }: { currentSlug: string }) {
   const others = allServiceCards.filter((s) => s.slug !== currentSlug);
   return (
-    <section data-tone="paper" aria-labelledby="other-services-title" className="py-28 md:py-40">
+    <section aria-labelledby="other-title" className="py-32 md:py-44">
       <div className="container-page">
         <SectionHeading
-          id="other-services-title"
-          label="Explore more"
-          title="Other ways we help you *scale*"
+          id="other-title"
+          eyebrow="More services"
+          title="Other ways we *help you scale.*"
           size="md"
-          className="mb-14"
+          className="mb-12"
         />
-        <HoverList
-          size="md"
-          items={others.map((s) => ({
-            href: `/services/${s.slug}`,
-            title: s.title,
-            meta: s.cardSummary,
-            photo: servicePhotos[s.slug]?.hero ?? "blocks",
-            badge: s.slug === "website-development" ? "New" : undefined,
-          }))}
-        />
+        <Reveal stagger={0.08} as="ul" className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          {others.map((s) => {
+            const photo = photos[servicePhotos[s.slug]?.hero ?? "blocks"];
+            return (
+              <li key={s.slug}>
+                <Link href={`/services/${s.slug}`} className="group flex flex-col gap-4">
+                  <div className="relative aspect-[4/3] overflow-hidden rounded-[4px] bg-paper-2">
+                    <Image
+                      src={photo.src}
+                      alt={photo.alt}
+                      fill
+                      sizes="(min-width: 1024px) 25vw, 50vw"
+                      className="object-cover transition-transform duration-[1.4s] ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-[1.05]"
+                    />
+                  </div>
+                  <div className="flex items-start justify-between gap-4">
+                    <h3 className="text-[17px] leading-snug font-medium">
+                      <span className="link-line">{s.title}</span>
+                    </h3>
+                    <span className="flex items-center gap-2">
+                      {s.slug === "website-development" && <Badge>New</Badge>}
+                      <ArrowUpRight className="size-4 shrink-0" aria-hidden="true" />
+                    </span>
+                  </div>
+                  <p className="line-clamp-3 text-[14px] leading-relaxed text-stone">
+                    {s.cardSummary}
+                  </p>
+                </Link>
+              </li>
+            );
+          })}
+        </Reveal>
       </div>
     </section>
   );

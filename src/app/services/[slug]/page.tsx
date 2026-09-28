@@ -3,7 +3,6 @@ import { notFound } from "next/navigation";
 import { getOutsourcingService, outsourcingServices } from "@/content/services";
 import { servicePhotos } from "@/content/media";
 import { serviceFaqs } from "@/content/faqs";
-import { ctaBanner } from "@/content/home";
 import { pageMetadata, serializeJsonLd, serviceJsonLd } from "@/lib/seo";
 import type { ServiceOption } from "@/lib/constants";
 import { PageHero } from "@/components/sections/shared/PageHero";
@@ -12,9 +11,9 @@ import {
   ServiceWhy,
   OtherServices,
 } from "@/components/sections/services/ServiceDetail";
-import { FaqSection } from "@/components/sections/shared/FaqSection";
-import { CtaBanner } from "@/components/sections/shared/CtaBanner";
-import { ContactSection } from "@/components/sections/shared/ContactSection";
+import { FaqBlock } from "@/components/sections/shared/FaqBlock";
+import { CtaBand } from "@/components/sections/shared/CtaBand";
+import { ContactPanel } from "@/components/sections/shared/ContactPanel";
 import { ButtonLink } from "@/components/ui/Button";
 
 export const dynamicParams = false;
@@ -43,7 +42,7 @@ const formService: Record<string, ServiceOption> = {
   "legal-process-outsourcing": "Legal Process Outsourcing",
 };
 
-/** Last word italicised for the editorial title treatment. */
+/** Last word muted for the two-tone title treatment. */
 const accent = (title: string) => title.replace(/(\S+)$/, "*$1*");
 
 export default async function ServicePage({ params }: PageProps<"/services/[slug]">) {
@@ -67,7 +66,7 @@ export default async function ServicePage({ params }: PageProps<"/services/[slug
         }}
       />
       <PageHero
-        label="Our services"
+        eyebrow="Our services"
         title={accent(service.title)}
         description={lead}
         photo={servicePhotos[slug]?.hero}
@@ -77,26 +76,23 @@ export default async function ServicePage({ params }: PageProps<"/services/[slug
         ]}
       >
         {rest.map((p) => (
-          <p key={p} className="leading-relaxed text-muted">
+          <p key={p} className="text-[15px] leading-relaxed text-stone">
             {p}
           </p>
         ))}
         <div className="flex flex-wrap gap-3">
-          <ButtonLink href="#contact" arrow>
+          <ButtonLink href="#contact" variant="solid" arrow>
             Get started
           </ButtonLink>
-          <ButtonLink href="/services" variant="outline">
-            All services
-          </ButtonLink>
+          <ButtonLink href="/services">All services</ButtonLink>
         </div>
       </PageHero>
       <ServiceWhy service={service} />
       <ServiceCapabilities service={service} />
-      <FaqSection faqs={serviceFaqs} index="03" />
-      <CtaBanner {...ctaBanner} href="#contact" photo={servicePhotos[slug]?.detail} />
-      <ContactSection
-        label="Get Started"
-        title={`Let’s talk about *${service.shortTitle}*`}
+      <FaqBlock faqs={serviceFaqs} />
+      <CtaBand href="#contact" />
+      <ContactPanel
+        title={`Let’s talk about *${service.shortTitle}.*`}
         defaultService={formService[slug]}
       />
       <OtherServices currentSlug={slug} />

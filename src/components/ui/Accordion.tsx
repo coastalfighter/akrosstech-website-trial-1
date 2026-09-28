@@ -9,11 +9,15 @@ export interface AccordionItem {
   answer: string;
 }
 
-/** Hairline editorial accordion (WAI-ARIA disclosure pattern). */
+/**
+ * Studio FAQ list (WAI-ARIA disclosure pattern): hairline rows, a plus that
+ * turns into a cross, and colours inherited from the section so it works
+ * on paper and ink alike.
+ */
 export function Accordion({
   items,
   className,
-  defaultOpen = 0,
+  defaultOpen = null,
 }: {
   items: AccordionItem[];
   className?: string;
@@ -23,13 +27,13 @@ export function Accordion({
   const baseId = useId();
 
   return (
-    <div className={cn("border-t border-line", className)}>
+    <div className={cn("border-t border-current/15", className)}>
       {items.map((item, index) => {
         const isOpen = open === index;
         const buttonId = `${baseId}-button-${index}`;
         const panelId = `${baseId}-panel-${index}`;
         return (
-          <div key={item.question} className="border-b border-line">
+          <div key={item.question} className="border-b border-current/15">
             <h3>
               <button
                 id={buttonId}
@@ -37,22 +41,20 @@ export function Accordion({
                 aria-expanded={isOpen}
                 aria-controls={panelId}
                 onClick={() => setOpen(isOpen ? null : index)}
-                className="group flex w-full items-baseline gap-6 py-6 text-left"
+                className="group flex w-full items-center gap-6 py-5 text-left"
               >
-                <span className="w-8 shrink-0 label text-muted tabular-nums" aria-hidden="true">
-                  {String(index + 1).padStart(2, "0")}
-                </span>
-                <span className="flex-1 font-serif text-xl leading-snug text-fg transition-transform duration-500 group-hover:translate-x-2 sm:text-2xl">
+                <span className="flex-1 text-[15px] leading-snug font-medium transition-opacity duration-300 group-hover:opacity-70 sm:text-base">
                   {item.question}
                 </span>
-                <span className="relative size-4 shrink-0 self-center" aria-hidden="true">
-                  <span className="absolute top-1/2 left-0 h-px w-full bg-fg" />
-                  <span
-                    className={cn(
-                      "absolute top-1/2 left-0 h-px w-full bg-fg transition-transform duration-500",
-                      !isOpen && "rotate-90",
-                    )}
-                  />
+                <span
+                  className={cn(
+                    "relative grid size-7 shrink-0 place-items-center rounded-full transition-[background-color,transform] duration-500 ease-out",
+                    isOpen ? "rotate-45 bg-lime text-ink" : "bg-current/8",
+                  )}
+                  aria-hidden="true"
+                >
+                  <span className="absolute h-px w-3 bg-current" />
+                  <span className="absolute h-3 w-px bg-current" />
                 </span>
               </button>
             </h3>
@@ -68,7 +70,9 @@ export function Accordion({
                   transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
                   className="overflow-hidden"
                 >
-                  <p className="max-w-2xl pb-7 pl-14 leading-relaxed text-muted">{item.answer}</p>
+                  <p className="max-w-2xl pr-12 pb-6 text-[15px] leading-relaxed opacity-70">
+                    {item.answer}
+                  </p>
                 </m.div>
               )}
             </AnimatePresence>

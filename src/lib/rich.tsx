@@ -1,10 +1,11 @@
 import { Fragment } from "react";
 
 /**
- * Tiny editorial markup: `*word*` renders as an italic serif accent,
- * e.g. rich("Work that *works*"). Keeps headings as plain data strings.
+ * Tiny heading markup: `*words*` render as the muted half of a two-tone
+ * headline, e.g. rich("Built for reliability, *scalability and value.*").
+ * Keeps headings as plain data strings.
  */
-export function rich(text: string, emClassName = "italic"): React.ReactNode {
+export function rich(text: string, emClassName = "not-italic opacity-50"): React.ReactNode {
   const parts = text.split(/(\*[^*]+\*)/g).filter(Boolean);
   return parts.map((part, i) =>
     part.startsWith("*") && part.endsWith("*") ? (

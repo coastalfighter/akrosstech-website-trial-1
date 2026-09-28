@@ -39,34 +39,3 @@ export function ImageReveal({
     </div>
   );
 }
-
-/**
- * Oversized word whose letters drift apart as it scrolls (noth.in-style).
- * Letters are aria-hidden; the element carries the readable label.
- */
-export function SpreadWord({
-  text,
-  className,
-  as = "p",
-}: {
-  text: string;
-  className?: string;
-  as?: "p" | "h2";
-}) {
-  const Tag = as as "p";
-  return (
-    <Tag className={cn("flex justify-between", className)} data-spread="">
-      <span className="sr-only">{text}</span>
-      {text.split("").map((letter, i) => (
-        <span
-          key={i}
-          aria-hidden="true"
-          className="inline-block will-change-transform"
-          data-spread-letter=""
-        >
-          {letter}
-        </span>
-      ))}
-    </Tag>
-  );
-}

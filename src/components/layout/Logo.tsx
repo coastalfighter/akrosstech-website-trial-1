@@ -39,12 +39,14 @@ export function LogoMark({
   );
 }
 
-/** Mark + wordmark lockup. */
+/** Mark + wordmark lockup: the lime mark on an ink tile reads on any surface. */
 export function Logo({ className }: { className?: string }) {
   return (
-    <span className={cn("inline-flex items-center gap-2", className)}>
-      <LogoMark className="w-7 text-lime" />
-      <span className="text-[15px] font-bold tracking-[0.02em] uppercase">Akrostech</span>
+    <span className={cn("inline-flex items-center gap-2.5", className)}>
+      <span className="grid size-7 place-items-center rounded-[6px] bg-ink" aria-hidden="true">
+        <LogoMark className="w-[18px] text-lime" />
+      </span>
+      <span className="text-[17px] font-medium tracking-[-0.03em]">Akrostech</span>
     </span>
   );
 }

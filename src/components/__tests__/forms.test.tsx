@@ -74,7 +74,7 @@ describe("NewsletterForm", () => {
     vi.stubGlobal("fetch", fetchMock);
     const user = userEvent.setup();
     render(<NewsletterForm />);
-    await user.type(screen.getByLabelText(/subscribe our newsletter/i), "not-an-email");
+    await user.type(screen.getByLabelText(/subscribe to our newsletter/i), "not-an-email");
     await user.click(screen.getByRole("button", { name: /subscribe/i }));
     expect(await screen.findByRole("status")).toHaveTextContent(/valid email/i);
     expect(fetchMock).not.toHaveBeenCalled();
@@ -82,16 +82,22 @@ describe("NewsletterForm", () => {
 });
 
 describe("Accordion", () => {
+  const items = [
+    { question: "First?", answer: "Answer one" },
+    { question: "Second?", answer: "Answer two" },
+  ];
+
+  it("starts with every panel closed by default", () => {
+    render(<Accordion items={items} />);
+    for (const name of ["First?", "Second?"]) {
+      expect(screen.getByRole("button", { name })).toHaveAttribute("aria-expanded", "false");
+    }
+    expect(screen.queryByRole("region")).not.toBeInTheDocument();
+  });
+
   it("toggles panels with correct ARIA state", async () => {
     const user = userEvent.setup();
-    render(
-      <Accordion
-        items={[
-          { question: "First?", answer: "Answer one" },
-          { question: "Second?", answer: "Answer two" },
-        ]}
-      />,
-    );
+    render(<Accordion items={items} defaultOpen={0} />);
     const first = screen.getByRole("button", { name: "First?" });
     const second = screen.getByRole("button", { name: "Second?" });
     expect(first).toHaveAttribute("aria-expanded", "true");
