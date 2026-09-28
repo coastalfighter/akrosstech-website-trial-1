@@ -45,7 +45,7 @@ export function Pricing({
               key={tier.name}
               className={cn(
                 "group flex flex-col gap-7 border-r border-b border-line p-7 transition-colors duration-700 md:p-8",
-                tier.highlighted ? "bg-fg text-bg" : "hover:bg-soft",
+                tier.highlighted ? "bg-lime text-ink" : "hover:bg-soft",
               )}
             >
               <div className="flex items-start justify-between gap-4">
@@ -68,7 +68,7 @@ export function Pricing({
               <ul
                 className={cn(
                   "flex flex-col gap-2.5 border-t pt-6 text-sm",
-                  tier.highlighted ? "border-current/20" : "border-line",
+                  tier.highlighted ? "border-ink/20" : "border-line",
                 )}
               >
                 {tier.features.map((f) => (
@@ -86,8 +86,8 @@ export function Pricing({
                 className={cn(
                   "mt-auto inline-flex h-12 items-center justify-center rounded-full border label transition-colors",
                   tier.highlighted
-                    ? "border-bg hover:bg-bg hover:text-fg"
-                    : "border-line-strong hover:border-fg hover:bg-fg hover:text-bg",
+                    ? "border-ink hover:bg-ink hover:text-lime"
+                    : "border-line-strong hover:border-lime hover:bg-lime hover:text-ink",
                 )}
               >
                 {tier.cta}

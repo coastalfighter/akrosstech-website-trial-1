@@ -53,9 +53,9 @@ export function CustomCursor() {
 
   return (
     <div aria-hidden="true" className="pointer-events-none fixed inset-0 z-[90]">
-      <div ref={ref} className="fixed top-0 left-0 mix-blend-difference">
+      <div ref={ref} className="fixed top-0 left-0">
         <div
-          className="grid -translate-x-1/2 -translate-y-1/2 place-items-center rounded-full bg-white label !text-[10px] text-black transition-[width,height,opacity] duration-500 ease-out"
+          className="grid -translate-x-1/2 -translate-y-1/2 place-items-center rounded-full bg-lime label !text-[10px] text-ink shadow-[0_0_0_1px_rgb(11_11_11/0.35)] transition-[width,height,opacity] duration-500 ease-out"
           style={{ width: size, height: size, opacity: state === "hidden" ? 0 : 1 }}
         >
           {label}

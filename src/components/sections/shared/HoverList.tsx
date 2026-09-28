@@ -128,9 +128,9 @@ export function HoverList({
             >
               <span
                 aria-hidden="true"
-                className="absolute inset-0 -z-10 origin-bottom scale-y-0 bg-fg transition-transform duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-y-100"
+                className="absolute inset-0 -z-10 origin-bottom scale-y-0 bg-lime transition-transform duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:scale-y-100"
               />
-              <span className="flex items-center gap-4 pl-0 transition-[padding,color] duration-700 group-hover:pl-4 group-hover:text-bg">
+              <span className="flex items-center gap-4 pl-0 transition-[padding,color] duration-700 group-hover:pl-4 group-hover:text-ink">
                 <span className="w-8 label tabular-nums">{String(i + 1).padStart(2, "0")}</span>
                 <Photo
                   name={item.photo}
@@ -138,7 +138,7 @@ export function HoverList({
                   className="size-14 shrink-0 sm:size-16 lg:hidden"
                 />
               </span>
-              <span className="min-w-0 transition-colors duration-700 group-hover:text-bg">
+              <span className="min-w-0 transition-colors duration-700 group-hover:text-ink">
                 <Heading
                   className={cn(
                     "font-serif leading-[1] transition-transform duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] group-hover:translate-x-3 group-hover:italic",
@@ -155,12 +155,12 @@ export function HoverList({
                   )}
                 </Heading>
                 {(item.tag || item.meta) && (
-                  <span className="mt-2 flex flex-wrap gap-x-4 gap-y-1 text-sm text-muted transition-colors duration-700 group-hover:text-bg/70 md:hidden">
+                  <span className="mt-2 flex flex-wrap gap-x-4 gap-y-1 text-sm text-muted transition-colors duration-700 group-hover:text-ink/70 md:hidden">
                     {item.tag && <span className="label">{item.tag}</span>}
                   </span>
                 )}
               </span>
-              <span className="flex items-center gap-6 pr-0 transition-[padding,color] duration-700 group-hover:pr-4 group-hover:text-bg">
+              <span className="flex items-center gap-6 pr-0 transition-[padding,color] duration-700 group-hover:pr-4 group-hover:text-ink">
                 {item.meta && (
                   <span className="hidden max-w-xs text-right text-sm leading-relaxed md:block">
                     {item.meta}

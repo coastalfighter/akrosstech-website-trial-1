@@ -38,7 +38,7 @@ export function WebServicesList() {
                 {s.points.map((p) => (
                   <li key={p} className="flex items-baseline gap-3 text-sm text-fg">
                     <span
-                      className="h-px w-4 shrink-0 translate-y-[-0.25em] bg-fg"
+                      className="h-px w-4 shrink-0 translate-y-[-0.25em] bg-lime"
                       aria-hidden="true"
                     />
                     {p}

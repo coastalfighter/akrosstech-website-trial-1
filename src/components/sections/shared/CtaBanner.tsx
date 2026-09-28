@@ -15,7 +15,7 @@ interface CtaBannerProps {
   photo?: PhotoKey;
 }
 
-/** Full-bleed monochrome photo band with a serif call to action. */
+/** Full-bleed photo band with a serif call to action. */
 export function CtaBanner({
   eyebrow,
   heading,
@@ -37,7 +37,7 @@ export function CtaBanner({
         </TextReveal>
         <div className="flex flex-col gap-8 border-t border-paper/25 pt-8 md:flex-row md:items-center md:justify-between">
           <p className="max-w-lg text-lg leading-relaxed text-paper/80">{body}</p>
-          <ButtonLink href={href} size="lg" arrow className="bg-paper text-ink" cursorLabel="Go">
+          <ButtonLink href={href} size="lg" arrow cursorLabel="Go">
             {cta}
           </ButtonLink>
         </div>

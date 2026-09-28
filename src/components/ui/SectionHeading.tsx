@@ -16,7 +16,7 @@ export function Label({
 }) {
   return (
     <p className={cn("flex items-center gap-3 label text-muted", className)}>
-      {index && <span className="tabular-nums">{index}</span>}
+      {index && <span className="text-lime tabular-nums">{index}</span>}
       <span>( {children} )</span>
     </p>
   );

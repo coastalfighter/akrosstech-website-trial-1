@@ -6,13 +6,13 @@ GSAP, Framer Motion and Lenis, and it deploys to Vercel.
 
 - All content from the previous WordPress site is preserved verbatim (see
   [`docs/CONTENT_INVENTORY.md`](docs/CONTENT_INVENTORY.md)), and old URLs 301-redirect to the new routes.
-- **"Editorial" design:** monochrome paper (`#f1efe9`) and ink (`#0b0b0a`), Instrument Serif
-  display type with italic accents, Inter Tight for UI, tiny numbered `( labels )` and hairline
-  rules. Inspired by the storytelling of rebrandgurus.com, scfo.de and noth.in.
-- **Tone-shifting page:** each section declares `data-tone="paper" | "ink"` and the whole page
-  inverts as sections cross the middle of the viewport.
-- **Real photography** (Unsplash licence) graded to black and white. Photos warm to full colour on
-  hover.
+- **"Editorial" design in the Akrostech brand palette:** lime `#BFF747` accents on near-black
+  (`#0B0B0B` / charcoal `#1B1B1B`) with off-white `#F5F5F4` type. Instrument Serif display type
+  with lime italic accents, Inter Tight for UI, tiny numbered `( labels )` and hairline rules.
+  Inspired by the storytelling of rebrandgurus.com, scfo.de and noth.in.
+- **Tone-shifting page:** each section declares `data-tone="paper"` (charcoal) or `"ink"` (black),
+  and the page background shifts as sections cross the middle of the viewport.
+- **Real photography** (Unsplash licence) in full colour, gently muted until hovered.
 - Effects: counter preloader that wipes up, a full-bleed AKROSTECH wordmark that rises in and
   spreads apart on scroll (moving the pointer stirs a WebGL fluid simulation — a port of the noth.in hero — whose dye reveals a colour photo, `FluidReveal`), a
   scroll-expanding image, scroll-scrubbed manifesto text, tilted marquee

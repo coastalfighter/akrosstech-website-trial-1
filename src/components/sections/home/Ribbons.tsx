@@ -40,7 +40,7 @@ export function Ribbons() {
           ))}
         </Marquee>
       </div>
-      <div className="absolute top-1/2 left-1/2 w-[130%] -translate-x-1/2 -translate-y-1/2 rotate-[5deg] border-y border-ink bg-paper py-4 text-ink md:py-6">
+      <div className="absolute top-1/2 left-1/2 w-[130%] -translate-x-1/2 -translate-y-1/2 rotate-[5deg] bg-lime py-4 text-ink md:py-6">
         <Marquee duration={44} reverse pauseOnHover={false}>
           {bottom.map((word) => (
             <span

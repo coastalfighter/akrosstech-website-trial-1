@@ -72,7 +72,7 @@ export const metadata: Metadata = {
 };
 
 export const viewport: Viewport = {
-  themeColor: "#0b0b0a",
+  themeColor: "#0b0b0b",
   colorScheme: "light dark",
   width: "device-width",
   initialScale: 1,
@@ -101,7 +101,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
       <body>
         <a
           href="#main"
-          className="fixed top-3 left-3 z-[110] -translate-y-20 rounded-full bg-ink px-5 py-3 text-sm font-semibold text-paper transition-transform focus:translate-y-0"
+          className="fixed top-3 left-3 z-[110] -translate-y-20 rounded-full bg-lime px-5 py-3 text-sm font-semibold text-ink transition-transform focus:translate-y-0"
         >
           Skip to content
         </a>

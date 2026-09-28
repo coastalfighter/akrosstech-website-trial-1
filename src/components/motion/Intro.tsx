@@ -50,7 +50,7 @@ export function IntroTitle({ children, as = "h1", className, id, delay = 0.05 }:
         <Fragment key={`${word}-${i}`}>
           <span aria-hidden="true" className="hero-mask">
             <span
-              className={cn("hero-word", italic && "italic")}
+              className={cn("hero-word", italic && "text-lime italic")}
               style={{ ["--i" as string]: i, ["--hero-delay" as string]: `${delay}s` }}
             >
               {word}

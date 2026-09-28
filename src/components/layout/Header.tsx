@@ -48,7 +48,7 @@ function RollLink({
     >
       <span
         className={cn(
-          "size-1 rounded-full bg-current transition-opacity",
+          "size-1 rounded-full bg-lime transition-opacity",
           active ? "opacity-100" : "opacity-0",
         )}
         aria-hidden="true"
@@ -65,6 +65,7 @@ export function Header() {
   const pathname = usePathname();
   const lenis = useLenisInstance();
   const [hidden, setHidden] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const [hovered, setHovered] = useState(0);
   const [previousPath, setPreviousPath] = useState(pathname);
@@ -80,6 +81,7 @@ export function Header() {
   useEffect(() => {
     const onScroll = () => {
       const y = window.scrollY;
+      setScrolled(y > 40);
       if (y > 300 && y > lastY.current + 4) setHidden(true);
       else if (y < lastY.current - 4 || y < 300) setHidden(false);
       lastY.current = y;
@@ -115,8 +117,10 @@ export function Header() {
         data-tone={menuOpen ? "ink" : undefined}
         data-tone-scope={menuOpen ? "" : undefined}
         className={cn(
-          "fixed inset-x-0 top-0 z-50 text-fg transition-[transform,color] duration-700 ease-[cubic-bezier(0.16,1,0.3,1)]",
+          "fixed inset-x-0 top-0 z-50 text-fg transition-[transform,color,background-color,border-color] duration-700 ease-[cubic-bezier(0.16,1,0.3,1)]",
           hidden && !menuOpen && "-translate-y-full",
+          // Once the page moves, a quiet backdrop keeps links legible over content.
+          scrolled && !menuOpen && "border-b border-line bg-bg/80 backdrop-blur-md",
         )}
       >
         <div className="container-page flex h-20 items-center justify-between gap-6">
@@ -139,7 +143,7 @@ export function Header() {
           <div className="flex items-center gap-2 sm:gap-4">
             <Link
               href="/contact"
-              className="group hidden h-10 items-center rounded-full border border-line-strong px-5 label transition-colors hover:border-fg hover:bg-fg hover:text-bg sm:inline-flex"
+              className="group hidden h-10 items-center rounded-full border border-line-strong px-5 label transition-colors hover:border-lime hover:bg-lime hover:text-ink sm:inline-flex"
             >
               <span className="roll">
                 <span>Book a call</span>

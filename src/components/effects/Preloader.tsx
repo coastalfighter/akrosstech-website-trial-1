@@ -19,12 +19,12 @@ export function Preloader() {
           <span>Offshore talent · Onshore quality</span>
         </div>
         <div className="flex items-center justify-center">
-          <LogoMark animated className="w-24 md:w-32" />
+          <LogoMark animated className="w-24 text-lime md:w-32" />
         </div>
         <div className="flex items-end justify-between">
           <span className="label">Wilmington, DE — India</span>
           <span className="font-serif text-6xl leading-none md:text-8xl">
-            (<span className="preloader-count tabular-nums" />)
+            (<span className="preloader-count text-lime tabular-nums" />)
           </span>
         </div>
       </div>

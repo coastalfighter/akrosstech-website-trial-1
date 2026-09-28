@@ -60,7 +60,7 @@ export function Testimonials() {
               type="button"
               onClick={() => go(-1)}
               aria-label="Previous testimonial"
-              className="grid size-12 place-items-center rounded-full border border-line-strong text-fg transition-colors hover:bg-fg hover:text-bg"
+              className="grid size-12 place-items-center rounded-full border border-line-strong text-fg transition-colors hover:border-lime hover:bg-lime hover:text-ink"
             >
               ←
             </button>
@@ -68,7 +68,7 @@ export function Testimonials() {
               type="button"
               onClick={() => go(1)}
               aria-label="Next testimonial"
-              className="grid size-12 place-items-center rounded-full border border-line-strong text-fg transition-colors hover:bg-fg hover:text-bg"
+              className="grid size-12 place-items-center rounded-full border border-line-strong text-fg transition-colors hover:border-lime hover:bg-lime hover:text-ink"
             >
               →
             </button>

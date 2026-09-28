@@ -92,7 +92,7 @@ export function Footer() {
         </div>
       </div>
 
-      <Wordmark className="px-2 pb-2 text-fg md:px-4" />
+      <Wordmark className="px-2 pb-2 text-lime md:px-4" />
     </footer>
   );
 }

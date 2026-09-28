@@ -46,7 +46,7 @@ export function TechStack() {
             .map((item) => (
               <span
                 key={item}
-                className="font-serif text-6xl whitespace-nowrap text-fg/15 italic md:text-8xl"
+                className="font-serif text-6xl whitespace-nowrap text-fg/40 italic md:text-8xl"
               >
                 {item}
               </span>

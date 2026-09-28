@@ -71,7 +71,7 @@ export function NewsletterForm({ className }: { className?: string }) {
           type="submit"
           disabled={status === "loading"}
           aria-label="Subscribe"
-          className="grid size-10 shrink-0 place-items-center rounded-full border border-line-strong text-fg transition-colors hover:bg-fg hover:text-bg disabled:opacity-60"
+          className="grid size-10 shrink-0 place-items-center rounded-full border border-line-strong text-fg transition-colors hover:border-lime hover:bg-lime hover:text-ink disabled:opacity-60"
         >
           {status === "loading" ? (
             <Loader2 className="size-4 animate-spin" aria-hidden="true" />

@@ -1,7 +1,7 @@
 /**
- * Bakes the site's monochrome editorial photo grade (black & white +
- * contrast) into background variants, so full-bleed images need no runtime
- * CSS filters or overlays (much cheaper to paint).
+ * Bakes the site's photo grade (full colour, gently muted and deepened so
+ * light type and lime accents sit well on top) into background variants, so
+ * full-bleed images need no runtime CSS filters (much cheaper to paint).
  *
  *   node scripts/grade-images.mjs
  *
@@ -20,9 +20,8 @@ for (const file of files) {
   const out = path.join(OUT, file);
   await sharp(path.join(SRC, file))
     .resize({ width: 1920, withoutEnlargement: true })
-    .modulate({ saturation: 0 }) // monochrome, kept in sRGB
-    .linear(1.12, -10) // editorial contrast
-    .modulate({ brightness: 0.92 })
+    .modulate({ saturation: 0.9, brightness: 0.88 }) // slightly muted, deeper
+    .linear(1.06, -6) // gentle contrast
     .jpeg({ quality: 72, mozjpeg: true })
     .toFile(out);
   console.log("graded", file);

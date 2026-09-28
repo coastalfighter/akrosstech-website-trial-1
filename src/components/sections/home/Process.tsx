@@ -51,7 +51,7 @@ export function Process() {
           {steps.map((step, i) => (
             <li key={step.title} className="relative flex flex-col gap-4">
               <span
-                className="absolute -top-[2.85rem] left-0 size-2.5 rounded-full bg-fg"
+                className="absolute -top-[2.85rem] left-0 size-2.5 rounded-full bg-lime"
                 aria-hidden="true"
               />
               <span className="font-serif text-6xl leading-none text-fg md:text-7xl">0{i + 1}</span>

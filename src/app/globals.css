@@ -1,14 +1,20 @@
 @import "tailwindcss";
 
 /* ──────────────────────────────────────────────────────────────
-   Akrostech — "Editorial" design system
-   Monochrome paper & ink. The whole page inverts between tones as
-   sections pass the middle of the viewport (see <ToneController>).
+   Akrostech — "Editorial" design system in the Akrostech brand
+   palette: lime #BFF747 on near-black, off-white type.
+   Sections alternate between two dark tones as they pass the middle
+   of the viewport (see <ToneController>):
+     data-tone="paper" → charcoal #1B1B1B (brand secondary)
+     data-tone="ink"   → black    #0B0B0B
    ────────────────────────────────────────────────────────────── */
 @theme {
-  --color-paper: #f1efe9;
-  --color-ink: #0b0b0a;
-  --color-stone: #8b877e;
+  /* Off-white type colour (named "paper" for the tone system). */
+  --color-paper: #f5f5f4;
+  --color-ink: #0b0b0b;
+  --color-charcoal: #1b1b1b;
+  --color-lime: #bff747;
+  --color-lime-soft: #d6fb85;
 
   --font-sans: var(--font-grotesk), ui-sans-serif, system-ui, sans-serif;
   --font-serif: var(--font-serif-display), ui-serif, Georgia, serif;
@@ -42,21 +48,21 @@
 :root,
 html[data-tone="paper"],
 [data-tone="paper"][data-tone-scope] {
-  --tone-bg: #f1efe9;
-  --tone-fg: #0b0b0a;
-  --tone-muted: #5f5c55;
-  --tone-line: rgb(11 11 10 / 0.14);
-  --tone-line-strong: rgb(11 11 10 / 0.32);
-  --tone-soft: rgb(11 11 10 / 0.05);
+  --tone-bg: #1b1b1b;
+  --tone-fg: #f5f5f4;
+  --tone-muted: #a8a8a3;
+  --tone-line: rgb(255 255 255 / 0.1);
+  --tone-line-strong: rgb(255 255 255 / 0.22);
+  --tone-soft: rgb(255 255 255 / 0.05);
 }
 html[data-tone="ink"],
 [data-tone="ink"][data-tone-scope] {
-  --tone-bg: #0b0b0a;
-  --tone-fg: #f1efe9;
-  --tone-muted: #a19d94;
-  --tone-line: rgb(241 239 233 / 0.14);
-  --tone-line-strong: rgb(241 239 233 / 0.32);
-  --tone-soft: rgb(241 239 233 / 0.06);
+  --tone-bg: #0b0b0b;
+  --tone-fg: #f5f5f4;
+  --tone-muted: #a8a8a3;
+  --tone-line: rgb(255 255 255 / 0.1);
+  --tone-line-strong: rgb(255 255 255 / 0.22);
+  --tone-soft: rgb(255 255 255 / 0.05);
 }
 
 @layer base {
@@ -77,11 +83,11 @@ html[data-tone="ink"],
       color 0.8s var(--ease-out-expo);
   }
   ::selection {
-    background: var(--tone-fg);
-    color: var(--tone-bg);
+    background: var(--color-lime);
+    color: var(--color-ink);
   }
   :focus-visible {
-    outline: 1.5px solid currentColor;
+    outline: 2px solid var(--color-lime);
     outline-offset: 4px;
   }
   h1,
@@ -96,6 +102,10 @@ html[data-tone="ink"],
   }
   em {
     font-style: italic;
+  }
+  /* Italic accent words in headlines carry the brand lime. */
+  :where(h1, h2, h3, blockquote, [class*="display-"]) em {
+    color: var(--color-lime);
   }
   html.lenis,
   html.lenis body {
@@ -150,16 +160,16 @@ html[data-tone="ink"],
 }
 
 @layer components {
-  /* Monochrome photography that warms to full colour on hover. */
+  /* Full-colour photography, slightly muted until hovered. */
   .photo img {
-    filter: grayscale(1) contrast(1.05);
+    filter: saturate(0.85) brightness(0.92);
     transition:
       filter 0.9s var(--ease-out-expo),
       transform 1.4s var(--ease-out-expo);
   }
   .group:hover .photo img,
   .photo-hover:hover img {
-    filter: grayscale(0) contrast(1);
+    filter: saturate(1.05) brightness(1);
     transform: scale(1.04);
   }
 
@@ -198,8 +208,8 @@ html[data-tone="ink"],
     position: fixed;
     inset: 0;
     z-index: 60;
-    opacity: 0.05;
-    mix-blend-mode: multiply;
+    opacity: 0.06;
+    mix-blend-mode: overlay;
     background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.9 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
   }
 

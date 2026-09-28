@@ -68,7 +68,7 @@ export function ProcessTimeline() {
           From briefing <em className="italic">to launch</em> — and every day after.
         </h2>
         <div className="hidden h-px w-full max-w-md bg-line lg:block" aria-hidden="true">
-          <div ref={progressRef} className="h-full origin-left bg-fg" />
+          <div ref={progressRef} className="h-full origin-left bg-lime" />
         </div>
       </div>
       <ol

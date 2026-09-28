@@ -20,8 +20,8 @@ interface PhotoProps {
 }
 
 /**
- * Optimised photograph shown in monochrome, warming to full colour on
- * hover. `baked` uses the pre-graded black & white file (no runtime filter).
+ * Optimised full-colour photograph, gently muted until hovered.
+ * `baked` uses the pre-graded background file (no runtime filter).
  */
 export function Photo({
   name,
