@@ -1,10 +1,11 @@
 import { TextReveal } from "@/components/motion/TextReveal";
 import { Reveal } from "@/components/motion/Reveal";
 import { IntroFade, IntroTitle } from "@/components/motion/Intro";
+import { rich } from "@/lib/rich";
 import { cn } from "@/lib/utils";
 
-/** Mono "terminal" label, e.g. `[02] // SERVICES`. */
-export function Eyebrow({
+/** Parenthesised editorial label, e.g. "( The Studio )", with optional index. */
+export function Label({
   children,
   index,
   className,
@@ -14,62 +15,53 @@ export function Eyebrow({
   className?: string;
 }) {
   return (
-    <p
-      className={cn(
-        "inline-flex items-center gap-3 font-mono text-[11px] tracking-[0.18em] text-pulse uppercase",
-        className,
-      )}
-    >
-      <span className="relative flex size-2" aria-hidden="true">
-        <span className="absolute inline-flex size-full animate-ping-slow rounded-full bg-pulse/60" />
-        <span className="relative inline-flex size-2 rounded-full bg-pulse" />
-      </span>
-      {index && <span className="text-fg-subtle">[{index}]</span>}
-      <span>{children}</span>
+    <p className={cn("flex items-center gap-3 label text-muted", className)}>
+      {index && <span className="tabular-nums">{index}</span>}
+      <span>( {children} )</span>
     </p>
   );
 }
 
 interface SectionHeadingProps {
-  eyebrow?: string;
+  label?: string;
   index?: string;
+  /** Title; wrap words in *asterisks* for italic serif accents. */
   title: string;
   description?: string;
   align?: "left" | "center";
   as?: "h1" | "h2" | "h3";
+  size?: "md" | "lg" | "xl";
   className?: string;
-  titleClassName?: string;
   id?: string;
-  /** Use the CSS-only intro animation (for headings at the top of a page). */
+  /** CSS-only intro animation (for headings at the top of a page). */
   intro?: boolean;
 }
 
-/** Eyebrow + animated title + optional description. */
 export function SectionHeading({
-  eyebrow,
+  label,
   index,
   title,
   description,
   align = "left",
   as = "h2",
+  size = "lg",
   className,
-  titleClassName,
   id,
   intro = false,
 }: SectionHeadingProps) {
-  const titleClasses = cn(
-    "max-w-4xl text-[clamp(2rem,1.2rem+3.2vw,3.75rem)] leading-[1.04] font-semibold text-fg",
-    titleClassName,
+  const titleClass = cn(
+    size === "xl" ? "display-xl" : size === "lg" ? "display-lg" : "display-md",
+    "text-fg",
   );
   const wrapper = cn(
-    "flex flex-col gap-5",
+    "flex flex-col gap-6",
     align === "center" && "items-center text-center",
     className,
   );
-  const descriptionEl = description && (
+  const desc = description && (
     <p
       className={cn(
-        "max-w-2xl text-base leading-relaxed text-fg-muted sm:text-lg",
+        "max-w-xl text-base leading-relaxed text-muted sm:text-lg",
         align === "center" && "mx-auto",
       )}
     >
@@ -80,32 +72,32 @@ export function SectionHeading({
   if (intro) {
     return (
       <div className={wrapper}>
-        {eyebrow && (
+        {label && (
           <IntroFade delay={0}>
-            <Eyebrow index={index}>{eyebrow}</Eyebrow>
+            <Label index={index}>{label}</Label>
           </IntroFade>
         )}
-        <IntroTitle as={as === "h1" ? "h1" : "h2"} id={id} className={titleClasses}>
+        <IntroTitle as={as === "h1" ? "h1" : "h2"} id={id} className={titleClass}>
           {title}
         </IntroTitle>
-        {descriptionEl && <IntroFade delay={0.3}>{descriptionEl}</IntroFade>}
+        {desc && <IntroFade delay={0.3}>{desc}</IntroFade>}
       </div>
     );
   }
 
   return (
     <div className={wrapper}>
-      {eyebrow && (
-        <Reveal y={16}>
-          <Eyebrow index={index}>{eyebrow}</Eyebrow>
+      {label && (
+        <Reveal y={12}>
+          <Label index={index}>{label}</Label>
         </Reveal>
       )}
-      <TextReveal as={as} id={id} split="words" className={titleClasses}>
-        {title}
+      <TextReveal as={as} id={id} split="lines" className={titleClass}>
+        {rich(title)}
       </TextReveal>
-      {descriptionEl && (
-        <Reveal y={24} delay={0.1}>
-          {descriptionEl}
+      {desc && (
+        <Reveal y={20} delay={0.1}>
+          {desc}
         </Reveal>
       )}
     </div>

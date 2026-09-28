@@ -23,7 +23,7 @@ export default function OpengraphImage() {
         justifyContent: "space-between",
         padding: 72,
         background:
-          "radial-gradient(circle at 85% 20%, rgba(61,123,255,0.35), transparent 45%), radial-gradient(circle at 10% 100%, rgba(34,211,238,0.22), transparent 40%), #05070d",
+          "radial-gradient(circle at 85% 20%, rgba(241,239,233,0.08), transparent 45%), radial-gradient(circle at 10% 100%, rgba(241,239,233,0.04), transparent 40%), #0b0b0a",
         color: "#f5f5f4",
         fontFamily: "sans-serif",
       }}
@@ -34,7 +34,7 @@ export default function OpengraphImage() {
           height="62"
           viewBox={LOGO_VIEWBOX}
           fill="none"
-          stroke="#3d7bff"
+          stroke="#f1efe9"
           strokeWidth={LOGO_STROKE_WIDTH}
           strokeLinecap="round"
           strokeLinejoin="round"
@@ -63,14 +63,14 @@ export default function OpengraphImage() {
             lineHeight: 1,
             letterSpacing: -3,
             textTransform: "uppercase",
-            color: "#3d7bff",
+            color: "#f1efe9",
           }}
         >
           Onshore Quality.
         </span>
       </div>
       <div
-        style={{ display: "flex", justifyContent: "space-between", fontSize: 26, color: "#a3adc2" }}
+        style={{ display: "flex", justifyContent: "space-between", fontSize: 26, color: "#a19d94" }}
       >
         <span>Website Development · RPO · Virtual Assistance · Accounting · LPO</span>
         <span>akrosstech.com</span>

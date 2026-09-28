@@ -2,7 +2,7 @@ import { cn } from "@/lib/utils";
 
 interface RevealProps {
   children: React.ReactNode;
-  as?: "div" | "section" | "ul" | "ol" | "article" | "li" | "p" | "span";
+  as?: "div" | "section" | "ul" | "ol" | "dl" | "article" | "li" | "p" | "span";
   className?: string;
   /** Animate direct children one after another instead of the wrapper. */
   stagger?: number;

@@ -6,24 +6,32 @@ import { faqJsonLd, serializeJsonLd } from "@/lib/seo";
 
 export function FaqSection({
   faqs,
-  eyebrow = "FAQs",
+  label = "FAQs",
   index,
-  title = "Frequently asked questions",
+  title = "Clarity *up front*",
+  tone = "paper",
 }: {
   faqs: Faq[];
-  eyebrow?: string;
+  label?: string;
   index?: string;
   title?: string;
+  tone?: "paper" | "ink";
 }) {
   return (
-    <section aria-labelledby="faq-title" className="relative py-24 sm:py-32">
+    <section
+      id="faq"
+      data-tone={tone}
+      data-index-label="FAQ"
+      aria-labelledby="faq-title"
+      className="py-28 md:py-40"
+    >
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: serializeJsonLd(faqJsonLd(faqs)) }}
       />
-      <div className="container-page grid gap-12 lg:grid-cols-[2fr_3fr]">
-        <div className="lg:sticky lg:top-36 lg:self-start">
-          <SectionHeading id="faq-title" eyebrow={eyebrow} index={index} title={title} />
+      <div className="container-page grid gap-12 lg:grid-cols-[1fr_1.6fr]">
+        <div className="lg:sticky lg:top-28 lg:self-start">
+          <SectionHeading id="faq-title" label={label} index={index} title={title} size="md" />
         </div>
         <Reveal>
           <Accordion items={faqs} />

@@ -1,42 +1,31 @@
 import { webWhyUs } from "@/content/website-development";
 import { SectionHeading } from "@/components/ui/SectionHeading";
-import { Icon } from "@/components/ui/Icon";
 import { Reveal } from "@/components/motion/Reveal";
 
 export function WebWhyUs() {
   return (
-    <section
-      aria-labelledby="web-why-title"
-      className="relative overflow-hidden border-y border-line bg-void py-24 sm:py-32"
-    >
-      <div className="absolute inset-0 grid-lines mask-radial opacity-40" aria-hidden="true" />
-      <div className="relative container-page">
+    <section data-tone="ink" aria-labelledby="web-why-title" className="py-28 md:py-40">
+      <div className="container-page">
         <SectionHeading
           id="web-why-title"
-          eyebrow="Why Akrostech for web"
+          label="Why Akrostech for web"
           index="05"
-          title="Our approach: agency craft, outsourcing economics"
+          title="Agency craft, *outsourcing economics*"
+          className="mb-16"
         />
         <Reveal
           stagger={0.06}
-          className="mt-14 grid [gap:1px] overflow-hidden rounded-2xl border border-line bg-line sm:grid-cols-2 lg:grid-cols-3"
+          as="ol"
+          className="grid border-t border-line md:grid-cols-2 md:gap-x-16 lg:grid-cols-3"
         >
           {webWhyUs.map((item, i) => (
-            <div
-              key={item.title}
-              className="group flex flex-col gap-4 bg-void p-8 transition-colors duration-500 hover:bg-panel"
-            >
-              <div className="flex items-center justify-between">
-                <span className="grid size-12 place-items-center rounded-lg border border-line-strong text-pulse transition-all duration-500 group-hover:border-signal group-hover:bg-signal group-hover:text-white">
-                  <Icon name={item.icon} className="size-6" />
-                </span>
-                <span className="font-mono text-xs text-fg-subtle">
-                  {String(i + 1).padStart(2, "0")}
-                </span>
-              </div>
-              <h3 className="text-xl font-semibold text-fg">{item.title}</h3>
-              <p className="text-sm leading-relaxed text-fg-muted">{item.description}</p>
-            </div>
+            <li key={item.title} className="group flex flex-col gap-4 border-b border-line py-8">
+              <span className="label text-muted">{String(i + 1).padStart(2, "0")}</span>
+              <h3 className="font-serif text-3xl leading-tight text-fg group-hover:italic">
+                {item.title}
+              </h3>
+              <p className="text-sm leading-relaxed text-muted">{item.description}</p>
+            </li>
           ))}
         </Reveal>
       </div>

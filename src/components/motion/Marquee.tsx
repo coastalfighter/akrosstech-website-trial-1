@@ -22,7 +22,7 @@ export function Marquee({
   pauseOnHover = true,
 }: MarqueeProps) {
   return (
-    <div className={cn("group/marquee flex overflow-hidden mask-fade-x", className)}>
+    <div className={cn("group/marquee mask-fade-x flex overflow-hidden", className)}>
       {[0, 1].map((copy) => (
         <div
           key={copy}

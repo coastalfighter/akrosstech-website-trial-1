@@ -1,105 +1,102 @@
 import Link from "next/link";
-import { Check, Clock } from "lucide-react";
 import type { PricingTier } from "@/content/website-development";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { Reveal } from "@/components/motion/Reveal";
-import { TiltCard } from "@/components/motion/TiltCard";
 import { cn } from "@/lib/utils";
-
-function TierCard({ tier }: { tier: PricingTier }) {
-  return (
-    <TiltCard max={3} className="rounded-2xl">
-      <article
-        className={cn(
-          "relative flex h-full flex-col gap-6 rounded-2xl border p-7",
-          tier.highlighted
-            ? "beam border-signal/50 bg-gradient-to-b from-signal/[0.14] to-panel shadow-[0_30px_90px_-30px_rgba(61,123,255,0.7)]"
-            : "border-line bg-panel",
-        )}
-      >
-        {tier.highlighted && (
-          <span className="absolute -top-3 left-7 rounded-md bg-signal px-2.5 py-1 font-mono text-[10px] font-medium tracking-[0.14em] text-white uppercase">
-            Most popular
-          </span>
-        )}
-        <div>
-          <h3 className="text-xl font-semibold text-fg">{tier.name}</h3>
-          <p className="mt-1 text-sm text-fg-muted">{tier.tagline}</p>
-        </div>
-        <div>
-          <p className="font-display text-5xl font-bold tracking-tight text-fg">{tier.price}</p>
-          <p className="mt-1 font-mono text-[11px] tracking-[0.12em] text-fg-subtle uppercase">
-            {tier.priceNote}
-          </p>
-        </div>
-        <p className="inline-flex w-fit items-center gap-2 rounded-md border border-line px-2.5 py-1.5 font-mono text-[11px] text-fg-muted">
-          <Clock className="size-3.5 text-pulse" aria-hidden="true" />
-          {tier.timeline}
-        </p>
-        <ul className="grid gap-3 border-t border-line pt-6">
-          {tier.features.map((feature) => (
-            <li key={feature} className="flex items-start gap-3 text-sm text-fg/90">
-              <span className="mt-0.5 grid size-5 shrink-0 place-items-center rounded bg-signal/15 text-pulse">
-                <Check className="size-3" aria-hidden="true" />
-              </span>
-              {feature}
-            </li>
-          ))}
-        </ul>
-        <Link
-          href="/contact#contact"
-          className={cn(
-            "mt-auto inline-flex h-12 items-center justify-center rounded-lg text-sm font-semibold transition-colors",
-            tier.highlighted
-              ? "bg-signal text-white hover:bg-signal-strong"
-              : "border border-line-strong text-fg hover:border-pulse hover:text-pulse",
-          )}
-        >
-          {tier.cta}
-          <span className="sr-only"> — {tier.name}</span>
-        </Link>
-      </article>
-    </TiltCard>
-  );
-}
 
 interface PricingProps {
   id: string;
-  eyebrow: string;
+  label: string;
   index?: string;
   title: string;
   description: string;
   tiers: PricingTier[];
   footnote?: string;
+  tone?: "paper" | "ink";
 }
 
-export function Pricing({ id, eyebrow, index, title, description, tiers, footnote }: PricingProps) {
+/** Pricing as hairline columns; the recommended tier is inverted. */
+export function Pricing({
+  id,
+  label,
+  index,
+  title,
+  description,
+  tiers,
+  footnote,
+  tone = "paper",
+}: PricingProps) {
   return (
-    <section id={id} aria-labelledby={`${id}-title`} className="relative py-24 sm:py-32">
+    <section id={id} data-tone={tone} aria-labelledby={`${id}-title`} className="py-28 md:py-36">
       <div className="container-page">
-        <SectionHeading
-          id={`${id}-title`}
-          eyebrow={eyebrow}
-          index={index}
-          title={title}
-          description={description}
-          align="center"
-          className="mx-auto"
-        />
+        <div className="mb-16 grid gap-8 lg:grid-cols-[1.4fr_1fr] lg:items-end">
+          <SectionHeading id={`${id}-title`} label={label} index={index} title={title} size="md" />
+          <p className="leading-relaxed text-muted">{description}</p>
+        </div>
         <Reveal
           stagger={0.08}
           className={cn(
-            "mt-16 grid gap-5 md:grid-cols-2",
-            tiers.length === 4 ? "xl:grid-cols-4" : "lg:grid-cols-3 lg:px-10",
+            "grid border-t border-l border-line sm:grid-cols-2",
+            tiers.length === 4 ? "xl:grid-cols-4" : "lg:grid-cols-3",
           )}
         >
           {tiers.map((tier) => (
-            <TierCard key={tier.name} tier={tier} />
+            <article
+              key={tier.name}
+              className={cn(
+                "group flex flex-col gap-7 border-r border-b border-line p-7 transition-colors duration-700 md:p-8",
+                tier.highlighted ? "bg-fg text-bg" : "hover:bg-soft",
+              )}
+            >
+              <div className="flex items-start justify-between gap-4">
+                <h3 className="font-serif text-3xl">{tier.name}</h3>
+                {tier.highlighted && (
+                  <span className="rounded-full border border-current px-2 py-1 label !text-[9px]">
+                    Popular
+                  </span>
+                )}
+              </div>
+              <p className={cn("text-sm", tier.highlighted ? "opacity-70" : "text-muted")}>
+                {tier.tagline}
+              </p>
+              <div>
+                <p className="font-serif text-6xl leading-none">{tier.price}</p>
+                <p className={cn("mt-2 label", tier.highlighted ? "opacity-60" : "text-muted")}>
+                  {tier.priceNote} · {tier.timeline}
+                </p>
+              </div>
+              <ul
+                className={cn(
+                  "flex flex-col gap-2.5 border-t pt-6 text-sm",
+                  tier.highlighted ? "border-current/20" : "border-line",
+                )}
+              >
+                {tier.features.map((f) => (
+                  <li key={f} className="flex items-baseline gap-3">
+                    <span
+                      className="h-px w-3 shrink-0 translate-y-[-0.25em] bg-current"
+                      aria-hidden="true"
+                    />
+                    {f}
+                  </li>
+                ))}
+              </ul>
+              <Link
+                href="/contact#contact"
+                className={cn(
+                  "mt-auto inline-flex h-12 items-center justify-center rounded-full border label transition-colors",
+                  tier.highlighted
+                    ? "border-bg hover:bg-bg hover:text-fg"
+                    : "border-line-strong hover:border-fg hover:bg-fg hover:text-bg",
+                )}
+              >
+                {tier.cta}
+                <span className="sr-only"> — {tier.name}</span>
+              </Link>
+            </article>
           ))}
         </Reveal>
-        {footnote && (
-          <p className="mx-auto mt-10 max-w-2xl text-center text-sm text-fg-subtle">{footnote}</p>
-        )}
+        {footnote && <p className="mt-8 max-w-2xl text-sm text-muted">{footnote}</p>}
       </div>
     </section>
   );

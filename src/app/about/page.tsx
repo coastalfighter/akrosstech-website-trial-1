@@ -1,18 +1,15 @@
 import type { Metadata } from "next";
-import { Headset } from "lucide-react";
 import { aboutCta, aboutHero, approach, edge, experience, support } from "@/content/about";
 import { site } from "@/content/site";
 import { pageMetadata } from "@/lib/seo";
 import { PageHero } from "@/components/sections/shared/PageHero";
 import { StatsSection } from "@/components/sections/shared/StatsSection";
 import { CtaBanner } from "@/components/sections/shared/CtaBanner";
-import { SectionHeading } from "@/components/ui/SectionHeading";
+import { Label, SectionHeading } from "@/components/ui/SectionHeading";
 import { ButtonLink } from "@/components/ui/Button";
-import { Icon } from "@/components/ui/Icon";
 import { Photo } from "@/components/ui/Photo";
 import { Reveal } from "@/components/motion/Reveal";
-import { TiltCard } from "@/components/motion/TiltCard";
-import { TextReveal } from "@/components/motion/TextReveal";
+import { ScrubText, ImageReveal } from "@/components/motion/Scroll";
 
 export const metadata: Metadata = pageMetadata({
   title: "About Us",
@@ -25,116 +22,85 @@ export default function AboutPage() {
   return (
     <>
       <PageHero
-        eyebrow={aboutHero.eyebrow}
-        title={aboutHero.title}
+        label={aboutHero.eyebrow}
+        title="Outsourcing, reimagined for the *modern business*"
         description={aboutHero.body}
         breadcrumbs={[{ name: "About Us", path: "/about" }]}
         photo="meeting"
       >
-        <ul className="flex flex-wrap gap-2">
-          {aboutHero.tags.map((tag) => (
-            <li
-              key={tag}
-              className="rounded-md border border-line-strong bg-void/50 px-3 py-1.5 font-mono text-xs tracking-[0.08em] text-fg-muted uppercase backdrop-blur"
-            >
-              {tag}
+        <ul className="flex flex-wrap gap-2 label text-fg">
+          {aboutHero.tags.map((t) => (
+            <li key={t} className="rounded-full border border-line-strong px-3 py-1.5">
+              {t}
             </li>
           ))}
         </ul>
-        <div className="flex flex-wrap items-center gap-5 pt-2">
-          <ButtonLink href="/contact" size="lg" arrow>
-            Contact Us
+        <div className="flex flex-wrap items-center gap-5">
+          <ButtonLink href="/contact" arrow>
+            Contact us
           </ButtonLink>
-          <a
-            href={site.contact.phoneHref}
-            className="font-mono text-sm text-fg-muted hover:text-pulse"
-          >
-            Need Help! <span className="text-fg">{site.contact.phone}</span>
+          <a href={site.contact.phoneHref} className="link-line label text-muted">
+            Need help? {site.contact.phone}
           </a>
         </div>
       </PageHero>
 
-      {/* Approach: mission & vision with photography */}
-      <section aria-labelledby="approach-title" className="relative py-24 sm:py-32">
-        <div className="container-page">
-          <SectionHeading
-            id="approach-title"
-            eyebrow={approach.eyebrow}
-            index="01"
-            title={approach.heading}
-          />
-          <div className="mt-14 grid gap-5 md:grid-cols-2">
-            {[
-              { ...approach.mission, photo: "teamLaptops" as const },
-              { ...approach.vision, photo: "blocks" as const },
-            ].map((item, i) => (
-              <Reveal key={item.title} delay={i * 0.1}>
-                <TiltCard className="h-full rounded-2xl" max={4}>
-                  <article className="group relative isolate flex h-full min-h-[380px] flex-col justify-end gap-4 overflow-hidden rounded-2xl border border-line p-8 sm:p-10">
-                    <Photo
-                      name={item.photo}
-                      className="absolute inset-0 -z-20"
-                      sizes="(min-width: 768px) 50vw, 100vw"
-                    />
-                    <div
-                      className="absolute inset-0 -z-10 bg-gradient-to-t from-void via-void/80 to-void/10"
-                      aria-hidden="true"
-                    />
-                    <h3 className="font-mono text-xs tracking-[0.2em] text-pulse uppercase">
-                      {"// "}
-                      {item.title}
-                    </h3>
-                    <p className="text-2xl leading-snug font-semibold text-fg sm:text-3xl">
-                      {item.body}
-                    </p>
-                  </article>
-                </TiltCard>
-              </Reveal>
-            ))}
+      {/* Approach: mission & vision */}
+      <section data-tone="paper" aria-labelledby="approach-title" className="py-28 md:py-40">
+        <div className="container-page grid gap-10 lg:grid-cols-[1fr_3fr]">
+          <Label index="01">{approach.eyebrow}</Label>
+          <div className="flex flex-col gap-16">
+            <h2 id="approach-title" className="display-lg text-fg">
+              Global teams. <em className="italic">Local precision.</em>
+            </h2>
+            <div className="grid gap-12 border-t border-line pt-10 md:grid-cols-2">
+              {[approach.mission, approach.vision].map((item) => (
+                <div key={item.title} className="flex flex-col gap-5">
+                  <p className="label text-muted">( {item.title} )</p>
+                  <ScrubText className="font-serif text-[clamp(1.6rem,1rem+1.6vw,2.6rem)] leading-[1.12] text-fg">
+                    {item.body}
+                  </ScrubText>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
       </section>
 
       {/* Our edge */}
-      <section
-        aria-labelledby="edge-title"
-        className="relative overflow-hidden border-y border-line bg-void py-24 sm:py-32"
-      >
-        <div className="absolute inset-0 grid-lines mask-radial opacity-40" aria-hidden="true" />
-        <div className="relative container-page">
-          <div className="mb-14 flex flex-col items-start justify-between gap-8 md:flex-row md:items-end">
+      <section data-tone="ink" aria-labelledby="edge-title" className="py-28 md:py-40">
+        <div className="container-page grid gap-16 lg:grid-cols-2">
+          <div className="flex flex-col gap-10 lg:sticky lg:top-28 lg:self-start">
             <SectionHeading
               id="edge-title"
-              eyebrow={edge.eyebrow}
+              label={edge.eyebrow}
               index="02"
-              title={edge.heading}
+              title="The Akrostech difference: *built for results*"
+              size="md"
             />
-            <Reveal>
-              <ButtonLink href="/contact" variant="secondary" arrow>
-                Contact Us
-              </ButtonLink>
-            </Reveal>
+            <ImageReveal className="aspect-[4/3]">
+              <Photo
+                name="highFive"
+                hover
+                sizes="(min-width: 1024px) 45vw, 100vw"
+                className="size-full"
+              />
+            </ImageReveal>
           </div>
-          <Reveal
-            stagger={0.07}
-            className="grid [gap:1px] overflow-hidden rounded-2xl border border-line bg-line sm:grid-cols-2 lg:grid-cols-4"
-          >
+          <Reveal stagger={0.08} as="ol" className="border-t border-line">
             {edge.items.map((item, i) => (
-              <article
+              <li
                 key={item.title}
-                className="group flex h-full flex-col gap-5 bg-void p-7 transition-colors duration-500 hover:bg-panel"
+                className="group grid grid-cols-[3rem_1fr] gap-4 border-b border-line py-10"
               >
-                <div className="flex items-center justify-between">
-                  <span className="grid size-12 place-items-center rounded-lg border border-line-strong text-pulse transition-colors group-hover:border-signal group-hover:bg-signal group-hover:text-white">
-                    <Icon name={item.icon} className="size-6" />
-                  </span>
-                  <span className="font-mono text-xs text-fg-subtle">
-                    {String(i + 1).padStart(2, "0")}
-                  </span>
+                <span className="pt-3 label text-muted">{String(i + 1).padStart(2, "0")}</span>
+                <div>
+                  <h3 className="font-serif text-4xl leading-tight text-fg transition-transform duration-700 group-hover:translate-x-2 group-hover:italic">
+                    {item.title}
+                  </h3>
+                  <p className="mt-3 max-w-md leading-relaxed text-muted">{item.description}</p>
                 </div>
-                <h3 className="text-xl font-semibold text-fg">{item.title}</h3>
-                <p className="text-sm leading-relaxed text-fg-muted">{item.description}</p>
-              </article>
+              </li>
             ))}
           </Reveal>
         </div>
@@ -142,35 +108,25 @@ export default function AboutPage() {
 
       <StatsSection
         stats={experience.stats}
-        eyebrow={experience.eyebrow}
+        label={experience.eyebrow}
         index="03"
-        title={experience.heading}
+        title="Proven partnerships, *measurable impact*"
         description={experience.body}
+        tone="paper"
       />
 
-      {/* 24/7 support strip */}
-      <section aria-label={support.title} className="pb-12">
-        <div className="container-page">
-          <Reveal className="beam flex flex-col items-start gap-6 rounded-2xl p-8 glass sm:flex-row sm:items-center sm:justify-between sm:p-10">
-            <div className="flex items-center gap-5">
-              <span className="grid size-16 shrink-0 place-items-center rounded-xl bg-signal text-white">
-                <Headset className="size-8" aria-hidden="true" />
-              </span>
-              <div>
-                <TextReveal
-                  as="h2"
-                  split="words"
-                  className="text-2xl font-semibold text-fg sm:text-3xl"
-                >
-                  {support.title}
-                </TextReveal>
-                <p className="mt-1 text-fg-muted">{support.body}</p>
-              </div>
-            </div>
-            <ButtonLink href={site.contact.phoneHref} size="lg" variant="secondary">
-              {site.contact.phone}
-            </ButtonLink>
-          </Reveal>
+      <section data-tone="paper" aria-label={support.title} className="pb-28">
+        <div className="container-page flex flex-col gap-8 border-t border-line pt-10 md:flex-row md:items-end md:justify-between">
+          <div>
+            <p className="label text-muted">( Always on )</p>
+            <h2 className="mt-4 display-md text-fg">
+              24/7 <em className="italic">support</em>
+            </h2>
+            <p className="mt-3 text-muted">{support.body}</p>
+          </div>
+          <ButtonLink href={site.contact.phoneHref} variant="outline" size="lg">
+            {site.contact.phone}
+          </ButtonLink>
         </div>
       </section>
 

@@ -1,56 +1,48 @@
-import Link from "next/link";
-import { ArrowUpRight } from "lucide-react";
 import type { OutsourcingService } from "@/content/services";
 import { allServiceCards } from "@/content/services";
 import { servicePhotos } from "@/content/media";
 import { SectionHeading } from "@/components/ui/SectionHeading";
-import { Icon } from "@/components/ui/Icon";
-import { Badge } from "@/components/ui/Badge";
 import { Photo } from "@/components/ui/Photo";
 import { Reveal } from "@/components/motion/Reveal";
-import { TiltCard } from "@/components/motion/TiltCard";
+import { ImageReveal } from "@/components/motion/Scroll";
+import { HoverList } from "@/components/sections/shared/HoverList";
 
-/** "Why … trust Akrostech" — copy + benefit cells. */
+/** "Why … trust Akrostech": sticky copy + numbered benefit rows. */
 export function ServiceWhy({ service }: { service: OutsourcingService }) {
   const { why } = service;
   return (
-    <section aria-labelledby="why-service-title" className="relative py-24 sm:py-32">
+    <section data-tone="paper" aria-labelledby="why-service-title" className="py-28 md:py-40">
       <div className="container-page grid gap-16 lg:grid-cols-2">
-        <div className="flex flex-col gap-6 lg:sticky lg:top-36 lg:self-start">
+        <div className="flex flex-col gap-8 lg:sticky lg:top-28 lg:self-start">
           <SectionHeading
             id="why-service-title"
-            eyebrow={why.eyebrow}
+            label={why.eyebrow}
             index="01"
             title={why.heading}
+            size="md"
           />
-          <Reveal className="flex flex-col gap-4 leading-relaxed text-fg-muted">
-            {why.body.map((paragraph) => (
-              <p key={paragraph}>{paragraph}</p>
+          <Reveal className="flex flex-col gap-4 leading-relaxed text-muted">
+            {why.body.map((p) => (
+              <p key={p}>{p}</p>
             ))}
           </Reveal>
         </div>
-        <Reveal
-          stagger={0.06}
-          className="grid [gap:1px] overflow-hidden rounded-2xl border border-line bg-line sm:grid-cols-2"
-        >
-          {why.benefits.map((benefit, i) => (
-            <div
-              key={benefit.title}
-              className="group flex flex-col gap-4 bg-canvas p-6 transition-colors duration-500 hover:bg-panel sm:p-7"
+        <Reveal stagger={0.06} as="ol" className="border-t border-line">
+          {why.benefits.map((b, i) => (
+            <li
+              key={b.title}
+              className="group grid grid-cols-[3rem_1fr] gap-4 border-b border-line py-7"
             >
-              <div className="flex items-center justify-between">
-                <span className="grid size-11 place-items-center rounded-lg border border-line-strong text-pulse transition-colors group-hover:border-signal group-hover:bg-signal group-hover:text-white">
-                  <Icon name={benefit.icon} className="size-5" />
-                </span>
-                <span className="font-mono text-xs text-fg-subtle">
-                  {String(i + 1).padStart(2, "0")}
-                </span>
+              <span className="pt-2 label text-muted">{String(i + 1).padStart(2, "0")}</span>
+              <div>
+                <h3 className="font-serif text-3xl leading-tight text-fg transition-transform duration-700 group-hover:translate-x-2 group-hover:italic">
+                  {b.title}
+                </h3>
+                {b.description && (
+                  <p className="mt-2 leading-relaxed text-muted">{b.description}</p>
+                )}
               </div>
-              <h3 className="text-lg font-semibold text-fg">{benefit.title}</h3>
-              {benefit.description && (
-                <p className="text-sm leading-relaxed text-fg-muted">{benefit.description}</p>
-              )}
-            </div>
+            </li>
           ))}
         </Reveal>
       </div>
@@ -58,98 +50,77 @@ export function ServiceWhy({ service }: { service: OutsourcingService }) {
   );
 }
 
-/** "What we can do for you" / "Industries" — sticky photo + capability cards. */
+/** "What we can do for you" / industries — big numbered rows + a photo. */
 export function ServiceCapabilities({ service }: { service: OutsourcingService }) {
   const { capabilities } = service;
   const photo = servicePhotos[service.slug]?.detail ?? "blocks";
   return (
-    <section
-      aria-labelledby="capabilities-title"
-      className="relative overflow-hidden border-y border-line bg-void py-24 sm:py-32"
-    >
-      <div className="absolute inset-0 grid-lines mask-radial opacity-40" aria-hidden="true" />
-      <div className="relative container-page">
-        <SectionHeading
-          id="capabilities-title"
-          eyebrow={capabilities.eyebrow}
-          index="02"
-          title={capabilities.heading}
-          description={capabilities.body}
-        />
-        <div className="mt-14 grid gap-8 lg:grid-cols-[2fr_3fr]">
-          <div className="hidden lg:block">
+    <section data-tone="ink" aria-labelledby="capabilities-title" className="py-28 md:py-40">
+      <div className="container-page">
+        <div className="mb-16 grid gap-10 lg:grid-cols-[1.4fr_1fr] lg:items-end">
+          <SectionHeading
+            id="capabilities-title"
+            label={capabilities.eyebrow}
+            index="02"
+            title={capabilities.heading}
+            description={capabilities.body}
+          />
+          <ImageReveal className="aspect-[4/3]">
             <Photo
               name={photo}
-              className="sticky top-36 aspect-[3/4] rounded-2xl border border-line"
-              sizes="(min-width: 1024px) 480px, 0px"
+              hover
+              sizes="(min-width: 1024px) 40vw, 100vw"
+              className="size-full"
             />
-          </div>
-          <Reveal stagger={0.07} className="grid gap-4 md:grid-cols-2">
-            {capabilities.items.map((item, i) => (
-              <TiltCard key={item.title} className="rounded-2xl" max={5}>
-                <article className="group relative flex h-full flex-col gap-4 overflow-hidden rounded-2xl border border-line bg-panel p-6 transition-colors duration-500 hover:border-signal/40">
-                  <div className="flex items-center justify-between">
-                    <span className="grid size-11 place-items-center rounded-lg bg-signal/15 text-pulse">
-                      <Icon name={item.icon} className="size-5" />
-                    </span>
-                    <span className="font-mono text-xs text-fg-subtle">
-                      {String(i + 1).padStart(2, "0")}
-                    </span>
-                  </div>
-                  <h3 className="text-xl font-semibold text-fg">{item.title}</h3>
-                  <p className="text-sm leading-relaxed text-fg-muted">{item.description}</p>
-                </article>
-              </TiltCard>
-            ))}
-          </Reveal>
+          </ImageReveal>
         </div>
+        <Reveal
+          stagger={0.06}
+          as="ol"
+          className="grid border-t border-line md:grid-cols-2 md:gap-x-16"
+        >
+          {capabilities.items.map((item, i) => (
+            <li key={item.title} className="group flex gap-6 border-b border-line py-8">
+              <span className="font-serif text-4xl leading-none text-muted transition-colors group-hover:text-fg">
+                {String(i + 1).padStart(2, "0")}
+              </span>
+              <div>
+                <h3 className="font-serif text-3xl leading-tight text-fg group-hover:italic">
+                  {item.title}
+                </h3>
+                <p className="mt-3 leading-relaxed text-muted">{item.description}</p>
+              </div>
+            </li>
+          ))}
+        </Reveal>
       </div>
     </section>
   );
 }
 
-/** Cross-links to the other services, as photo cards. */
+/** Cross-links to the other services. */
 export function OtherServices({ currentSlug }: { currentSlug: string }) {
   const others = allServiceCards.filter((s) => s.slug !== currentSlug);
   return (
-    <section aria-labelledby="other-services-title" className="py-24 sm:py-32">
+    <section data-tone="paper" aria-labelledby="other-services-title" className="py-28 md:py-40">
       <div className="container-page">
         <SectionHeading
           id="other-services-title"
-          eyebrow="Explore more"
-          title="Other ways we help you scale"
+          label="Explore more"
+          title="Other ways we help you *scale*"
+          size="md"
+          className="mb-14"
         />
-        <Reveal stagger={0.06} className="mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          {others.map((service) => (
-            <Link
-              key={service.slug}
-              href={`/services/${service.slug}`}
-              className="group flex h-full flex-col overflow-hidden rounded-2xl border border-line bg-panel transition-colors duration-500 hover:border-signal/40"
-            >
-              <Photo
-                name={servicePhotos[service.slug]?.hero ?? "blocks"}
-                className="aspect-[16/10]"
-                sizes="(min-width: 1024px) 320px, 50vw"
-              />
-              <div className="flex flex-1 flex-col gap-3 p-5">
-                <div className="flex items-center justify-between gap-3">
-                  <h3 className="text-lg font-semibold text-fg">{service.title}</h3>
-                  {service.slug === "website-development" ? (
-                    <Badge>New</Badge>
-                  ) : (
-                    <ArrowUpRight
-                      className="size-4 shrink-0 text-fg-subtle transition-transform duration-300 group-hover:rotate-45 group-hover:text-pulse"
-                      aria-hidden="true"
-                    />
-                  )}
-                </div>
-                <p className="line-clamp-3 text-sm leading-relaxed text-fg-muted">
-                  {service.cardSummary}
-                </p>
-              </div>
-            </Link>
-          ))}
-        </Reveal>
+        <HoverList
+          size="md"
+          items={others.map((s) => ({
+            href: `/services/${s.slug}`,
+            title: s.title,
+            meta: s.cardSummary,
+            photo: servicePhotos[s.slug]?.hero ?? "blocks",
+            badge: s.slug === "website-development" ? "New" : undefined,
+          }))}
+        />
       </div>
     </section>
   );

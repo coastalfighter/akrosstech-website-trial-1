@@ -1,19 +1,22 @@
 import type { Metadata } from "next";
-import { companyStats, site } from "@/content/site";
-import { byTheNumbers, ctaBanner } from "@/content/home";
+import { site } from "@/content/site";
 import { getAllBlogPosts } from "@/lib/content";
+import { blogPhotos } from "@/content/media";
 import { pageMetadata } from "@/lib/seo";
+import { formatDate } from "@/lib/utils";
 import { Hero } from "@/components/sections/home/Hero";
-import { AboutSection } from "@/components/sections/home/AboutSection";
-import { ServicesIndex } from "@/components/sections/home/ServicesIndex";
-import { WebDevSpotlight } from "@/components/sections/home/WebDevSpotlight";
-import { GlobalTeams } from "@/components/sections/home/GlobalTeams";
-import { WhyStory } from "@/components/sections/home/WhyStory";
-import { StatsSection } from "@/components/sections/shared/StatsSection";
-import { Portfolio } from "@/components/sections/shared/Portfolio";
-import { Testimonials } from "@/components/sections/shared/Testimonials";
-import { CtaBanner } from "@/components/sections/shared/CtaBanner";
-import { BlogCards } from "@/components/sections/shared/BlogCards";
+import { ExpandingImage } from "@/components/sections/home/ExpandingImage";
+import { Manifesto } from "@/components/sections/home/Manifesto";
+import { Ribbons } from "@/components/sections/home/Ribbons";
+import { ServicesSection } from "@/components/sections/home/ServicesSection";
+import { WebDevFeature } from "@/components/sections/home/WebDevFeature";
+import { Numbers } from "@/components/sections/home/Numbers";
+import { Works } from "@/components/sections/home/Works";
+import { Principles } from "@/components/sections/home/Principles";
+import { Process } from "@/components/sections/home/Process";
+import { Testimonials } from "@/components/sections/home/Testimonials";
+import { PageIndex } from "@/components/sections/home/PageIndex";
+import { HoverList } from "@/components/sections/shared/HoverList";
 import { ContactSection } from "@/components/sections/shared/ContactSection";
 import { SectionHeading } from "@/components/ui/SectionHeading";
 import { ButtonLink } from "@/components/ui/Button";
@@ -33,51 +36,54 @@ export default function HomePage() {
 
   return (
     <>
+      <PageIndex />
       <Hero />
-      <AboutSection />
-      <ServicesIndex />
-      <WebDevSpotlight />
-      <GlobalTeams />
-      <WhyStory />
-      <StatsSection
-        stats={companyStats}
-        eyebrow={byTheNumbers.eyebrow}
-        index="06"
-        title="Our journey is just beginning but the momentum is real."
-        description={byTheNumbers.body.replace(
-          "Our journey is just beginning but the momentum is real. ",
-          "",
-        )}
-        highlight={{
-          value: `${byTheNumbers.highlight.value}%`,
-          label: byTheNumbers.highlight.label,
-        }}
-        className="border-y border-line"
-      />
-      <Portfolio index="07" />
-      <Testimonials index="08" />
+      <ExpandingImage statement="Built for startups, scaled by enterprises, *trusted by leaders.*" />
+      <Manifesto />
+      <Ribbons />
+      <ServicesSection />
+      <WebDevFeature />
+      <Numbers />
+      <Works />
+      <Principles />
+      <Process />
+      <Testimonials />
 
-      <section aria-labelledby="blog-title" className="py-24 sm:py-32">
+      <section
+        id="journal"
+        data-tone="paper"
+        data-index-label="Journal"
+        aria-labelledby="journal-title"
+        className="py-28 md:py-40"
+      >
         <div className="container-page">
-          <div className="mb-14 flex flex-col items-start justify-between gap-8 md:flex-row md:items-end">
+          <div className="mb-14 flex flex-col gap-8 md:flex-row md:items-end md:justify-between">
             <SectionHeading
-              id="blog-title"
-              eyebrow="Latest Blog"
+              id="journal-title"
+              label="Latest Blog"
               index="09"
-              title="Our latest insight news"
+              title="Our latest *insight* news"
             />
             <Reveal>
-              <ButtonLink href="/blog" variant="secondary" arrow>
-                See All Posts
+              <ButtonLink href="/blog" variant="outline" arrow>
+                See all posts
               </ButtonLink>
             </Reveal>
           </div>
-          <BlogCards posts={posts} />
+          <HoverList
+            size="md"
+            items={posts.map((p) => ({
+              href: `/blog/${p.slug}`,
+              title: p.title,
+              meta: `${formatDate(p.date)} — ${p.readingMinutes} min read`,
+              tag: p.category,
+              photo: blogPhotos[p.slug] ?? "blocks",
+            }))}
+          />
         </div>
       </section>
 
-      <CtaBanner {...ctaBanner} photo="highFive" />
-      <ContactSection />
+      <ContactSection tone="ink" />
     </>
   );
 }

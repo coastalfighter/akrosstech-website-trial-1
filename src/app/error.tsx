@@ -15,21 +15,19 @@ export default function Error({
   }, [error]);
 
   return (
-    <section className="flex min-h-[80svh] items-center pt-24">
-      <div className="container-page flex flex-col items-center gap-6 text-center">
-        <p className="font-display text-sm tracking-[0.3em] text-pulse uppercase">
-          Something went wrong
-        </p>
-        <h1 className="text-4xl font-medium text-fg">We hit an unexpected error.</h1>
-        <p className="max-w-md text-fg-muted">
+    <section data-tone="paper" className="flex min-h-[80svh] items-center pt-24">
+      <div className="container-page flex flex-col gap-6">
+        <p className="label text-muted">( Something went wrong )</p>
+        <h1 className="display-lg text-fg">
+          We hit an <em className="italic">unexpected</em> error.
+        </h1>
+        <p className="max-w-md text-muted">
           Please try again. If the problem continues, contact us and we’ll sort it out.
         </p>
-        <div className="flex flex-wrap justify-center gap-4">
-          <Button size="lg" onClick={reset}>
-            Try again
-          </Button>
-          <ButtonLink href="/" size="lg" variant="secondary">
-            Back to Home
+        <div className="flex flex-wrap gap-3">
+          <Button onClick={reset}>Try again</Button>
+          <ButtonLink href="/" variant="outline">
+            Back to home
           </ButtonLink>
         </div>
       </div>

@@ -4,13 +4,10 @@ import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { AnimatePresence, m } from "motion/react";
-import { ArrowUpRight, ChevronDown, Menu, X } from "lucide-react";
 import { mainNav, serviceLinks } from "@/content/navigation";
 import { site } from "@/content/site";
-import { ButtonLink } from "@/components/ui/Button";
-import { Badge } from "@/components/ui/Badge";
-import { LinkedInIcon } from "@/components/ui/Icon";
-import { LiveClock } from "@/components/ui/LiveClock";
+import { servicePhotos, type PhotoKey } from "@/content/media";
+import { Photo } from "@/components/ui/Photo";
 import { useLenisInstance } from "@/components/providers/SmoothScroll";
 import { cn } from "@/lib/utils";
 import { Logo } from "./Logo";
@@ -18,74 +15,80 @@ import { Logo } from "./Logo";
 const isActive = (pathname: string, href: string) =>
   href === "/" ? pathname === "/" : pathname.startsWith(href);
 
-/** Mono status strip: live U.S./India clocks + contact. */
-function StatusBar() {
+/** Menu overlay entries: pages + every service, each with a preview photo. */
+const menuItems: { label: string; href: string; photo: PhotoKey; badge?: string }[] = [
+  { label: "Home", href: "/", photo: "heroEarth" },
+  { label: "Studio", href: "/about", photo: "teamLaptops" },
+  { label: "Services", href: "/services", photo: "meeting" },
+  ...serviceLinks.map((s) => ({
+    label: s.label,
+    href: s.href,
+    badge: s.badge,
+    photo: servicePhotos[s.href.split("/").pop() ?? ""]?.hero ?? ("blocks" as PhotoKey),
+  })),
+  { label: "Journal", href: "/blog", photo: "library" },
+  { label: "Contact", href: "/contact", photo: "handshake" },
+];
+
+/** Nav link whose label rolls to a duplicate on hover. */
+function RollLink({
+  href,
+  children,
+  active,
+}: {
+  href: string;
+  children: React.ReactNode;
+  active?: boolean;
+}) {
   return (
-    <div className="hidden border-b border-line bg-void/80 md:block">
-      <div className="container-page flex h-9 items-center justify-between font-mono text-[11px] tracking-[0.12em] text-fg-subtle uppercase">
-        <p className="flex items-center gap-2">
-          <span className="relative flex size-1.5" aria-hidden="true">
-            <span className="absolute inline-flex size-full animate-ping-slow rounded-full bg-ok/70" />
-            <span className="relative inline-flex size-1.5 rounded-full bg-ok" />
-          </span>
-          Delivery teams online
-        </p>
-        <p className="flex items-center gap-5">
-          <span>
-            NYC <LiveClock timeZone="America/New_York" className="text-fg-muted" />
-          </span>
-          <span>
-            LA <LiveClock timeZone="America/Los_Angeles" className="text-fg-muted" />
-          </span>
-          <span>
-            IND <LiveClock timeZone="Asia/Kolkata" className="text-fg-muted" />
-          </span>
-          <a
-            href={site.contact.phoneHref}
-            className="text-fg-muted transition-colors hover:text-pulse"
-          >
-            {site.contact.phone}
-          </a>
-        </p>
-      </div>
-    </div>
+    <Link
+      href={href}
+      aria-current={active ? "page" : undefined}
+      className="group relative inline-flex items-center gap-2 py-2 label"
+    >
+      <span
+        className={cn(
+          "size-1 rounded-full bg-current transition-opacity",
+          active ? "opacity-100" : "opacity-0",
+        )}
+        aria-hidden="true"
+      />
+      <span className="roll">
+        <span>{children}</span>
+        <span aria-hidden="true">{children}</span>
+      </span>
+    </Link>
   );
 }
 
 export function Header() {
   const pathname = usePathname();
   const lenis = useLenisInstance();
-  const [scrolled, setScrolled] = useState(false);
   const [hidden, setHidden] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
-  const [servicesOpen, setServicesOpen] = useState(false);
+  const [hovered, setHovered] = useState(0);
   const [previousPath, setPreviousPath] = useState(pathname);
   const lastY = useRef(0);
-  const servicesRef = useRef<HTMLLIElement>(null);
   const menuButtonRef = useRef<HTMLButtonElement>(null);
 
-  // Close menus on navigation (adjust-state-on-prop-change pattern).
   if (pathname !== previousPath) {
     setPreviousPath(pathname);
     setMenuOpen(false);
-    setServicesOpen(false);
   }
 
-  // Solid bar after scrolling; hide on scroll down, reveal on scroll up.
+  // Hide on scroll down, reveal on scroll up.
   useEffect(() => {
     const onScroll = () => {
       const y = window.scrollY;
-      setScrolled(y > 24);
-      setHidden(y > 400 && y > lastY.current + 4);
-      if (y < lastY.current - 4 || y < 400) setHidden(false);
+      if (y > 300 && y > lastY.current + 4) setHidden(true);
+      else if (y < lastY.current - 4 || y < 300) setHidden(false);
       lastY.current = y;
     };
-    onScroll();
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
 
-  // Lock scroll while the mobile menu is open; close it with Escape.
+  // Lock scroll while the menu is open; Escape closes it.
   useEffect(() => {
     if (!menuOpen) return;
     lenis?.stop();
@@ -105,165 +108,72 @@ export function Header() {
     };
   }, [menuOpen, lenis]);
 
-  // Close the services dropdown on outside click or Escape.
-  useEffect(() => {
-    if (!servicesOpen) return;
-    const onPointer = (e: PointerEvent) => {
-      if (!servicesRef.current?.contains(e.target as Node)) setServicesOpen(false);
-    };
-    const onKey = (e: KeyboardEvent) => e.key === "Escape" && setServicesOpen(false);
-    document.addEventListener("pointerdown", onPointer);
-    window.addEventListener("keydown", onKey);
-    return () => {
-      document.removeEventListener("pointerdown", onPointer);
-      window.removeEventListener("keydown", onKey);
-    };
-  }, [servicesOpen]);
-
   return (
     <>
       <header
+        // While the ink menu overlay is open the bar must read as ink too.
+        data-tone={menuOpen ? "ink" : undefined}
+        data-tone-scope={menuOpen ? "" : undefined}
         className={cn(
-          "fixed inset-x-0 top-0 z-50 transition-transform duration-500 ease-out",
+          "fixed inset-x-0 top-0 z-50 text-fg transition-[transform,color] duration-700 ease-[cubic-bezier(0.16,1,0.3,1)]",
           hidden && !menuOpen && "-translate-y-full",
         )}
       >
-        <StatusBar />
-        <div
-          className={cn(
-            "border-b transition-[background-color,border-color] duration-500",
-            scrolled || menuOpen
-              ? "border-line bg-canvas/85 backdrop-blur-xl"
-              : "border-transparent bg-transparent",
-          )}
-        >
-          <div className="container-page flex h-[68px] items-center justify-between gap-6">
-            <Link href="/" aria-label="Akrostech — home" className="relative z-10 shrink-0">
-              <Logo />
+        <div className="container-page flex h-20 items-center justify-between gap-6">
+          <Link href="/" aria-label="Akrostech — home" className="relative z-10 shrink-0">
+            <Logo />
+          </Link>
+
+          <nav aria-label="Main" className="hidden lg:block">
+            <ul className="flex items-center gap-8">
+              {mainNav.map((item) => (
+                <li key={item.href}>
+                  <RollLink href={item.href} active={isActive(pathname, item.href)}>
+                    {item.label}
+                  </RollLink>
+                </li>
+              ))}
+            </ul>
+          </nav>
+
+          <div className="flex items-center gap-2 sm:gap-4">
+            <Link
+              href="/contact"
+              className="group hidden h-10 items-center rounded-full border border-line-strong px-5 label transition-colors hover:border-fg hover:bg-fg hover:text-bg sm:inline-flex"
+            >
+              <span className="roll">
+                <span>Book a call</span>
+                <span aria-hidden="true">Book a call</span>
+              </span>
             </Link>
-
-            <nav aria-label="Main" className="hidden lg:block">
-              <ul className="flex items-center gap-1 rounded-xl border border-line bg-panel/60 p-1 backdrop-blur">
-                {mainNav.map((item) =>
-                  item.children ? (
-                    <li
-                      key={item.href}
-                      ref={servicesRef}
-                      className="relative"
-                      onMouseEnter={() => setServicesOpen(true)}
-                      onMouseLeave={() => setServicesOpen(false)}
-                    >
-                      <div className="flex items-center">
-                        <Link
-                          href={item.href}
-                          className={cn(
-                            "rounded-lg py-2 pr-1 pl-4 text-sm font-medium transition-colors hover:text-white",
-                            isActive(pathname, item.href) ? "text-white" : "text-fg-muted",
-                          )}
-                        >
-                          {item.label}
-                        </Link>
-                        <button
-                          type="button"
-                          aria-expanded={servicesOpen}
-                          aria-controls="services-menu"
-                          aria-label="Show services"
-                          onClick={() => setServicesOpen((v) => !v)}
-                          className="rounded-lg p-2 text-fg-muted transition-colors hover:text-white"
-                        >
-                          <ChevronDown
-                            className={cn(
-                              "size-4 transition-transform duration-300",
-                              servicesOpen && "rotate-180",
-                            )}
-                            aria-hidden="true"
-                          />
-                        </button>
-                      </div>
-                      <AnimatePresence>
-                        {servicesOpen && (
-                          <m.div
-                            id="services-menu"
-                            initial={{ opacity: 0, y: 8 }}
-                            animate={{ opacity: 1, y: 0 }}
-                            exit={{ opacity: 0, y: 6 }}
-                            transition={{ duration: 0.22, ease: [0.16, 1, 0.3, 1] }}
-                            className="absolute top-full left-1/2 w-[380px] -translate-x-1/2 pt-3"
-                          >
-                            <ul className="rounded-xl p-2 shadow-2xl shadow-black/70 glass">
-                              {serviceLinks.map((link, i) => (
-                                <li key={link.href}>
-                                  <Link
-                                    href={link.href}
-                                    className={cn(
-                                      "group flex items-center justify-between gap-3 rounded-lg px-3 py-3 text-sm transition-colors hover:bg-signal/10",
-                                      pathname === link.href
-                                        ? "text-white"
-                                        : "text-fg-muted hover:text-white",
-                                    )}
-                                  >
-                                    <span className="flex items-center gap-3">
-                                      <span className="font-mono text-[10px] text-fg-subtle">
-                                        0{i + 1}
-                                      </span>
-                                      {link.label}
-                                    </span>
-                                    {link.badge ? (
-                                      <Badge>{link.badge}</Badge>
-                                    ) : (
-                                      <ArrowUpRight
-                                        className="size-4 opacity-0 transition-opacity group-hover:opacity-100"
-                                        aria-hidden="true"
-                                      />
-                                    )}
-                                  </Link>
-                                </li>
-                              ))}
-                            </ul>
-                          </m.div>
-                        )}
-                      </AnimatePresence>
-                    </li>
-                  ) : (
-                    <li key={item.href}>
-                      <Link
-                        href={item.href}
-                        aria-current={pathname === item.href ? "page" : undefined}
-                        className={cn(
-                          "relative block rounded-lg px-4 py-2 text-sm font-medium transition-colors hover:text-white",
-                          isActive(pathname, item.href)
-                            ? "bg-white/[0.06] text-white"
-                            : "text-fg-muted",
-                        )}
-                      >
-                        {item.label}
-                      </Link>
-                    </li>
-                  ),
-                )}
-              </ul>
-            </nav>
-
-            <div className="flex items-center gap-3">
-              <ButtonLink href="/contact" size="md" arrow className="hidden sm:inline-flex">
-                Get Started
-              </ButtonLink>
-              <button
-                ref={menuButtonRef}
-                type="button"
-                onClick={() => setMenuOpen((v) => !v)}
-                aria-expanded={menuOpen}
-                aria-controls="mobile-menu"
-                aria-label={menuOpen ? "Close menu" : "Open menu"}
-                className="relative z-10 grid size-11 place-items-center rounded-lg border border-line-strong bg-panel/70 text-fg transition-colors hover:border-pulse hover:text-pulse lg:hidden"
-              >
-                {menuOpen ? (
-                  <X className="size-5" aria-hidden="true" />
-                ) : (
-                  <Menu className="size-5" aria-hidden="true" />
-                )}
-              </button>
-            </div>
+            <button
+              ref={menuButtonRef}
+              type="button"
+              onClick={() => setMenuOpen((v) => !v)}
+              aria-expanded={menuOpen}
+              aria-controls="site-menu"
+              aria-label={menuOpen ? "Close menu" : "Open menu"}
+              className="group flex h-10 items-center gap-3 pl-2 label"
+            >
+              <span className="roll hidden sm:inline-flex">
+                <span>{menuOpen ? "Close" : "Menu"}</span>
+                <span aria-hidden="true">{menuOpen ? "Close" : "Menu"}</span>
+              </span>
+              <span className="relative block h-3 w-7" aria-hidden="true">
+                <span
+                  className={cn(
+                    "absolute left-0 h-px w-full bg-current transition-transform duration-500",
+                    menuOpen ? "top-1/2 rotate-45" : "top-0 group-hover:translate-x-1",
+                  )}
+                />
+                <span
+                  className={cn(
+                    "absolute left-0 h-px w-full bg-current transition-transform duration-500",
+                    menuOpen ? "top-1/2 -rotate-45" : "bottom-0 group-hover:-translate-x-1",
+                  )}
+                />
+              </span>
+            </button>
           </div>
         </div>
       </header>
@@ -271,74 +181,105 @@ export function Header() {
       <AnimatePresence>
         {menuOpen && (
           <m.div
-            id="mobile-menu"
+            id="site-menu"
             role="dialog"
             aria-modal="true"
             aria-label="Site menu"
             initial={{ clipPath: "inset(0 0 100% 0)" }}
             animate={{ clipPath: "inset(0 0 0% 0)" }}
-            exit={{ clipPath: "inset(0 0 100% 0)" }}
-            transition={{ duration: 0.6, ease: [0.76, 0, 0.24, 1] }}
-            className="fixed inset-0 z-40 overflow-y-auto bg-void pt-24 pb-10 lg:hidden"
+            exit={{ clipPath: "inset(100% 0 0% 0)" }}
+            transition={{ duration: 0.8, ease: [0.76, 0, 0.24, 1] }}
+            className="fixed inset-0 z-40 overflow-y-auto bg-ink text-paper"
+            data-tone="ink"
+            data-tone-scope=""
             data-lenis-prevent
           >
-            <div
-              className="pointer-events-none absolute inset-0 grid-lines mask-radial opacity-50"
-              aria-hidden="true"
-            />
-            <nav aria-label="Mobile" className="relative container-page">
-              <ul className="flex flex-col">
-                {[...mainNav.filter((i) => !i.children), ...serviceLinks].map((item, i) => (
-                  <m.li
-                    key={item.href}
-                    initial={{ opacity: 0, x: -20 }}
-                    animate={{ opacity: 1, x: 0 }}
-                    transition={{ delay: 0.2 + i * 0.04, duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
-                    className="border-b border-line"
-                  >
-                    <Link
-                      href={item.href}
-                      className={cn(
-                        "flex items-center justify-between gap-4 py-4 font-display text-2xl font-semibold transition-colors hover:text-pulse",
-                        pathname === item.href ? "text-pulse" : "text-fg",
-                      )}
+            <div className="container-page grid min-h-full gap-10 pt-28 pb-10 lg:grid-cols-[1.3fr_1fr] lg:items-center">
+              <nav aria-label="Menu">
+                <ul>
+                  {menuItems.map((item, i) => (
+                    <m.li
+                      key={item.href}
+                      initial={{ opacity: 0, y: 40 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ delay: 0.3 + i * 0.04, duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+                      onPointerEnter={() => setHovered(i)}
+                      onFocus={() => setHovered(i)}
                     >
-                      <span className="flex items-baseline gap-3">
-                        <span className="font-mono text-xs text-fg-subtle">
+                      <Link
+                        href={item.href}
+                        className="group flex items-baseline gap-4 py-1.5 md:py-1"
+                      >
+                        <span className="w-8 label text-paper/50 tabular-nums">
                           {String(i + 1).padStart(2, "0")}
                         </span>
-                        {item.label}
-                      </span>
-                      {item.badge && <Badge>{item.badge}</Badge>}
-                    </Link>
-                  </m.li>
-                ))}
-              </ul>
+                        <span
+                          className={cn(
+                            "font-serif text-[2rem] leading-[1.05] transition-[transform,opacity] duration-500 md:text-[2.75rem] lg:text-5xl",
+                            "group-hover:translate-x-3 group-hover:italic",
+                            isActive(pathname, item.href) && item.href !== "/" ? "italic" : "",
+                            hovered === i ? "opacity-100" : "opacity-60 lg:opacity-40",
+                          )}
+                        >
+                          {item.label}
+                        </span>
+                        {item.badge && (
+                          <span className="rounded-full border border-paper/40 px-2 py-0.5 label !text-[9px]">
+                            {item.badge}
+                          </span>
+                        )}
+                      </Link>
+                    </m.li>
+                  ))}
+                </ul>
+              </nav>
               <m.div
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
-                transition={{ delay: 0.6 }}
-                className="mt-10 flex flex-col gap-4 font-mono text-sm text-fg-muted"
+                initial={{ opacity: 0, scale: 0.95 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ delay: 0.45, duration: 0.9, ease: [0.16, 1, 0.3, 1] }}
+                className="hidden flex-col gap-8 lg:flex"
               >
-                <a href={site.contact.phoneHref} className="hover:text-pulse">
-                  {site.contact.phone}
-                </a>
-                <a href={`mailto:${site.contact.email}`} className="hover:text-pulse">
-                  {site.contact.email}
-                </a>
-                <a
-                  href={site.social.linkedin}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="inline-flex items-center gap-2 hover:text-pulse"
-                >
-                  <LinkedInIcon className="size-4" /> LinkedIn
-                </a>
-                <ButtonLink href="/contact" size="lg" arrow className="mt-4 w-full">
-                  Get Started
-                </ButtonLink>
+                <div className="relative aspect-[4/5] w-full overflow-hidden">
+                  {menuItems.map((item, i) => (
+                    <Photo
+                      key={item.href}
+                      name={item.photo}
+                      baked
+                      sizes="480px"
+                      className={cn(
+                        "absolute inset-0 transition-opacity duration-700",
+                        hovered === i ? "opacity-100" : "opacity-0",
+                      )}
+                    />
+                  ))}
+                </div>
+                <div className="grid grid-cols-2 gap-6 label text-paper/70">
+                  <div className="flex flex-col gap-1.5">
+                    <span className="text-paper/40">( Contact )</span>
+                    <a href={site.contact.phoneHref} className="link-line w-fit">
+                      {site.contact.phone}
+                    </a>
+                    <a
+                      href={`mailto:${site.contact.email}`}
+                      className="link-line w-fit tracking-normal normal-case"
+                    >
+                      {site.contact.email}
+                    </a>
+                  </div>
+                  <div className="flex flex-col gap-1.5">
+                    <span className="text-paper/40">( Follow )</span>
+                    <a
+                      href={site.social.linkedin}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="link-line w-fit"
+                    >
+                      LinkedIn
+                    </a>
+                  </div>
+                </div>
               </m.div>
-            </nav>
+            </div>
           </m.div>
         )}
       </AnimatePresence>

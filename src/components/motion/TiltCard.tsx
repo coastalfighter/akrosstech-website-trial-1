@@ -41,7 +41,7 @@ export function TiltCard({
           style={{
             opacity: "var(--glare, 0)",
             background:
-              "radial-gradient(600px circle at var(--gx,50%) var(--gy,50%), rgb(191 247 71 / 0.12), transparent 40%)",
+              "radial-gradient(600px circle at var(--gx,50%) var(--gy,50%), rgb(128 128 128 / 0.12), transparent 40%)",
           }}
         />
       )}

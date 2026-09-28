@@ -7,37 +7,28 @@ import { useIsFinePointer, usePrefersReducedMotion } from "@/hooks/useMediaQuery
 const INTERACTIVE = "a, button, [role='button'], [data-cursor], summary, label[for]";
 
 /**
- * Crosshair cursor: a precise dot plus corner brackets that lag behind and
- * lock onto interactive elements (optionally showing a `data-cursor-label`).
- * Fine pointers only; disabled for reduced motion.
+ * A small difference-blended dot (visible on paper and ink alike) that
+ * swells over links and becomes a labelled disc on `data-cursor-label`.
  */
 export function CustomCursor() {
   const fine = useIsFinePointer();
   const reduced = usePrefersReducedMotion();
   const enabled = fine && !reduced;
 
-  const dotRef = useRef<HTMLDivElement>(null);
-  const frameRef = useRef<HTMLDivElement>(null);
+  const ref = useRef<HTMLDivElement>(null);
   const [label, setLabel] = useState<string | null>(null);
   const [state, setState] = useState<"idle" | "hover" | "hidden">("hidden");
 
   useEffect(() => {
     if (!enabled) return;
-    const dot = dotRef.current;
-    const frame = frameRef.current;
-    if (!dot || !frame) return;
-
+    const el = ref.current;
+    if (!el) return;
     document.documentElement.classList.add("has-custom-cursor");
-    const dotX = gsap.quickTo(dot, "x", { duration: 0.1, ease: "power3.out" });
-    const dotY = gsap.quickTo(dot, "y", { duration: 0.1, ease: "power3.out" });
-    const frameX = gsap.quickTo(frame, "x", { duration: 0.45, ease: "power3.out" });
-    const frameY = gsap.quickTo(frame, "y", { duration: 0.45, ease: "power3.out" });
-
+    const xTo = gsap.quickTo(el, "x", { duration: 0.35, ease: "power3.out" });
+    const yTo = gsap.quickTo(el, "y", { duration: 0.35, ease: "power3.out" });
     const onMove = (e: PointerEvent) => {
-      dotX(e.clientX);
-      dotY(e.clientY);
-      frameX(e.clientX);
-      frameY(e.clientY);
+      xTo(e.clientX);
+      yTo(e.clientY);
       setState((s) => (s === "hidden" ? "idle" : s));
     };
     const onOver = (e: PointerEvent) => {
@@ -46,7 +37,6 @@ export function CustomCursor() {
       setLabel(target?.dataset.cursorLabel ?? null);
     };
     const onLeave = () => setState("hidden");
-
     window.addEventListener("pointermove", onMove, { passive: true });
     document.addEventListener("pointerover", onOver, { passive: true });
     document.documentElement.addEventListener("pointerleave", onLeave);
@@ -59,37 +49,15 @@ export function CustomCursor() {
   }, [enabled]);
 
   if (!enabled) return null;
-
-  const hidden = state === "hidden";
-  const size = label ? 96 : state === "hover" ? 48 : 30;
-  const corner = "absolute size-2.5 border-pulse transition-colors duration-300";
+  const size = label ? 92 : state === "hover" ? 44 : 12;
 
   return (
     <div aria-hidden="true" className="pointer-events-none fixed inset-0 z-[90]">
-      <div ref={dotRef} className="fixed top-0 left-0">
+      <div ref={ref} className="fixed top-0 left-0 mix-blend-difference">
         <div
-          className="size-1.5 -translate-x-1/2 -translate-y-1/2 bg-pulse transition-opacity"
-          style={{ opacity: hidden ? 0 : 1 }}
-        />
-      </div>
-      <div ref={frameRef} className="fixed top-0 left-0">
-        <div
-          className="relative flex -translate-x-1/2 -translate-y-1/2 items-center justify-center font-mono text-[10px] tracking-widest text-white uppercase transition-[width,height,opacity,background-color] duration-300 ease-out"
-          style={{
-            width: size,
-            height: size,
-            opacity: hidden ? 0 : 1,
-            backgroundColor: label
-              ? "rgb(61 123 255 / 0.85)"
-              : state === "hover"
-                ? "rgb(34 211 238 / 0.08)"
-                : "transparent",
-          }}
+          className="grid -translate-x-1/2 -translate-y-1/2 place-items-center rounded-full bg-white label !text-[10px] text-black transition-[width,height,opacity] duration-500 ease-out"
+          style={{ width: size, height: size, opacity: state === "hidden" ? 0 : 1 }}
         >
-          <span className={`${corner} top-0 left-0 border-t border-l`} />
-          <span className={`${corner} top-0 right-0 border-t border-r`} />
-          <span className={`${corner} bottom-0 left-0 border-b border-l`} />
-          <span className={`${corner} right-0 bottom-0 border-r border-b`} />
           {label}
         </div>
       </div>

@@ -25,10 +25,8 @@ export default function ContactPage() {
           ),
         }}
       />
-      <div className="pt-20">
-        <ContactSection headingLevel="h1" />
-      </div>
-      <FaqSection faqs={serviceFaqs.slice(-4)} title="Before you reach out" />
+      <ContactSection headingLevel="h1" />
+      <FaqSection faqs={serviceFaqs.slice(-4)} title="Before you *reach out*" tone="ink" />
     </>
   );
 }

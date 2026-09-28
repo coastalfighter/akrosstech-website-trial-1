@@ -2,7 +2,7 @@
 
 import { useEffect } from "react";
 import { usePathname } from "next/navigation";
-import { gsap, SplitText } from "@/lib/gsap";
+import { gsap, ScrollTrigger, SplitText } from "@/lib/gsap";
 import { INTRO_DURATION_MS } from "@/components/effects/Preloader";
 import { useIsFinePointer, usePrefersReducedMotion } from "@/hooks/useMediaQuery";
 
@@ -75,10 +75,71 @@ function initParallax(el: HTMLElement) {
   );
 }
 
+/** Word-by-word opacity scrub for `[data-scrub-words]`. */
+function initScrubWords(el: HTMLElement) {
+  SplitText.create(el, {
+    type: "words",
+    autoSplit: true,
+    onSplit(self) {
+      return gsap.fromTo(
+        self.words,
+        { opacity: 0.14 },
+        {
+          opacity: 1,
+          ease: "none",
+          stagger: 0.1,
+          scrollTrigger: { trigger: el, start: "top 80%", end: "bottom 45%", scrub: 0.6 },
+        },
+      );
+    },
+  });
+}
+
+const revealFrom: Record<string, string> = {
+  bottom: "inset(100% 0% 0% 0%)",
+  top: "inset(0% 0% 100% 0%)",
+  left: "inset(0% 100% 0% 0%)",
+  center: "inset(22% 22% 22% 22%)",
+};
+
+/** Clip-path wipe + zoom-out for `[data-image-reveal]`. */
+function initImageReveal(el: HTMLElement) {
+  const inner = el.querySelector("img");
+  const tl = gsap.timeline({ scrollTrigger: { trigger: el, start: "top 88%", once: true } });
+  tl.fromTo(
+    el,
+    { clipPath: revealFrom[el.dataset.imageReveal ?? "bottom"] ?? revealFrom.bottom },
+    { clipPath: "inset(0% 0% 0% 0%)", duration: 1.4, ease: "expo.inOut" },
+  );
+  if (inner) tl.fromTo(inner, { scale: 1.25 }, { scale: 1, duration: 1.8, ease: "expo.out" }, 0);
+}
+
+/** Letters drift apart vertically/horizontally while scrolling past. */
+function initSpread(el: HTMLElement) {
+  const letters = el.querySelectorAll<HTMLElement>("[data-spread-letter]");
+  const mid = (letters.length - 1) / 2;
+  letters.forEach((letter, i) => {
+    const offset = i - mid;
+    gsap.fromTo(
+      letter,
+      { yPercent: (i % 2 === 0 ? -1 : 1) * 18, xPercent: offset * -8 },
+      {
+        yPercent: (i % 2 === 0 ? 1 : -1) * 18,
+        xPercent: offset * 8,
+        ease: "none",
+        scrollTrigger: { trigger: el, start: "top bottom", end: "bottom top", scrub: 0.8 },
+      },
+    );
+  });
+}
+
 function initElement(el: HTMLElement) {
   if (el.hasAttribute("data-split")) initSplit(el);
+  if (el.hasAttribute("data-scrub-words")) initScrubWords(el);
   if (el.hasAttribute("data-reveal")) initReveal(el);
   if (el.hasAttribute("data-parallax")) initParallax(el);
+  if (el.hasAttribute("data-image-reveal")) initImageReveal(el);
+  if (el.hasAttribute("data-spread")) initSpread(el);
 }
 
 /**
@@ -134,6 +195,34 @@ export function MotionController() {
       ctx.revert();
     };
   }, [pathname, reduced]);
+
+  // Page tone: the whole page inverts (paper ⇄ ink) to match whichever
+  // `[data-tone]` section is crossing the middle of the viewport.
+  useEffect(() => {
+    const html = document.documentElement;
+    const sections = Array.from(
+      document.querySelectorAll<HTMLElement>("main [data-tone], footer[data-tone]"),
+    );
+    if (sections.length === 0) {
+      html.dataset.tone = "paper";
+      return;
+    }
+    const setTone = (tone: string | undefined) => {
+      html.dataset.tone = tone === "ink" ? "ink" : "paper";
+    };
+    setTone(sections[0]?.dataset.tone);
+    const triggers = sections.map((section) =>
+      ScrollTrigger.create({
+        trigger: section,
+        start: "top 50%",
+        end: "bottom 50%",
+        onToggle: (self) => {
+          if (self.isActive) setTone(section.dataset.tone);
+        },
+      }),
+    );
+    return () => triggers.forEach((t) => t.kill());
+  }, [pathname]);
 
   // 3D tilt — a single delegated pointer listener for every `[data-tilt]`.
   useEffect(() => {

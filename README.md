@@ -6,13 +6,19 @@ GSAP, Framer Motion and Lenis, and it deploys to Vercel.
 
 - All content from the previous WordPress site is preserved verbatim (see
   [`docs/CONTENT_INVENTORY.md`](docs/CONTENT_INVENTORY.md)), and old URLs 301-redirect to the new routes.
-- **"Signal" design:** dark, bold and techie — near-black navy with electric blue/cyan, Sora +
-  Inter + JetBrains Mono, blueprint grids, terminal-style UI details and live U.S./India clocks.
-- **Real photography** (Unsplash licence) run through one consistent cinematic grade, so the set
-  reads like a single shoot. Photos warm to full colour on hover.
-- Effects: terminal "boot" preloader, split-text reveals, photo parallax, 3D tilt cards, a pinned
-  horizontal portfolio and process timeline, a sticky scroll story, cursor-following service
-  previews, a crosshair cursor, page transitions, smooth scrolling and animated counters.
+- **"Editorial" design:** monochrome paper (`#f1efe9`) and ink (`#0b0b0a`), Instrument Serif
+  display type with italic accents, Inter Tight for UI, tiny numbered `( labels )` and hairline
+  rules. Inspired by the storytelling of rebrandgurus.com, scfo.de and noth.in.
+- **Tone-shifting page:** each section declares `data-tone="paper" | "ink"` and the whole page
+  inverts as sections cross the middle of the viewport.
+- **Real photography** (Unsplash licence) graded to black and white. Photos warm to full colour on
+  hover.
+- Effects: counter preloader that wipes up, a full-bleed AKROSTECH wordmark that rises in and
+  spreads apart on scroll, a scroll-expanding image, scroll-scrubbed manifesto text, tilted marquee
+  ribbons, hover-flood service rows with a cursor-following photo, a spreading "WORKS" title over an
+  asymmetric parallax grid, a horizontal principles accordion, a pinned process timeline, a
+  rotating circular CTA, rolling hover labels, a difference-blend cursor, page-name transitions,
+  smooth scrolling and animated counters.
 - Contact and newsletter forms send email through Resend to **gaurang@akrosstech.com**.
 
 ---
@@ -54,12 +60,13 @@ GSAP, Framer Motion and Lenis, and it deploys to Vercel.
 │   │   ├── layout.tsx  globals.css  not-found.tsx  error.tsx
 │   │   └── sitemap.ts  robots.ts  manifest.ts  opengraph-image.tsx  icon.svg  apple-icon.tsx
 │   ├── components/
-│   │   ├── effects/               # Preloader, cursor, page transition, progress bar, backgrounds
+│   │   ├── effects/               # Preloader, cursor, page transition, noise overlay
 │   │   ├── forms/                 # ContactForm, NewsletterForm
-│   │   ├── layout/                # Header, Footer, Logo
+│   │   ├── layout/                # Header (+ full-screen menu), Footer, Logo, Wordmark
 │   │   ├── mdx/                   # MDX renderer
 │   │   ├── motion/                # Reveal, TextReveal, Parallax, TiltCard, Counter, Marquee,
-│   │   │                          # Magnetic, Intro + MotionController (single client driver)
+│   │   │                          # Scroll (ScrubText, ImageReveal, SpreadWord), Intro
+│   │   │                          # + MotionController (single client driver, tone switching)
 │   │   ├── providers/             # SmoothScroll (Lenis), MotionProvider (LazyMotion)
 │   │   ├── sections/              # home/, services/, webdev/, shared/
 │   │   └── ui/                    # Button, SectionHeading, Accordion, Badge, Icon
@@ -151,6 +158,12 @@ an existing Chromium binary.
 
 ## Architecture notes
 
+- **Tones.** Colours are tone-aware tokens (`bg-bg`, `text-fg`, `text-muted`, `border-line`) that
+  read CSS variables set on `html[data-tone]`. The `ToneController` in `MotionController` flips the
+  `html` tone with ScrollTrigger as each `[data-tone]` section passes mid-viewport. Add
+  `data-tone-scope` to pin a subtree to its own tone (the menu overlay does this).
+- **Italic accents.** Headline strings in `src/content` and page props accept `*word*` markup, which
+  renders as serif italic (`src/lib/rich.tsx`).
 - **Rendering.** Every page is statically prerendered; only `/api/*` runs on demand.
 - **Motion without hydration cost.** `Reveal`, `TextReveal`, `Parallax` and `TiltCard` are _server_
   components that only render `data-*` attributes. One client `MotionController` sets them up lazily
@@ -178,18 +191,14 @@ The form rate limiter lives in memory, so each serverless instance keeps its own
 enough to deter casual abuse. For strict global limits, back `createRateLimiter` in
 `src/lib/rate-limit.ts` with a shared store such as Upstash Redis.
 
-## Quality results (production build, Lighthouse 13)
+## Quality results (production build, Lighthouse 13, home page)
 
-| Page                | Desktop P / A / BP / SEO | Mobile P / A / BP / SEO |
-| ------------------- | ------------------------ | ----------------------- |
-| Home                | 98 / 100 / 100 / 100     | 90 / 100 / 100 / 100    |
-| Website Development | 98 / 100 / 100 / 100     | 89 / 100 / 100 / 100    |
-| Virtual Assistance  | 97 / 100 / 100 / 100     | 87 / 100 / 100 / 100    |
-| About               | 99 / 100 / 100 / 100     | 88 / 100 / 100 / 100    |
-| Contact             | 98 / 100 / 100 / 100     | 87 / 100 / 100 / 100    |
+| Profile | Performance | Accessibility | Best practices | SEO |
+| ------- | ----------- | ------------- | -------------- | --- |
+| Desktop | 99          | 100           | 100            | 100 |
+| Mobile  | 90          | 100           | 100            | 100 |
 
-Mobile scores use Lighthouse's simulated slow-4G / 4× CPU profile. In the real trace, LCP happens at
-first paint (about 0.3 s).
+Mobile uses Lighthouse's simulated slow-4G / 4× CPU profile.
 
 ## Before launch — please confirm
 

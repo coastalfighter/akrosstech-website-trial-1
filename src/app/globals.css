@@ -1,41 +1,23 @@
 @import "tailwindcss";
 
 /* ──────────────────────────────────────────────────────────────
-   Akrostech "Signal" design system
-   Dark, high-contrast, electric-blue/cyan accents, mono details.
+   Akrostech — "Editorial" design system
+   Monochrome paper & ink. The whole page inverts between tones as
+   sections pass the middle of the viewport (see <ToneController>).
    ────────────────────────────────────────────────────────────── */
 @theme {
-  --color-void: #030509;
-  --color-canvas: #05070d;
-  --color-panel: #0a0e18;
-  --color-panel-2: #0e1320;
-  --color-panel-3: #141a2a;
+  --color-paper: #f1efe9;
+  --color-ink: #0b0b0a;
+  --color-stone: #8b877e;
 
-  --color-signal: #2563ff; /* electric blue — primary (4.9:1 with white) */
-  --color-signal-strong: #1d4fe0;
-  --color-signal-soft: #7aa3ff;
-  --color-pulse: #22d3ee; /* cyan — secondary */
-  --color-ion: #8b5cf6; /* violet — tertiary, gradients only */
-  --color-ok: #34d399;
-
-  --color-fg: #eef2ff;
-  --color-fg-muted: #a3adc2;
-  --color-fg-subtle: #7f8aa3;
-  --color-line: rgb(148 163 184 / 0.12);
-  --color-line-strong: rgb(148 163 184 / 0.24);
-
-  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
-  --font-display: var(--font-sora), var(--font-inter), ui-sans-serif, system-ui, sans-serif;
-  --font-mono: var(--font-mono-jb), ui-monospace, SFMono-Regular, Menlo, monospace;
+  --font-sans: var(--font-grotesk), ui-sans-serif, system-ui, sans-serif;
+  --font-serif: var(--font-serif-display), ui-serif, Georgia, serif;
 
   --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
   --ease-in-out-quart: cubic-bezier(0.76, 0, 0.24, 1);
 
   --animate-marquee: marquee var(--marquee-duration, 40s) linear infinite;
-  --animate-blink: blink 1.1s steps(1) infinite;
-  --animate-float: float 8s ease-in-out infinite;
-  --animate-ping-slow: ping-slow 2.4s cubic-bezier(0, 0, 0.2, 1) infinite;
-  --animate-spin-slow: spin 20s linear infinite;
+  --animate-spin-slow: spin 16s linear infinite;
 
   @keyframes marquee {
     from {
@@ -45,69 +27,75 @@
       transform: translate3d(-100%, 0, 0);
     }
   }
-  @keyframes blink {
-    50% {
-      opacity: 0;
-    }
-  }
-  @keyframes float {
-    0%,
-    100% {
-      transform: translate3d(0, 0, 0);
-    }
-    50% {
-      transform: translate3d(0, -12px, 0);
-    }
-  }
-  @keyframes ping-slow {
-    75%,
-    100% {
-      transform: scale(2.2);
-      opacity: 0;
-    }
-  }
 }
 
-/* Animatable angle for the rotating "border beam". */
-@property --beam-angle {
-  syntax: "<angle>";
-  inherits: false;
-  initial-value: 0deg;
+/* Tone-aware tokens: utilities like bg-bg / text-fg follow the current tone. */
+@theme inline {
+  --color-bg: var(--tone-bg);
+  --color-fg: var(--tone-fg);
+  --color-muted: var(--tone-muted);
+  --color-line: var(--tone-line);
+  --color-line-strong: var(--tone-line-strong);
+  --color-soft: var(--tone-soft);
+}
+
+:root,
+html[data-tone="paper"],
+[data-tone="paper"][data-tone-scope] {
+  --tone-bg: #f1efe9;
+  --tone-fg: #0b0b0a;
+  --tone-muted: #5f5c55;
+  --tone-line: rgb(11 11 10 / 0.14);
+  --tone-line-strong: rgb(11 11 10 / 0.32);
+  --tone-soft: rgb(11 11 10 / 0.05);
+}
+html[data-tone="ink"],
+[data-tone="ink"][data-tone-scope] {
+  --tone-bg: #0b0b0a;
+  --tone-fg: #f1efe9;
+  --tone-muted: #a19d94;
+  --tone-line: rgb(241 239 233 / 0.14);
+  --tone-line-strong: rgb(241 239 233 / 0.32);
+  --tone-soft: rgb(241 239 233 / 0.06);
 }
 
 @layer base {
   html {
-    color-scheme: dark;
-    background: var(--color-void);
+    background: var(--tone-bg);
     -webkit-text-size-adjust: 100%;
+    transition: background-color 0.8s var(--ease-out-expo);
   }
   body {
-    background: var(--color-canvas);
-    color: var(--color-fg);
+    background: var(--tone-bg);
+    color: var(--tone-fg);
     font-family: var(--font-sans);
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     overflow-x: clip;
+    transition:
+      background-color 0.8s var(--ease-out-expo),
+      color 0.8s var(--ease-out-expo);
   }
   ::selection {
-    background: var(--color-signal);
-    color: #fff;
+    background: var(--tone-fg);
+    color: var(--tone-bg);
   }
   :focus-visible {
-    outline: 2px solid var(--color-pulse);
-    outline-offset: 3px;
-    border-radius: 6px;
+    outline: 1.5px solid currentColor;
+    outline-offset: 4px;
   }
   h1,
   h2,
   h3,
   h4 {
-    font-family: var(--font-display);
-    letter-spacing: -0.03em;
     text-wrap: balance;
+    font-weight: 400;
   }
   p {
     text-wrap: pretty;
+  }
+  em {
+    font-style: italic;
   }
   html.lenis,
   html.lenis body {
@@ -123,206 +111,134 @@
 
 @utility container-page {
   width: 100%;
-  max-width: 1360px;
+  max-width: 1480px;
   margin-inline: auto;
-  padding-inline: 1rem;
-  @media (min-width: 640px) {
-    padding-inline: 1.5rem;
-  }
-  @media (min-width: 1024px) {
+  padding-inline: 1.25rem;
+  @media (min-width: 768px) {
     padding-inline: 2.5rem;
   }
 }
 
-/* Electric gradient text. */
-@utility text-signal {
-  background: linear-gradient(95deg, #9ec0ff 0%, var(--color-signal) 35%, var(--color-pulse) 100%);
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
+/* Small uppercase label, e.g. "( The Studio )". */
+@utility label {
+  font-family: var(--font-sans);
+  font-size: 0.6875rem;
+  line-height: 1.4;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  font-weight: 500;
 }
 
-@utility glass {
-  background: linear-gradient(160deg, rgb(20 28 48 / 0.72), rgb(8 12 22 / 0.6));
-  border: 1px solid var(--color-line);
-  backdrop-filter: blur(16px) saturate(140%);
-  -webkit-backdrop-filter: blur(16px) saturate(140%);
+/* Editorial serif display sizes. */
+@utility display-xl {
+  font-family: var(--font-serif);
+  font-size: clamp(3.25rem, 1.4rem + 7vw, 9.5rem);
+  line-height: 0.92;
+  letter-spacing: -0.02em;
 }
-
-/* Blueprint grid, faded at the edges. */
-@utility grid-lines {
-  background-image:
-    linear-gradient(rgb(148 163 184 / 0.07) 1px, transparent 1px),
-    linear-gradient(90deg, rgb(148 163 184 / 0.07) 1px, transparent 1px);
-  background-size: 56px 56px;
+@utility display-lg {
+  font-family: var(--font-serif);
+  font-size: clamp(2.6rem, 1.4rem + 4.6vw, 6.5rem);
+  line-height: 0.95;
+  letter-spacing: -0.015em;
 }
-
-@utility dot-grid {
-  background-image: radial-gradient(rgb(148 163 184 / 0.18) 1px, transparent 1px);
-  background-size: 20px 20px;
-}
-
-@utility mask-radial {
-  mask-image: radial-gradient(ellipse at center, #000 25%, transparent 75%);
-}
-@utility mask-fade-b {
-  mask-image: linear-gradient(to bottom, #000 55%, transparent);
-}
-@utility mask-fade-x {
-  mask-image: linear-gradient(to right, transparent, #000 10%, #000 90%, transparent);
+@utility display-md {
+  font-family: var(--font-serif);
+  font-size: clamp(2rem, 1.3rem + 2.6vw, 4rem);
+  line-height: 1.02;
+  letter-spacing: -0.01em;
 }
 
 @layer components {
-  /* ── Photo grade: one consistent cinematic treatment for every photo.
-        Desaturated + deep blue tint; returns to full colour on hover. ── */
-  .photo {
-    position: relative;
-    overflow: hidden;
-    isolation: isolate;
-    background: var(--color-panel);
-  }
+  /* Monochrome photography that warms to full colour on hover. */
   .photo img {
-    filter: grayscale(0.85) contrast(1.1) brightness(0.78);
+    filter: grayscale(1) contrast(1.05);
     transition:
       filter 0.9s var(--ease-out-expo),
-      transform 1.2s var(--ease-out-expo);
+      transform 1.4s var(--ease-out-expo);
   }
-  .photo::after {
-    content: "";
-    position: absolute;
-    inset: 0;
-    z-index: 1;
-    pointer-events: none;
-    background: linear-gradient(
-      160deg,
-      rgb(37 99 255 / 0.38),
-      rgb(34 211 238 / 0.08) 55%,
-      rgb(3 5 9 / 0.4)
-    );
-    /* Normal blending: mix-blend-mode would force costly recompositing. */
-    transition: opacity 0.9s var(--ease-out-expo);
-  }
-  .photo-hover:hover img,
   .group:hover .photo img,
-  .group\/tilt:hover .photo img {
-    filter: grayscale(0) contrast(1.05) brightness(0.85);
+  .photo-hover:hover img {
+    filter: grayscale(0) contrast(1);
     transform: scale(1.04);
   }
-  .photo-hover:hover::after,
-  .group:hover .photo::after,
-  .group\/tilt:hover .photo::after {
-    opacity: 0.15;
+
+  /* Underline that draws in from the left on hover. */
+  .link-line {
+    background-image: linear-gradient(currentColor, currentColor);
+    background-size: 0% 1px;
+    background-position: 0 100%;
+    background-repeat: no-repeat;
+    transition: background-size 0.6s var(--ease-out-expo);
+  }
+  .link-line:hover,
+  .group:hover .link-line {
+    background-size: 100% 1px;
   }
 
-  /* ── Border beam: a light that travels around a card's edge. ── */
-  .beam {
-    position: relative;
+  /* Text that rolls up to a duplicate on hover (buttons, nav). */
+  .roll {
+    display: inline-flex;
+    flex-direction: column;
+    height: 1.2em;
+    line-height: 1.2em;
+    overflow: hidden;
   }
-  .beam::before {
-    content: "";
-    position: absolute;
-    inset: 0;
-    padding: 1px;
-    border-radius: inherit;
-    background: conic-gradient(
-      from var(--beam-angle),
-      transparent 0 70%,
-      var(--color-pulse) 82%,
-      var(--color-signal) 90%,
-      transparent 100%
-    );
-    -webkit-mask:
-      linear-gradient(#000 0 0) content-box,
-      linear-gradient(#000 0 0);
-    -webkit-mask-composite: xor;
-    mask-composite: exclude;
-    animation: beam-spin 5s linear infinite paused;
-    pointer-events: none;
+  .roll > span {
+    transition: transform 0.55s var(--ease-out-expo);
   }
-  /* Animating a registered custom property repaints on the main thread, so
-     beams only travel while the card is hovered or focused. */
-  .beam:hover::before,
-  .beam:focus-within::before {
-    animation-play-state: running;
-  }
-  @keyframes beam-spin {
-    to {
-      --beam-angle: 360deg;
-    }
+  .group:hover .roll > span,
+  .roll:hover > span {
+    transform: translateY(-100%);
   }
 
-  /* Cursor-following spotlight (position set by <Spotlight>). */
-  .spotlight {
-    background: radial-gradient(
-      600px circle at var(--mx, 50%) var(--my, 40%),
-      rgb(61 123 255 / 0.16),
-      transparent 60%
-    );
-  }
-
-  /* Film grain for depth on flat dark surfaces (static — no repaint cost). */
+  /* Film grain for tactile depth (static; no repaint cost). */
   .noise-overlay {
     pointer-events: none;
     position: fixed;
     inset: 0;
     z-index: 60;
-    opacity: 0.045;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 0.9 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+    opacity: 0.05;
+    mix-blend-mode: multiply;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='220'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0.9 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
   }
 
   /* ── Above-the-fold intro (pure CSS, runs before hydration). ── */
   .hero-mask {
     display: inline-block;
     overflow: clip;
-    overflow-clip-margin: 0.1em;
-    padding-bottom: 0.08em;
-    margin-bottom: -0.08em;
+    overflow-clip-margin: 0.12em;
+    padding-bottom: 0.1em;
+    margin-bottom: -0.1em;
     vertical-align: top;
   }
   .hero-word {
     display: inline-block;
-    transform: translate3d(0, 110%, 0) rotate(4deg);
-    animation: intro-in 1s var(--ease-out-expo) forwards;
+    transform: translate3d(0, 115%, 0);
+    animation: intro-in 1.2s var(--ease-out-expo) forwards;
     animation-delay: calc(var(--intro-offset, 0s) + var(--hero-delay, 0.05s) + var(--i) * 0.06s);
   }
   @keyframes intro-in {
     to {
-      transform: translate3d(0, 0, 0) rotate(0deg);
-      opacity: 1;
+      transform: translate3d(0, 0, 0);
     }
   }
-  /* --fade-from is 1 while the preloader covers the page (content is painted
-     immediately and only rises), 0 otherwise. The keyframe name never changes,
-     so settling the intro state later can't restart a finished animation. */
+  /* --fade-from is 1 while the preloader covers the page (content paints
+     immediately and only rises), 0 otherwise. */
   .hero-fade {
     opacity: var(--fade-from, 0);
-    transform: translate3d(0, 24px, 0);
-    animation: hero-fade-in 1s var(--ease-out-expo) forwards;
+    transform: translate3d(0, 20px, 0);
+    animation: hero-fade-in 1.1s var(--ease-out-expo) forwards;
     animation-delay: calc(var(--intro-offset, 0s) + var(--d, 0.4s));
   }
   @keyframes hero-fade-in {
     from {
       opacity: var(--fade-from, 0);
-      transform: translate3d(0, 24px, 0);
+      transform: translate3d(0, 20px, 0);
     }
     to {
       opacity: 1;
       transform: translate3d(0, 0, 0);
-    }
-  }
-
-  /* Terminal lines typed in sequence by CSS (steps + width). */
-  .type-line {
-    display: block;
-    width: 0;
-    overflow: hidden;
-    white-space: nowrap;
-    animation: type 0.9s steps(var(--chars, 40)) forwards;
-    animation-delay: calc(var(--intro-offset, 0s) + var(--t, 0s));
-  }
-  @keyframes type {
-    to {
-      width: calc(var(--chars, 40) * 1ch);
     }
   }
 
@@ -340,7 +256,7 @@
 
   /* Prose (blog + legal). */
   .prose-ak {
-    color: var(--color-fg-muted);
+    color: var(--tone-muted);
     font-size: 1.0625rem;
     line-height: 1.8;
   }
@@ -348,24 +264,24 @@
     margin-top: 1.25em;
   }
   .prose-ak h2 {
-    color: var(--color-fg);
-    font-size: clamp(1.5rem, 1.2rem + 1vw, 2rem);
-    line-height: 1.2;
-    margin-top: 2.2em;
-    font-weight: 600;
+    color: var(--tone-fg);
+    font-family: var(--font-serif);
+    font-size: clamp(1.75rem, 1.3rem + 1.4vw, 2.5rem);
+    line-height: 1.1;
+    margin-top: 2em;
   }
   .prose-ak h3 {
-    color: var(--color-fg);
-    font-size: 1.25rem;
-    margin-top: 1.8em;
+    color: var(--tone-fg);
+    font-size: 1.2rem;
     font-weight: 600;
+    margin-top: 1.8em;
   }
   .prose-ak strong {
-    color: var(--color-fg);
+    color: var(--tone-fg);
     font-weight: 600;
   }
   .prose-ak a {
-    color: var(--color-signal-soft);
+    color: var(--tone-fg);
     text-decoration: underline;
     text-underline-offset: 3px;
   }
@@ -384,11 +300,10 @@
     content: "";
     position: absolute;
     left: -0.9rem;
-    top: 0.72em;
-    width: 7px;
-    height: 7px;
-    background: linear-gradient(135deg, var(--color-signal), var(--color-pulse));
-    transform: rotate(45deg);
+    top: 0.8em;
+    width: 8px;
+    height: 1px;
+    background: var(--tone-fg);
   }
   .prose-ak ol {
     list-style: decimal;
@@ -403,24 +318,23 @@
   }
   .prose-ak th,
   .prose-ak td {
-    border: 1px solid var(--color-line);
-    padding: 0.75rem 1rem;
+    border-bottom: 1px solid var(--tone-line);
+    padding: 0.85rem 1rem 0.85rem 0;
     text-align: left;
     vertical-align: top;
   }
   .prose-ak th {
-    color: var(--color-fg);
-    background: rgb(61 123 255 / 0.08);
-    font-family: var(--font-mono);
-    font-size: 0.8rem;
+    color: var(--tone-fg);
+    font-size: 0.7rem;
+    letter-spacing: 0.14em;
     text-transform: uppercase;
-    letter-spacing: 0.06em;
+    font-weight: 500;
   }
 }
 
 /* ──────────────────────────────────────────────────────────────
-   Preloader — a terminal "boot sequence", pure CSS (no JS):
-   lines type in (0–0.9s), progress fills, panel wipes up (1.0–1.6s).
+   Preloader — pure CSS: mark draws + counter (0–0.9s), then the
+   ink panel slides up (1.0–1.6s). Hero intro is offset to match.
    ────────────────────────────────────────────────────────────── */
 @property --preload-count {
   syntax: "<integer>";
@@ -431,44 +345,52 @@
   counter-reset: preload var(--preload-count);
 }
 .preloader-count::before {
-  content: counter(preload);
+  content: counter(preload, decimal-leading-zero);
 }
 html[data-preloader="active"] {
-  --intro-offset: 1.05s;
+  --intro-offset: 1.1s;
   --fade-from: 1;
 }
 html[data-preloader="active"] .preloader {
-  animation: preload-out 0.6s var(--ease-in-out-quart) 1s forwards;
+  animation: preload-out 0.8s var(--ease-in-out-quart) 1s forwards;
 }
 html[data-preloader="active"] .preloader-count {
   animation: preload-count 0.9s cubic-bezier(0.3, 0.7, 0.2, 1) forwards;
 }
-html[data-preloader="active"] .preloader-bar {
-  transform: scaleX(0);
-  animation: preload-bar 0.9s cubic-bezier(0.3, 0.7, 0.2, 1) forwards;
+html[data-preloader="active"] .preloader-inner {
+  animation: preload-inner 0.8s var(--ease-in-out-quart) 1s forwards;
 }
-html[data-preloader="active"] .preloader .boot-line {
-  width: 0;
-  animation: type 0.28s steps(var(--chars, 30)) forwards;
-  animation-delay: var(--t, 0s);
+.logo-draw {
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+  animation: logo-draw 0.8s var(--ease-in-out-quart) 0.05s forwards;
+}
+.logo-draw-delay {
+  animation-delay: 0.55s;
+  animation-duration: 0.3s;
+}
+@keyframes logo-draw {
+  to {
+    stroke-dashoffset: 0;
+  }
 }
 @keyframes preload-count {
   to {
     --preload-count: 100;
   }
 }
-@keyframes preload-bar {
-  to {
-    transform: scaleX(1);
-  }
-}
 @keyframes preload-out {
   to {
-    clip-path: inset(0 0 100% 0);
+    transform: translate3d(0, -100%, 0);
     visibility: hidden;
   }
 }
-/* Unlayered + !important so it always beats the component's display utilities. */
+@keyframes preload-inner {
+  to {
+    transform: translate3d(0, 40%, 0);
+    opacity: 0;
+  }
+}
 html[data-preloader="done"] .preloader {
   display: none !important;
 }
@@ -487,12 +409,5 @@ html[data-preloader="done"] .preloader {
     animation: none;
     opacity: 1;
     transform: none;
-  }
-  .type-line {
-    animation: none;
-    width: auto;
-  }
-  .beam::before {
-    animation: none;
   }
 }

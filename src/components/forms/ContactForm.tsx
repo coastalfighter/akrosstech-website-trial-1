@@ -24,10 +24,10 @@ const initialValues: Required<Omit<ContactInput, "service">> & { service: string
 };
 
 const inputClass =
-  "peer w-full rounded-lg border border-line-strong bg-white/[0.03] px-4 pt-6 pb-2.5 text-[15px] text-fg placeholder-transparent transition-colors focus:border-signal/70 focus:bg-white/[0.05] focus:outline-none aria-[invalid=true]:border-red-400/70";
+  "peer w-full border-0 border-b border-line-strong bg-transparent px-0 pt-7 pb-3 text-lg text-fg placeholder-transparent transition-colors focus:border-fg focus:outline-none aria-[invalid=true]:border-red-500";
 
 const labelClass =
-  "pointer-events-none absolute top-2 left-4 text-[11px] font-medium tracking-wide text-fg-subtle uppercase transition-all peer-placeholder-shown:top-4 peer-placeholder-shown:text-sm peer-placeholder-shown:tracking-normal peer-placeholder-shown:normal-case peer-focus:top-2 peer-focus:text-[11px] peer-focus:tracking-wide peer-focus:uppercase peer-focus:text-pulse";
+  "pointer-events-none absolute top-1 left-0 text-[11px] font-medium tracking-[0.14em] text-muted uppercase transition-all peer-placeholder-shown:top-7 peer-placeholder-shown:text-lg peer-placeholder-shown:tracking-normal peer-placeholder-shown:normal-case peer-focus:top-1 peer-focus:text-[11px] peer-focus:tracking-[0.14em] peer-focus:uppercase peer-focus:text-fg";
 
 export function ContactForm({
   defaultService,
@@ -97,7 +97,7 @@ export function ContactForm({
 
   const errorText = (name: string) =>
     errors[name] ? (
-      <p id={`${id}-${name}-error`} className="mt-1.5 pl-1 text-xs text-red-300">
+      <p id={`${id}-${name}-error`} className="mt-1.5 pl-1 text-xs text-red-500">
         {errors[name]}
       </p>
     ) : null;
@@ -115,14 +115,14 @@ export function ContactForm({
             role="status"
             aria-live="polite"
           >
-            <span className="grid size-16 place-items-center rounded-xl bg-ok/15 text-ok">
+            <span className="grid size-16 place-items-center rounded-xl bg-soft text-fg">
               <CheckCircle2 className="size-8" aria-hidden="true" />
             </span>
             <h3 className="text-2xl font-medium text-fg">Thank you — message received.</h3>
-            <p className="max-w-sm text-fg-muted">
+            <p className="max-w-sm text-muted">
               Our team will get back to you shortly. For anything urgent, call us directly.
             </p>
-            <Button variant="secondary" onClick={() => setStatus("idle")}>
+            <Button variant="outline" onClick={() => setStatus("idle")}>
               Send another message
             </Button>
           </m.div>
@@ -217,18 +217,18 @@ export function ContactForm({
                     "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%23a8a8a3' stroke-width='2'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E\")",
                 }}
               >
-                <option value="" className="bg-panel">
+                <option value="" className="bg-bg">
                   Choose a service…
                 </option>
                 {SERVICE_OPTIONS.map((option) => (
-                  <option key={option} value={option} className="bg-panel">
+                  <option key={option} value={option} className="bg-bg">
                     {option}
                   </option>
                 ))}
               </select>
               <label
                 htmlFor={`${id}-service`}
-                className="pointer-events-none absolute top-2 left-4 text-[11px] font-medium tracking-wide text-fg-subtle uppercase"
+                className="pointer-events-none absolute top-2 left-0 text-[11px] font-medium tracking-[0.14em] text-muted uppercase"
               >
                 I’m interested in
               </label>
@@ -271,23 +271,23 @@ export function ContactForm({
                 name="smsConsent"
                 checked={values.smsConsent}
                 onChange={(e) => set("smsConsent", e.target.checked)}
-                className="mt-1 size-4 shrink-0 accent-[#3d7bff]"
+                className="mt-1 size-4 shrink-0 accent-current"
               />
-              <label htmlFor={`${id}-sms`} className="text-xs leading-relaxed text-fg-subtle">
+              <label htmlFor={`${id}-sms`} className="text-xs leading-relaxed text-muted">
                 By opting in for text messages, you agree to receive an appointment reminders and
                 important updates from Akrostech Consulting LLC at the number provided. Message
                 frequency varies. Msg &amp; data rates may apply. Reply STOP to unsubscribe. Reply
                 HELP for help. View our{" "}
                 <Link
                   href="/privacy-policy"
-                  className="text-fg-muted underline underline-offset-2 hover:text-pulse"
+                  className="text-muted underline underline-offset-2 hover:text-fg"
                 >
                   Privacy Policy
                 </Link>{" "}
                 and{" "}
                 <Link
                   href="/terms-and-conditions"
-                  className="text-fg-muted underline underline-offset-2 hover:text-pulse"
+                  className="text-muted underline underline-offset-2 hover:text-fg"
                 >
                   Terms &amp; Conditions
                 </Link>{" "}
@@ -296,7 +296,7 @@ export function ContactForm({
             </div>
 
             <div className="flex flex-col gap-3 sm:col-span-2 sm:flex-row sm:items-center sm:justify-between">
-              <p id={`${id}-server`} role="alert" className="text-sm text-red-300">
+              <p id={`${id}-server`} role="alert" className="text-sm text-red-500">
                 {status === "error" ? serverMessage : ""}
               </p>
               <Button

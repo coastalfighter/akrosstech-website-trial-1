@@ -2,7 +2,6 @@
 
 import { useId, useState } from "react";
 import { AnimatePresence, m } from "motion/react";
-import { Plus } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 export interface AccordionItem {
@@ -10,7 +9,7 @@ export interface AccordionItem {
   answer: string;
 }
 
-/** Accessible accordion (WAI-ARIA disclosure pattern). */
+/** Hairline editorial accordion (WAI-ARIA disclosure pattern). */
 export function Accordion({
   items,
   className,
@@ -24,21 +23,13 @@ export function Accordion({
   const baseId = useId();
 
   return (
-    <div className={cn("flex flex-col gap-3", className)}>
+    <div className={cn("border-t border-line", className)}>
       {items.map((item, index) => {
         const isOpen = open === index;
         const buttonId = `${baseId}-button-${index}`;
         const panelId = `${baseId}-panel-${index}`;
         return (
-          <div
-            key={item.question}
-            className={cn(
-              "rounded-xl border transition-colors duration-300",
-              isOpen
-                ? "border-signal/40 bg-signal/[0.05]"
-                : "border-line bg-panel/60 hover:border-line-strong",
-            )}
-          >
+          <div key={item.question} className="border-b border-line">
             <h3>
               <button
                 id={buttonId}
@@ -46,24 +37,22 @@ export function Accordion({
                 aria-expanded={isOpen}
                 aria-controls={panelId}
                 onClick={() => setOpen(isOpen ? null : index)}
-                className="flex w-full items-center justify-between gap-6 px-5 py-5 text-left font-sans text-base font-semibold text-fg sm:px-6"
+                className="group flex w-full items-baseline gap-6 py-6 text-left"
               >
-                <span className="flex items-baseline gap-4">
-                  <span className="font-mono text-xs text-fg-subtle" aria-hidden="true">
-                    {String(index + 1).padStart(2, "0")}
-                  </span>
-                  <span>{item.question}</span>
+                <span className="w-8 shrink-0 label text-muted tabular-nums" aria-hidden="true">
+                  {String(index + 1).padStart(2, "0")}
                 </span>
-                <span
-                  className={cn(
-                    "grid size-8 shrink-0 place-items-center rounded-md border transition-all duration-300",
-                    isOpen
-                      ? "rotate-45 border-signal bg-signal text-white"
-                      : "border-line-strong text-fg-muted",
-                  )}
-                  aria-hidden="true"
-                >
-                  <Plus className="size-4" />
+                <span className="flex-1 font-serif text-xl leading-snug text-fg transition-transform duration-500 group-hover:translate-x-2 sm:text-2xl">
+                  {item.question}
+                </span>
+                <span className="relative size-4 shrink-0 self-center" aria-hidden="true">
+                  <span className="absolute top-1/2 left-0 h-px w-full bg-fg" />
+                  <span
+                    className={cn(
+                      "absolute top-1/2 left-0 h-px w-full bg-fg transition-transform duration-500",
+                      !isOpen && "rotate-90",
+                    )}
+                  />
                 </span>
               </button>
             </h3>
@@ -76,12 +65,10 @@ export function Accordion({
                   initial={{ height: 0, opacity: 0 }}
                   animate={{ height: "auto", opacity: 1 }}
                   exit={{ height: 0, opacity: 0 }}
-                  transition={{ duration: 0.4, ease: [0.16, 1, 0.3, 1] }}
+                  transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
                   className="overflow-hidden"
                 >
-                  <p className="max-w-3xl px-5 pb-6 pl-14 leading-relaxed text-fg-muted sm:px-6 sm:pl-[3.75rem]">
-                    {item.answer}
-                  </p>
+                  <p className="max-w-2xl pb-7 pl-14 leading-relaxed text-muted">{item.answer}</p>
                 </m.div>
               )}
             </AnimatePresence>

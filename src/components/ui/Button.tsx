@@ -1,24 +1,22 @@
 import Link from "next/link";
-import { ArrowRight } from "lucide-react";
+import { ArrowUpRight } from "lucide-react";
 import { cn } from "@/lib/utils";
 
-type Variant = "primary" | "secondary" | "ghost";
+type Variant = "solid" | "outline" | "ghost";
 type Size = "md" | "lg";
 
 const base =
-  "group/btn relative inline-flex items-center justify-center gap-2.5 overflow-hidden rounded-lg font-semibold whitespace-nowrap transition-[color,background-color,border-color,box-shadow,transform] duration-300 ease-out focus-visible:outline-2 focus-visible:outline-offset-4 disabled:pointer-events-none disabled:opacity-60 active:scale-[0.98]";
+  "group relative inline-flex items-center justify-center gap-3 rounded-full font-medium whitespace-nowrap transition-[background-color,color,border-color,transform] duration-500 ease-out active:scale-[0.97] disabled:pointer-events-none disabled:opacity-50";
 
 const variants: Record<Variant, string> = {
-  primary:
-    "bg-signal text-white shadow-[0_0_0_1px_rgba(122,163,255,0.4)_inset,0_8px_30px_-10px_rgba(61,123,255,0.9)] hover:bg-signal-strong hover:shadow-[0_0_0_1px_rgba(122,163,255,0.6)_inset,0_12px_44px_-8px_rgba(61,123,255,1)]",
-  secondary:
-    "border border-line-strong bg-white/[0.02] text-fg hover:border-pulse/60 hover:bg-pulse/[0.06] hover:text-white",
-  ghost: "text-fg hover:text-pulse",
+  solid: "bg-fg text-bg hover:opacity-90",
+  outline: "border border-line-strong text-fg hover:border-fg hover:bg-fg hover:text-bg",
+  ghost: "text-fg",
 };
 
 const sizes: Record<Size, string> = {
-  md: "h-11 px-5 text-sm",
-  lg: "h-13 px-7 text-[15px]",
+  md: "h-11 px-5 text-[13px]",
+  lg: "h-14 px-7 text-sm",
 };
 
 interface CommonProps {
@@ -26,43 +24,37 @@ interface CommonProps {
   size?: Size;
   className?: string;
   children: React.ReactNode;
-  /** Show the sliding arrow. */
   arrow?: boolean;
   cursorLabel?: string;
 }
 
-function Content({
-  children,
-  arrow,
-  variant,
-}: {
-  children: React.ReactNode;
-  arrow?: boolean;
-  variant: Variant;
-}) {
+/** Label that rolls up to a copy of itself on hover. */
+function Roll({ children }: { children: React.ReactNode }) {
+  return (
+    <span className="roll label !text-[12px] !tracking-[0.14em]">
+      <span>{children}</span>
+      <span aria-hidden="true">{children}</span>
+    </span>
+  );
+}
+
+function Content({ children, arrow }: { children: React.ReactNode; arrow?: boolean }) {
   return (
     <>
-      {variant === "primary" && (
-        <span
-          aria-hidden="true"
-          className="absolute inset-0 -translate-x-full bg-gradient-to-r from-transparent via-white/30 to-transparent transition-transform duration-700 ease-out group-hover/btn:translate-x-full"
-        />
-      )}
-      <span className="relative">{children}</span>
+      <Roll>{children}</Roll>
       {arrow && (
-        <ArrowRight
+        <ArrowUpRight
           aria-hidden="true"
-          className="relative size-4 transition-transform duration-300 group-hover/btn:translate-x-1"
+          className="size-4 transition-transform duration-500 ease-out group-hover:rotate-45"
         />
       )}
     </>
   );
 }
 
-/** Link styled as a button. Internal routes use next/link. */
 export function ButtonLink({
   href,
-  variant = "primary",
+  variant = "solid",
   size = "md",
   className,
   children,
@@ -77,24 +69,19 @@ export function ButtonLink({
   if (/^(https?:|mailto:|tel:)/.test(href)) {
     return (
       <a href={href} className={classes} data-cursor-label={cursorLabel} {...rest}>
-        <Content arrow={arrow} variant={variant}>
-          {children}
-        </Content>
+        <Content arrow={arrow}>{children}</Content>
       </a>
     );
   }
   return (
     <Link href={href} className={classes} data-cursor-label={cursorLabel} {...rest}>
-      <Content arrow={arrow} variant={variant}>
-        {children}
-      </Content>
+      <Content arrow={arrow}>{children}</Content>
     </Link>
   );
 }
 
-/** Native button with the same styling. */
 export function Button({
-  variant = "primary",
+  variant = "solid",
   size = "md",
   className,
   children,
@@ -104,9 +91,54 @@ export function Button({
 }: CommonProps & Omit<React.ButtonHTMLAttributes<HTMLButtonElement>, "className" | "children">) {
   return (
     <button type={type} className={cn(base, variants[variant], sizes[size], className)} {...rest}>
-      <Content arrow={arrow} variant={variant}>
-        {children}
-      </Content>
+      <Content arrow={arrow}>{children}</Content>
     </button>
+  );
+}
+
+/**
+ * Circular CTA with text rotating around the edge (rebrandgurus-style).
+ * The centre arrow tilts on hover.
+ */
+export function CircleLink({
+  href,
+  label,
+  ring = "Let’s work together • Get in touch • ",
+  className,
+}: {
+  href: string;
+  label: string;
+  ring?: string;
+  className?: string;
+}) {
+  return (
+    <Link
+      href={href}
+      data-cursor-label="Talk"
+      className={cn(
+        "group relative grid size-40 shrink-0 place-items-center rounded-full border border-line-strong text-fg transition-colors duration-500 hover:border-fg hover:bg-fg hover:text-bg sm:size-48",
+        className,
+      )}
+    >
+      <svg
+        viewBox="0 0 200 200"
+        className="absolute inset-0 size-full animate-spin-slow"
+        aria-hidden="true"
+      >
+        <defs>
+          <path id="circle-link-path" d="M100,100 m-78,0 a78,78 0 1,1 156,0 a78,78 0 1,1 -156,0" />
+        </defs>
+        <text className="fill-current text-[12.5px] font-medium tracking-[0.2em] uppercase">
+          <textPath href="#circle-link-path" textLength={490} lengthAdjust="spacing">
+            {ring}
+          </textPath>
+        </text>
+      </svg>
+      <span className="sr-only">{label}</span>
+      <ArrowUpRight
+        className="size-8 transition-transform duration-500 group-hover:rotate-45"
+        aria-hidden="true"
+      />
+    </Link>
   );
 }

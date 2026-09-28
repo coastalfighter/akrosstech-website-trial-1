@@ -1,13 +1,11 @@
 import Link from "next/link";
-import { ChevronRight } from "lucide-react";
 import type { PhotoKey } from "@/content/media";
-import { Eyebrow } from "@/components/ui/SectionHeading";
+import { Label } from "@/components/ui/SectionHeading";
 import { Photo } from "@/components/ui/Photo";
 import { IntroFade, IntroTitle } from "@/components/motion/Intro";
-import { GridBackdrop } from "@/components/effects/Backgrounds";
-import { Spotlight } from "@/components/effects/Spotlight";
+import { ImageReveal } from "@/components/motion/Scroll";
 import { breadcrumbJsonLd, serializeJsonLd } from "@/lib/seo";
-import { cn } from "@/lib/utils";
+import { plain } from "@/lib/rich";
 
 interface Crumb {
   name: string;
@@ -15,70 +13,54 @@ interface Crumb {
 }
 
 interface PageHeroProps {
-  eyebrow: string;
+  label: string;
+  /** Supports `*italic*` accents. */
   title: string;
   description?: string;
   breadcrumbs: Crumb[];
-  /** Full-bleed background photograph. */
   photo?: PhotoKey;
   children?: React.ReactNode;
-  /** Optional visual rendered to the right on large screens. */
-  aside?: React.ReactNode;
-  className?: string;
 }
 
-/** Inner-page hero: full-bleed graded photo, breadcrumbs (+ JSON-LD), CSS intro. */
+/**
+ * Inner-page opener: breadcrumb + label, an oversized serif title, intro
+ * copy on the right, then a full-width photograph that wipes in.
+ */
 export function PageHero({
-  eyebrow,
+  label,
   title,
   description,
   breadcrumbs,
   photo,
   children,
-  aside,
-  className,
 }: PageHeroProps) {
-  const trail = [{ name: "Home", path: "/" }, ...breadcrumbs];
+  const trail = [
+    { name: "Home", path: "/" },
+    ...breadcrumbs.map((c) => ({ ...c, name: plain(c.name) })),
+  ];
   return (
-    <section
-      className={cn(
-        "relative isolate overflow-hidden border-b border-line pt-40 pb-20 sm:pt-48 sm:pb-28",
-        className,
-      )}
-    >
+    <section data-tone="paper" className="pt-32 md:pt-40">
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: serializeJsonLd(breadcrumbJsonLd(trail)) }}
       />
-      {photo && (
-        <div className="absolute inset-0 -z-20">
-          <Photo name={photo} baked priority sizes="100vw" className="size-full opacity-70" />
-        </div>
-      )}
-      <div
-        className="absolute inset-0 -z-10 bg-gradient-to-r from-canvas via-canvas/90 to-canvas/40"
-        aria-hidden="true"
-      />
-      <div
-        className="absolute inset-x-0 bottom-0 -z-10 h-40 bg-gradient-to-t from-canvas to-transparent"
-        aria-hidden="true"
-      />
-      <GridBackdrop className="-z-10 opacity-60" />
-      <Spotlight className="-z-10" />
-
-      <div className="relative container-page grid items-center gap-12 lg:grid-cols-[3fr_2fr]">
-        <div className="flex flex-col gap-7">
+      <div className="container-page">
+        <IntroFade
+          delay={0}
+          className="flex flex-wrap items-center justify-between gap-4 border-b border-line pb-5"
+        >
+          <Label>{label}</Label>
           <nav aria-label="Breadcrumb">
-            <ol className="flex flex-wrap items-center gap-1.5 font-mono text-[11px] tracking-[0.12em] text-fg-subtle uppercase">
+            <ol className="flex flex-wrap items-center gap-2 label text-muted">
               {trail.map((crumb, i) => (
-                <li key={crumb.path} className="flex items-center gap-1.5">
-                  {i > 0 && <ChevronRight className="size-3" aria-hidden="true" />}
+                <li key={crumb.path} className="flex items-center gap-2">
+                  {i > 0 && <span aria-hidden="true">/</span>}
                   {i === trail.length - 1 ? (
-                    <span aria-current="page" className="text-fg-muted">
+                    <span aria-current="page" className="text-fg">
                       {crumb.name}
                     </span>
                   ) : (
-                    <Link href={crumb.path} className="transition-colors hover:text-pulse">
+                    <Link href={crumb.path} className="link-line">
                       {crumb.name}
                     </Link>
                   )}
@@ -86,31 +68,23 @@ export function PageHero({
               ))}
             </ol>
           </nav>
-          <IntroFade delay={0}>
-            <Eyebrow>{eyebrow}</Eyebrow>
-          </IntroFade>
-          <IntroTitle className="max-w-4xl text-[clamp(2.5rem,1.3rem+4.8vw,5.75rem)] leading-[0.98] font-bold tracking-[-0.04em] text-fg">
-            {title}
-          </IntroTitle>
-          {description && (
-            <IntroFade delay={0.3}>
-              <p className="max-w-2xl text-lg leading-relaxed text-fg-muted sm:text-xl">
-                {description}
-              </p>
-            </IntroFade>
-          )}
-          {children && (
-            <IntroFade delay={0.4} className="flex flex-col gap-7">
+        </IntroFade>
+
+        <div className="grid gap-10 py-14 md:py-20 lg:grid-cols-[3fr_2fr] lg:items-end">
+          <IntroTitle className="display-xl text-fg">{title}</IntroTitle>
+          {(description || children) && (
+            <IntroFade delay={0.35} className="flex flex-col gap-6">
+              {description && <p className="text-lg leading-relaxed text-muted">{description}</p>}
               {children}
             </IntroFade>
           )}
         </div>
-        {aside && (
-          <IntroFade delay={0.35} className="hidden lg:block">
-            {aside}
-          </IntroFade>
-        )}
       </div>
+      {photo && (
+        <ImageReveal className="aspect-[16/9] w-full md:aspect-[21/9]">
+          <Photo name={photo} baked priority sizes="100vw" className="size-full" />
+        </ImageReveal>
+      )}
     </section>
   );
 }

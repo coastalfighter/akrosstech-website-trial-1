@@ -20,8 +20,8 @@ interface PhotoProps {
 }
 
 /**
- * Optimised, colour-graded photograph. Every photo on the site runs
- * through this component so the imagery reads as one consistent set.
+ * Optimised photograph shown in monochrome, warming to full colour on
+ * hover. `baked` uses the pre-graded black & white file (no runtime filter).
  */
 export function Photo({
   name,
@@ -39,7 +39,7 @@ export function Photo({
   return (
     <div
       className={cn(
-        plain ? "relative overflow-hidden bg-panel" : "photo",
+        plain ? "relative overflow-hidden bg-soft" : "photo relative overflow-hidden bg-soft",
         hover && !plain && "photo-hover",
         className,
       )}

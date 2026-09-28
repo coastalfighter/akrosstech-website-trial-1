@@ -3,7 +3,7 @@ import { cn } from "@/lib/utils";
 type SplitMode = "lines" | "words" | "chars";
 
 interface TextRevealProps {
-  children: string;
+  children: React.ReactNode;
   as?: "p" | "h1" | "h2" | "h3" | "h4" | "span" | "div";
   className?: string;
   /** Granularity of the reveal. */
@@ -17,11 +17,9 @@ interface TextRevealProps {
 }
 
 /**
- * Masked split-text reveal (GSAP SplitText) triggered on scroll.
- *
- * Server component rendering `data-split-*` attributes; <MotionController>
- * splits the text lazily as it approaches the viewport. SplitText keeps an
- * aria-label on the element so screen readers read the full sentence.
+ * Masked split-text reveal (GSAP SplitText), driven by <MotionController>.
+ * Accepts inline markup (e.g. italic <em> accents); SplitText keeps an
+ * aria-label so screen readers hear the whole sentence.
  */
 export function TextReveal({
   children,

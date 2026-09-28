@@ -16,9 +16,7 @@ import { FaqSection } from "@/components/sections/shared/FaqSection";
 import { CtaBanner } from "@/components/sections/shared/CtaBanner";
 import { ContactSection } from "@/components/sections/shared/ContactSection";
 import { ButtonLink } from "@/components/ui/Button";
-import { Icon } from "@/components/ui/Icon";
 
-/** Only the four outsourcing services are generated here; unknown slugs 404. */
 export const dynamicParams = false;
 
 export function generateStaticParams() {
@@ -45,11 +43,13 @@ const formService: Record<string, ServiceOption> = {
   "legal-process-outsourcing": "Legal Process Outsourcing",
 };
 
+/** Last word italicised for the editorial title treatment. */
+const accent = (title: string) => title.replace(/(\S+)$/, "*$1*");
+
 export default async function ServicePage({ params }: PageProps<"/services/[slug]">) {
   const { slug } = await params;
   const service = getOutsourcingService(slug);
   if (!service) notFound();
-
   const [lead, ...rest] = service.intro;
 
   return (
@@ -67,55 +67,36 @@ export default async function ServicePage({ params }: PageProps<"/services/[slug
         }}
       />
       <PageHero
-        eyebrow="Our services"
-        title={service.title}
+        label="Our services"
+        title={accent(service.title)}
         description={lead}
         photo={servicePhotos[slug]?.hero}
         breadcrumbs={[
           { name: "Services", path: "/services" },
           { name: service.title, path: `/services/${slug}` },
         ]}
-        aside={
-          <div className="beam ml-auto w-full max-w-sm rounded-2xl p-6 glass">
-            <div className="flex items-center justify-between border-b border-line pb-4">
-              <span className="grid size-12 place-items-center rounded-lg bg-signal text-white">
-                <Icon name={service.icon} className="size-6" />
-              </span>
-              <span className="font-mono text-[11px] text-ok">● accepting clients</span>
-            </div>
-            <ul className="mt-4 flex flex-col gap-3">
-              {service.why.benefits.slice(0, 4).map((b) => (
-                <li key={b.title} className="flex items-center gap-3 text-sm text-fg">
-                  <Icon name={b.icon} className="size-4 text-pulse" />
-                  {b.title}
-                </li>
-              ))}
-            </ul>
-          </div>
-        }
       >
-        {rest.map((paragraph) => (
-          <p key={paragraph} className="max-w-2xl leading-relaxed text-fg-muted">
-            {paragraph}
+        {rest.map((p) => (
+          <p key={p} className="leading-relaxed text-muted">
+            {p}
           </p>
         ))}
-        <div className="flex flex-wrap gap-4 pt-2">
-          <ButtonLink href="#contact" size="lg" arrow>
-            Get Started
+        <div className="flex flex-wrap gap-3">
+          <ButtonLink href="#contact" arrow>
+            Get started
           </ButtonLink>
-          <ButtonLink href="/services" size="lg" variant="secondary">
-            All Services
+          <ButtonLink href="/services" variant="outline">
+            All services
           </ButtonLink>
         </div>
       </PageHero>
-
       <ServiceWhy service={service} />
       <ServiceCapabilities service={service} />
       <FaqSection faqs={serviceFaqs} index="03" />
       <CtaBanner {...ctaBanner} href="#contact" photo={servicePhotos[slug]?.detail} />
       <ContactSection
-        eyebrow="Get Started"
-        title={`Let’s talk about ${service.title.toLowerCase()}`}
+        label="Get Started"
+        title={`Let’s talk about *${service.shortTitle}*`}
         defaultService={formService[slug]}
       />
       <OtherServices currentSlug={slug} />

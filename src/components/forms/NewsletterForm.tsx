@@ -38,10 +38,10 @@ export function NewsletterForm({ className }: { className?: string }) {
 
   return (
     <form onSubmit={onSubmit} noValidate className={cn("w-full", className)}>
-      <label htmlFor={`${id}-email`} className="mb-3 block text-sm font-medium text-fg">
+      <label htmlFor={`${id}-email`} className="mb-4 block label text-muted">
         Subscribe our newsletter:
       </label>
-      <div className="flex items-center gap-2 rounded-lg border border-line-strong bg-panel p-1.5 focus-within:border-signal/70">
+      <div className="flex items-center gap-2 border-b border-line-strong pb-2 focus-within:border-fg">
         <input
           id={`${id}-email`}
           type="email"
@@ -54,7 +54,7 @@ export function NewsletterForm({ className }: { className?: string }) {
           onChange={(e) => setEmail(e.target.value)}
           aria-invalid={status === "error"}
           aria-describedby={`${id}-status`}
-          className="min-w-0 flex-1 bg-transparent px-4 text-sm text-fg placeholder:text-fg-subtle focus:outline-none"
+          className="min-w-0 flex-1 bg-transparent font-serif text-2xl text-fg placeholder:text-muted focus:outline-none"
         />
         {/* Honeypot — visually hidden, ignored by humans */}
         <input
@@ -71,7 +71,7 @@ export function NewsletterForm({ className }: { className?: string }) {
           type="submit"
           disabled={status === "loading"}
           aria-label="Subscribe"
-          className="grid size-10 shrink-0 place-items-center rounded-md bg-signal text-white transition-transform hover:scale-105 disabled:opacity-60"
+          className="grid size-10 shrink-0 place-items-center rounded-full border border-line-strong text-fg transition-colors hover:bg-fg hover:text-bg disabled:opacity-60"
         >
           {status === "loading" ? (
             <Loader2 className="size-4 animate-spin" aria-hidden="true" />
@@ -86,7 +86,7 @@ export function NewsletterForm({ className }: { className?: string }) {
         id={`${id}-status`}
         role="status"
         aria-live="polite"
-        className={cn("mt-2 min-h-5 text-xs", status === "error" ? "text-red-300" : "text-ok")}
+        className={cn("mt-2 min-h-5 text-xs", status === "error" ? "text-red-500" : "text-fg")}
       >
         {status === "success" || status === "error" ? message : ""}
       </p>

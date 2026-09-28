@@ -1,6 +1,6 @@
 /**
- * Bakes the site's cinematic photo grade (desaturate + electric-blue tint +
- * darken) into background variants, so full-bleed images need no runtime
+ * Bakes the site's monochrome editorial photo grade (black & white +
+ * contrast) into background variants, so full-bleed images need no runtime
  * CSS filters or overlays (much cheaper to paint).
  *
  *   node scripts/grade-images.mjs
@@ -20,10 +20,9 @@ for (const file of files) {
   const out = path.join(OUT, file);
   await sharp(path.join(SRC, file))
     .resize({ width: 1920, withoutEnlargement: true })
-    .modulate({ saturation: 0.08 }) // desaturate (keeps sRGB so the tint applies)
-    .linear(1.08, -14) // contrast + darken
-    .tint({ r: 118, g: 140, b: 196 })
-    .modulate({ brightness: 0.85 })
+    .modulate({ saturation: 0 }) // monochrome, kept in sRGB
+    .linear(1.12, -10) // editorial contrast
+    .modulate({ brightness: 0.92 })
     .jpeg({ quality: 72, mozjpeg: true })
     .toFile(out);
   console.log("graded", file);

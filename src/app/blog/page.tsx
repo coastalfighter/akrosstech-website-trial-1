@@ -1,8 +1,10 @@
 import type { Metadata } from "next";
 import { getAllBlogPosts } from "@/lib/content";
+import { blogPhotos } from "@/content/media";
 import { pageMetadata } from "@/lib/seo";
+import { formatDate } from "@/lib/utils";
 import { PageHero } from "@/components/sections/shared/PageHero";
-import { BlogCards } from "@/components/sections/shared/BlogCards";
+import { HoverList } from "@/components/sections/shared/HoverList";
 import { CtaBanner } from "@/components/sections/shared/CtaBanner";
 import { ctaBanner } from "@/content/home";
 
@@ -18,18 +20,26 @@ export default function BlogPage() {
   return (
     <>
       <PageHero
-        eyebrow="Our Blog"
-        title="Our latest insight news"
+        label="Journal"
+        title="Our latest *insight* news"
         description="Practical guides on outsourcing, hiring and scaling your business with remote teams."
         breadcrumbs={[{ name: "Blog", path: "/blog" }]}
-        photo="library"
       />
-      <section aria-labelledby="articles-title" className="py-24 sm:py-32">
+      <section data-tone="paper" aria-labelledby="articles-title" className="pb-28 md:pb-40">
         <div className="container-page">
           <h2 id="articles-title" className="sr-only">
             All articles
           </h2>
-          <BlogCards posts={posts} />
+          <HoverList
+            size="md"
+            items={posts.map((p) => ({
+              href: `/blog/${p.slug}`,
+              title: p.title,
+              meta: `${formatDate(p.date)} — ${p.readingMinutes} min read`,
+              tag: p.category,
+              photo: blogPhotos[p.slug] ?? "blocks",
+            }))}
+          />
         </div>
       </section>
       <CtaBanner {...ctaBanner} />
