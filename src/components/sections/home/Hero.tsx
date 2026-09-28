@@ -4,11 +4,13 @@ import { site } from "@/content/site";
 import { IntroFade, IntroTitle } from "@/components/motion/Intro";
 import { Wordmark } from "@/components/layout/Wordmark";
 import { ButtonLink } from "@/components/ui/Button";
+import { HeroTrail } from "@/components/effects/HeroTrail";
 
 /**
  * noth.in-inspired opener: serif statement + call to action up top, the
  * full-bleed AKROSTECH wordmark in the middle (letters rise in, then drift
- * apart as you scroll), and a quiet meta row along the bottom.
+ * apart as you scroll; hovering paints it with a photo trail), and a quiet
+ * meta row along the bottom.
  */
 export function Hero() {
   return (
@@ -34,7 +36,10 @@ export function Hero() {
         </IntroFade>
       </div>
 
-      <Wordmark intro spread className="my-10 px-2 text-fg md:px-4" />
+      {/* Hover paints the wordmark with a liquid, photo-filled trail. */}
+      <HeroTrail className="py-10 text-fg">
+        <Wordmark intro spread className="px-2 md:px-4" />
+      </HeroTrail>
 
       <IntroFade
         delay={0.5}
