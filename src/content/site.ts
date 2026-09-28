@@ -49,9 +49,7 @@ export const companyStats: Stat[] = [
 ];
 
 /**
- * Website-development figures.
- * Confirm these with the business before launch — they are the only
- * numbers on the site that did not come from the existing website.
+ * Website-development figures (confirmed by the business).
  */
 export const webStats: Stat[] = [
   { value: 50, suffix: "+", label: "Websites Delivered" },

@@ -200,14 +200,12 @@ enough to deter casual abuse. For strict global limits, back `createRateLimiter`
 
 Mobile uses Lighthouse's simulated slow-4G / 4× CPU profile.
 
-## Before launch — please confirm
+## Content status
 
-- **Website Development figures** in `src/content/site.ts` (`webStats`: 50+ websites, 6+ years). These
-  are the only numbers that didn't come from the old site.
-- **Pricing and maintenance tiers** in `src/content/website-development.ts`.
-- **Photography** is high-quality stock (see `docs/IMAGE_CREDITS.md`). Your own team and office
-  photos will make the site more personal, and swapping them in needs no code changes.
-- **Portfolio and testimonials** are clearly labelled sample content. Replace them with real case studies and
-  approved quotes when you have them.
+- **Confirmed by the business:** the Website Development figures in `src/content/site.ts`
+  (`webStats`: 50+ websites, 6+ years), the pricing and maintenance tiers in
+  `src/content/website-development.ts`, and the stock photography (see `docs/IMAGE_CREDITS.md`).
+- **Portfolio and testimonials** stay labelled as sample content until real case studies and
+  approved quotes replace them. Swapping them in needs no code changes.
 - **Terms & Conditions §1** still lists only the outsourcing services (kept verbatim). Consider adding
   Website Development and updating the "Last Updated" date.
