@@ -16,8 +16,9 @@ const items: { title: string; description: string; photo: PhotoKey }[] = [
 ];
 
 /**
- * Why choose us — horizontal accordion. On desktop the hovered/focused
- * panel widens to reveal its photo and copy; on mobile panels stack open.
+ * Why choose us — horizontal accordion of photo panels. On desktop the
+ * hovered/focused panel widens to its full photo and copy while the others
+ * stay dimmed behind their vertical titles; on mobile panels stack open.
  */
 export function Principles() {
   const [active, setActive] = useState(0);
@@ -49,7 +50,8 @@ export function Principles() {
                 key={item.title}
                 onPointerEnter={() => setActive(i)}
                 className={cn(
-                  "group relative overflow-hidden border border-line transition-[flex-grow] duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] lg:min-w-0",
+                  // `isolate` keeps the photo layers (negative z) inside the panel.
+                  "group relative isolate flex min-h-[22rem] overflow-hidden border border-line transition-[flex-grow] duration-700 ease-[cubic-bezier(0.16,1,0.3,1)] lg:min-h-0 lg:min-w-0",
                   open ? "lg:flex-[4]" : "lg:flex-[1]",
                 )}
               >
@@ -58,32 +60,30 @@ export function Principles() {
                   onClick={() => setActive(i)}
                   onFocus={() => setActive(i)}
                   aria-expanded={open}
-                  className="relative flex h-full w-full flex-col justify-between gap-8 p-6 text-left lg:p-8"
+                  className="relative flex w-full flex-1 flex-col justify-between gap-8 p-6 text-left lg:p-8"
                 >
                   <Photo
                     name={item.photo}
                     baked
                     sizes="(min-width: 1024px) 55vw, 100vw"
                     className={cn(
-                      "absolute inset-0 -z-10 transition-opacity duration-700",
-                      open ? "lg:opacity-100" : "lg:opacity-0",
-                      "opacity-0",
+                      "absolute inset-0 -z-20 transition-opacity duration-700",
+                      open ? "opacity-100" : "opacity-100 lg:opacity-35",
                     )}
                   />
                   <span
                     className={cn(
-                      "absolute inset-0 -z-10 bg-ink/55 transition-opacity duration-700",
-                      open ? "lg:opacity-100" : "opacity-0",
+                      "absolute inset-0 -z-10 bg-linear-to-t from-ink/90 via-ink/45 to-ink/25 transition-opacity duration-700",
+                      open ? "lg:opacity-100" : "lg:opacity-80",
                     )}
                     aria-hidden="true"
                   />
                   <span
                     className={cn(
-                      "flex justify-between label transition-colors duration-700",
-                      open ? "lg:text-paper" : "text-muted",
+                      "flex justify-between label text-paper/80 transition-colors duration-700",
                     )}
                   >
-                    <span>0{i + 1}</span>
+                    <span className={cn(open && "lg:text-lime")}>0{i + 1}</span>
                     <span
                       className={cn(
                         "transition-opacity duration-500",
@@ -97,9 +97,8 @@ export function Principles() {
                     <span
                       className={cn(
                         "font-serif text-3xl leading-none transition-colors duration-700 lg:text-4xl",
-                        open
-                          ? "lg:text-paper"
-                          : "text-fg lg:rotate-180 lg:[writing-mode:vertical-rl]",
+                        "text-paper",
+                        !open && "lg:rotate-180 lg:[writing-mode:vertical-rl]",
                       )}
                     >
                       {item.title}
@@ -107,9 +106,8 @@ export function Principles() {
                     <span
                       className={cn(
                         "max-w-md text-sm leading-relaxed transition-[opacity,color] duration-700",
-                        open
-                          ? "text-muted lg:text-paper/80 lg:opacity-100"
-                          : "text-muted lg:hidden",
+                        "text-paper/80",
+                        open ? "lg:opacity-100" : "lg:hidden",
                       )}
                     >
                       {item.description}

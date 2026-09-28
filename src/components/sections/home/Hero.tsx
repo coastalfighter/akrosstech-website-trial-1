@@ -10,7 +10,7 @@ import { FluidRevealLazy } from "@/components/effects/FluidRevealLazy";
  * noth.in-inspired opener: serif statement + call to action up top, the
  * full-bleed AKROSTECH wordmark in the middle (letters rise in, then drift
  * apart as you scroll), and a quiet meta row along the bottom. Moving the
- * pointer stirs a fluid simulation whose dye reveals a photo over the
+ * pointer stirs a fluid simulation whose dye reveals lime liquid ink over the
  * wordmark (FluidReveal, a port of the noth.in hero). Layering: wordmark
  * below the fluid canvas, copy and controls above it.
  */

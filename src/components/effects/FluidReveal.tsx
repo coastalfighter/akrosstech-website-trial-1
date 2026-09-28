@@ -2,7 +2,7 @@
 
 import { useEffect, useRef } from "react";
 import { getImageProps } from "next/image";
-import heroEarth from "@/assets/images/hero-earth.jpg";
+import heroLiquid from "@/assets/images/hero-liquid.jpg";
 import {
   FLUID_SETTINGS as S,
   createStepper,
@@ -14,15 +14,15 @@ import { cn } from "@/lib/utils";
 
 /** Stop simulating this long after the last pointer move (dye has faded by then). */
 const IDLE_STOP_MS = 4500;
-/** Where the photo is framed: the lit-up cities (top-down focal point) and zoom. */
-const PHOTO_FOCUS = { x: 0.5, y: 0.66 };
-const PHOTO_ZOOM = 1.15;
+/** How the reveal image is framed: top-down focal point and zoom. */
+const PHOTO_FOCUS = { x: 0.5, y: 0.12 };
+const PHOTO_ZOOM = 1;
 
 const { props: photoProps } = getImageProps({
-  src: heroEarth,
+  src: heroLiquid,
   alt: "",
   width: 1920,
-  height: Math.round((1920 * heroEarth.height) / heroEarth.width),
+  height: Math.round((1920 * heroLiquid.height) / heroLiquid.width),
   quality: 70,
 });
 
@@ -173,7 +173,6 @@ void main() {
   float dye = texture2D(uDye, vUv).r;
   float mask = clamp(smoothstep(uEdgeSoftness, uEdgeSoftness + uEdgeWidth, dye * uRevealSize), 0.0, 1.0);
   vec3 color = texture2D(uReveal, clamp(coverUv(vUv), 0.001, 0.999)).rgb;
-  color = min(pow(color, vec3(0.85)) * 1.25, 1.0);
   gl_FragColor = vec4(color * mask, mask);
 }`;
 
@@ -296,7 +295,7 @@ function createDouble(
 /**
  * noth.in hero effect: a GPU stable-fluids simulation driven by the
  * pointer. Its dye field is thresholded into a crisp, watery mask that
- * reveals a full-colour photo over the wordmark; outside the mask the
+ * reveals a lime liquid-ink texture over the wordmark; outside the mask the
  * canvas is transparent. Sits inside a positioned parent (the hero) and
  * covers it.
  *
@@ -419,7 +418,7 @@ function setupFluid(canvas: HTMLCanvasElement): (() => void) | undefined {
 
   // Reveal photo (loaded when idle; nothing is drawn until it is ready).
   let photo: WebGLTexture | null = null;
-  let photoAspect = heroEarth.width / heroEarth.height;
+  let photoAspect = heroLiquid.width / heroLiquid.height;
   const loadPhoto = () => {
     const img = new Image();
     img.decoding = "async";

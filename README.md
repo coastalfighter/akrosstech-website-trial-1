@@ -14,7 +14,7 @@ GSAP, Framer Motion and Lenis, and it deploys to Vercel.
   and the page background shifts as sections cross the middle of the viewport.
 - **Real photography** (Unsplash licence) in full colour, gently muted until hovered.
 - Effects: counter preloader that wipes up, a full-bleed AKROSTECH wordmark that rises in and
-  spreads apart on scroll (moving the pointer stirs a WebGL fluid simulation — a port of the noth.in hero — whose dye reveals a colour photo, `FluidReveal`), a
+  spreads apart on scroll (moving the pointer stirs a WebGL fluid simulation — a port of the noth.in hero — whose dye reveals a lime liquid-ink texture, `FluidReveal`), a
   scroll-expanding image, scroll-scrubbed manifesto text, tilted marquee
   ribbons, hover-flood service rows with a cursor-following photo, a spreading "WORKS" title over an
   asymmetric parallax grid, a horizontal principles accordion, a pinned process timeline, a
